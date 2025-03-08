@@ -39,7 +39,7 @@ const GAS_PERSONAL_URL = "https://script.google.com/macros/s/AKfycbysoCsP1D4qh_w
 const STEP = 20;
 const QUIZ_SHEET_ID = "1GyKDfVQCNrBlkxjsrQDv_ouIio9yjO3mVQy6Ds5uQzg";
 const MONSTER_SHEET_ID = "1t08cjUMrug0nvIpredcxjuoxejDRazqqzLTqjVraJhw";
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwr32j-z2AE0AwYbP2JguFxiPZHVJHghjQCgEz1bIT0T2ZxyKKuQx7294jIAtBpa2MnFw/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxPmY_-1Q4YcCfbseqz1vVtRqG84aDS-W4Kkzmyi_icswdOafg73RbgD4JuLn-LZr1c/exec";
 
 let playerData = { name: "", level: 1, exp: 0, g: 0, hp: 50 };
 let quizData = [];
