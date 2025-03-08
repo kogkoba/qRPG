@@ -240,7 +240,7 @@ function answerQuiz(selected, quiz) {
 }
 
 // ★ミス記録
-function function recordMistake(playerName, questionId) {
+function recordMistake(playerName, questionId) {
   const params = new URLSearchParams();
   params.append("mode", "recordMistake");
   params.append("name", playerName); // ✅ "player" → "name" に統一
