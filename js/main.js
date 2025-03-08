@@ -795,9 +795,11 @@ function retryBattle() {
             document.getElementById("loginScreen").style.display = "none";
             document.getElementById("titleScreen").style.display = "flex";
           }, 500);
-        } catch (err) {
+         
+        catch (err) {
           console.error("データ取得エラー:", err);
           hideLoadingOverlay();
           alert("ログインエラーが発生しました。再度お試しください。");
         }
+        
  
