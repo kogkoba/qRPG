@@ -746,8 +746,13 @@ function retryBattle() {
     }
 
     // ======================= 12) DOMContentLoaded：ログイン処理 =======================
-    document.addEventListener("DOMContentLoaded", () => {
-      console.log("✅ DOMContentLoaded");
+   document.addEventListener("DOMContentLoaded", () => {
+  // google api.js の <script> を探す
+  const script = document.querySelector('script[src*="apis.google.com/js/api.js"]');
+  if (script) {
+    script.addEventListener("load", () => {
+      console.log("✅ Google APIがロードされました");
+      // gapi.load("client", initClient); など、ここで実行
       
       // 回復ボタンは最初は隠すならここで制御
       // document.getElementById("healButton").style.display = "none";
