@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ドラクエ風クイズRPG</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSSファイルのパス。必要に応じてパスやファイル名を変更してください -->
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <!-- ==================== ローディングオーバーレイ ==================== -->
+  <!-- ローディング時に表示。初期状態は非表示。必要ならスタイルを変更 -->
+  <div id="loadingOverlay" style="display: none;">Loading…</div>
+
+  <!-- ==================== ログイン画面 ==================== -->
+  <div id="loginScreen">
+    <h2>プレイヤー名を入力してください</h2>
+    <!-- プレイヤー名の入力欄 -->
+    <input type="text" id="playerNameInput" placeholder="名前を入力">
+    <!-- ログインボタン。main.js内の onLogin 関数などと連携させる -->
+    <button id="loginButton">ログイン</button>
+  </div>
+
+  <!-- ==================== タイトル画面 ==================== -->
+  <div id="titleScreen" style="display: none;">
+    <h1>ドラクエ風クイズRPG</h1>
+    <!-- ゲーム開始ボタン。onclick属性で main.js の startGame() を呼び出すので、関数定義を忘れずに！ -->
+    <button id="startButton" onclick="startGame()">▶ ゲームスタート</button>
+  </div>
+
+  <!-- ==================== ゲーム画面 ==================== -->
+  <div id="gameContainer" style="display: none;">
+    <!-- ---------- ステータス表示 ---------- -->
+    <div id="status">
+      プレイヤーのHP: <span id="hp">100</span> / レベル: <span id="level">1</span>
+      <div id="bgmToggleContainer">
+        <!-- BGMトグルボタン。onclickで toggleBgm() を呼び出します -->
+        <button id="bgmToggleButton" onclick="toggleBgm()">🔇 BGM OFF</button>
+      </div>
+    </div>
+
+    <!-- ---------- フィールド画面 ---------- -->
+    <div id="gameArea">
+      <!-- プレイヤーキャラの画像 -->
+      <!-- パスが正しいか、大文字小文字に注意。ファイル名が変わった場合はここも変更 -->
+      <img id="player" src="./assets/images/plyerfront.PNG" alt="hero">
+      
+      <!-- タイルマップ用のキャンバスや div（必要なら有効化してください） -->
+      <!-- <canvas id="tilemapCanvas" width="800" height="600"></canvas> -->
+
+      <!-- D-Pad (スマホ操作用) -->
+      <div id="dpad">
+        <!-- 各方向のボタン。onclickで movePlayer(dx, dy) を呼ぶ -->
+        <div class="dpad-button up" onclick="movePlayer(0, -20)"></div>
+        <div class="dpad-button left" onclick="movePlayer(-20, 0)"></div>
+        <div class="dpad-button center"></div>
+        <div class="dpad-button right" onclick="movePlayer(20, 0)"></div>
+        <div class="dpad-button down" onclick="movePlayer(0, 20)"></div>
+      </div>
+
+      <!-- 円拡大演出用オーバーレイ（アニメーション用。必要ならCSSやJSで調整） -->
+      <div id="transition-overlay" style="display: none;">
+        <div id="transition-circle"></div>
+      </div>
+    </div>
+
+    <!-- ---------- 戦闘画面 ---------- -->
+    <div id="battle-screen" style="display: none;">
+      <!-- 上部のテキストボックス。敵出現時やクイズ開始時のメッセージ表示用 -->
+      <div id="top-text-box">mamがあらわれた！</div>
+      
+      <!-- クイズ画面のHP表示 -->
+      <div id="quiz-hp-container">
+        HP: <span id="quiz-hp">100</span>
+      </div>
+
+      <!-- 敵モンスター表示用 -->
+      <div id="enemy-container"></div>
+      <!-- クイズ画像（必要な場合のみ表示） -->
+      <img id="quiz-image" src="" style="display: none;">
+      
+      <!-- クイズ・選択肢エリア -->
+      <div id="quiz-area">
+        <div id="choice-area"></div>
+      </div>
+
+      <!-- ハート表示（体力などのUIに利用） -->
+      <div id="hearts-container"></div>
+
+      <!-- ザオリクボタン。特定条件下で表示。必要ならJSで制御 -->
+      <button id="zaorikuButton" style="display: none;">ザオリク</button>
+    </div>
+
+    <!-- HP回復ボタン (フィールドで使う例。必要なときに表示) -->
+    <button id="healButton" style="display: none;">💖 回復する (+10 HP)</button>
+  </div>
+
+  <!-- ==================== BGMなどのオーディオ ==================== -->
+  <!-- オーディオファイルのパスは assets/audio 内に配置。ファイル名・パスが正しいか確認 -->
+  <audio id="fieldBGM" loop preload="auto">
+    <source src="./assets/audio/field_bgm.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="battleBGM" loop preload="auto">
+    <source src="./assets/audio/battle_bgm.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="quizBGM" loop preload="auto">
+    <source src="./assets/audio/quiz_bgm.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="dqDownAudio" preload="auto">
+    <source src="./assets/audio/dq_down_long.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ==================== Google APIの読み込み ==================== -->
+  <!-- Google APIのスクリプト。onload属性で gapiLoaded() を呼び出すので、main.js に window.gapiLoaded を定義する必要があります -->
+  <script
+    async
+    defer
+    src="https://apis.google.com/js/api.js"
+    onload="gapiLoaded()"
+    onerror="console.error('❌ Google APIの読み込みに失敗しました');">
+  </script>
+
+  <!-- ==================== メインスクリプト ==================== -->
+  <!-- main.js を読み込みます。ファイルパスが正しいか確認 -->
+  <script src="./js/main.js"></script>
+</body>
+</html>
