@@ -1,1 +1,41 @@
+/* style.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+/* ログイン画面 */
+#loginScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  color: #fff;
+}
+
+/* タイトル画面 */
+#titleScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  color: #fff;
+}
+
+/* ゲーム画面 */
+#gameContainer {
+  width: 100%;
+  height: 100vh;
+  background: #222;
+  color: #fff;
+}
+
+/* など、細かいスタイルを追加 */
 
