@@ -41,38 +41,52 @@ let quizBgm = null;
 // クイズデータをGASから取得
 async function loadQuizData() {
   try {
-    // 例: ?mode=quiz で問題リストを取得する想定
-    const resp = await fetch(`${GAS_URL}?mode=quiz`);
+    const params = new URLSearchParams();
+    params.append("mode", "quiz"); // 🔹 modeをPOSTで送信
+
+    const resp = await fetch(GAS_URL, {
+      method: "POST",  // ✅ GET → POST に変更
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params
+    });
+
     if (!resp.ok) throw new Error("ネットワークエラー");
     const json = await resp.json();
     if (!json.success) {
       console.warn("クイズデータ取得失敗:", json.error);
       return;
     }
-    quizData = json.quizData || [];
+    quizData = json.quizzes || []; // 🔹 JSONキーを正しく指定
     console.log("✅ Quiz Data:", quizData);
   } catch (err) {
     console.error("⛔ loadQuizData Error:", err);
   }
 }
 
-// モンスターデータをGASから取得
 async function loadMonsterData() {
   try {
-    // 例: ?mode=monster でモンスターデータ取得
-    const resp = await fetch(`${GAS_URL}?mode=monster`);
+    const params = new URLSearchParams();
+    params.append("mode", "monster"); // 🔹 modeをPOSTで送信
+
+    const resp = await fetch(GAS_URL, {
+      method: "POST",  // ✅ GET → POST に変更
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params
+    });
+
     if (!resp.ok) throw new Error("ネットワークエラー");
     const json = await resp.json();
     if (!json.success) {
       console.warn("モンスターデータ取得失敗:", json.error);
       return;
     }
-    monsterData = json.monsterData || [];
-    console.log("Monster Data:", monsterData);
+    monsterData = json.monsterData || []; // 🔹 JSONキーを正しく指定
+    console.log("✅ Monster Data:", monsterData);
   } catch (err) {
-    console.error("Monster Data Error:", err);
+    console.error("⛔ loadMonsterData Error:", err);
   }
 }
+
 
 function getRandomQuiz() {
   if (!quizData || quizData.length === 0) return null;
@@ -226,11 +240,10 @@ function answerQuiz(selected, quiz) {
 }
 
 // ★ミス記録
-function recordMistake(playerName, questionId) {
-  // "mode=recordMistake" で POST
+function function recordMistake(playerName, questionId) {
   const params = new URLSearchParams();
   params.append("mode", "recordMistake");
-  params.append("player", playerName);
+  params.append("name", playerName); // ✅ "player" → "name" に統一
   params.append("questionId", questionId);
 
   fetch(GAS_URL, {
@@ -251,6 +264,7 @@ function recordMistake(playerName, questionId) {
   });
 }
 
+
 // ======================= 10) 戦闘終了関数 =======================
 function onZaoriku() { /* ... */ }
 function endBattle() { /* ... */ }
@@ -268,45 +282,51 @@ document.addEventListener("DOMContentLoaded", () => {
   if (quizBgm) quizBgm.loop = true;
   updateBgmButton();
 
-  // ログインボタン
-  const loginBtn = document.getElementById("loginButton");
-  loginBtn.addEventListener("click", async () => {
-    const enteredName = document.getElementById("playerNameInput").value.trim();
-    if (!enteredName) {
-      alert("名前を入力してください！");
-      return;
-    }
-    try {
-      showLoadingOverlay();
-      // プレイヤーデータ取得: ?mode=player & name=...
-      const resp = await fetch(`${GAS_URL}?mode=player&name=${encodeURIComponent(enteredName)}`);
-      if (!resp.ok) throw new Error("ネットワークエラーです");
-      const data = await resp.json();
-      if (!data.success) throw new Error(data.error || "不明なエラー");
+// ログインボタンのイベント
+const loginBtn = document.getElementById("loginButton");
+loginBtn.addEventListener("click", async () => {
+  const enteredName = document.getElementById("playerNameInput").value.trim();
+  if (!enteredName) {
+    alert("名前を入力してください！");
+    return;
+  }
+  try {
+    showLoadingOverlay();
+    const params = new URLSearchParams();
+    params.append("mode", "player");
+    params.append("name", enteredName);
 
-      console.log("データ取得成功:", data);
+    const resp = await fetch(GAS_URL, {
+      method: "POST",  // ✅ GET → POST に変更
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params
+    });
 
-      playerData.name  = data.name;
-      playerData.level = parseInt(data.level, 10);
-      playerData.exp   = parseInt(data.exp, 10);
-      playerData.g     = parseInt(data.g, 10);
-      playerData.hp    = parseInt(data.hp, 10) || 50;
-      updatePlayerStatusUI();
+    if (!resp.ok) throw new Error("ネットワークエラーです");
+    const data = await resp.json();
+    if (!data.success) throw new Error(data.error || "不明なエラー");
 
-      // 同時にクイズ/モンスターも読み込む
-      await loadQuizData();
-      await loadMonsterData();
+    console.log("データ取得成功:", data);
+    playerData.name  = data.name;
+    playerData.level = parseInt(data.level, 10);
+    playerData.exp   = parseInt(data.exp, 10);
+    playerData.g     = parseInt(data.g, 10);
+    playerData.hp    = parseInt(data.hp, 10) || 50;
+    updatePlayerStatusUI();
 
-      setTimeout(() => {
-        hideLoadingOverlay();
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("titleScreen").style.display = "flex";
-      }, 500);
+    // ✅ クイズ & モンスターをロードする処理を追加！
+    await loadQuizData();
+    await loadMonsterData();
 
-    } catch (err) {
-      console.error("ログインエラー:", err);
+    setTimeout(() => {
       hideLoadingOverlay();
-      alert("ログインエラーが発生しました。再度お試しください。");
-    }
-  });
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("titleScreen").style.display = "flex";
+    }, 500);
+  } catch (err) {
+    console.error("ログインエラー:", err);
+    hideLoadingOverlay();
+    alert("ログインエラーが発生しました。再度お試しください。");
+  }
 });
+
