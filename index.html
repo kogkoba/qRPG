@@ -26,11 +26,27 @@
     <!-- ...（省略: ステータス表示, フィールド, 戦闘画面など）... -->
   </div>
 
-  <!-- BGMなどのオーディオ -->
-  <audio id="fieldBGM" loop preload="auto">
-    <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
-  </audio>
-  <!-- ...他のaudio要素... -->
+<!-- BGMなどのオーディオ -->
+<audio id="fieldBGM" loop preload="auto">
+  <!-- フィールドBGM (例: kouyawoiku.mp3) -->
+  <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="battleBGM" loop preload="auto">
+  <!-- 戦闘BGM (例: kouyawoiku.mp3 で使い回してもOK) -->
+  <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="quizBGM" loop preload="auto">
+  <!-- クイズBGM (例: jypdance.mp3) -->
+  <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="dqDownAudio" preload="auto">
+  <!-- DQ-down-long.mp3 とスペースを消したファイル名に変更 -->
+  <source src="./assets/audio/DQ-down-long.mp3" type="audio/mpeg">
+</audio>
+
 
   <!-- Google APIの読み込み (onloadで gapiLoaded() を呼ぶならJS側で定義が必要) -->
   <script
