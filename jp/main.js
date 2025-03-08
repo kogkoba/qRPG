@@ -20,8 +20,9 @@ window.toggleBgm = function() {
 
 // Google APIの読み込み完了 (onload="gapiLoaded()")
 window.gapiLoaded = function() {
-  console.log("✅ gapiLoaded");
-  // gapi.load("client", initClient); など
+  console.log("✅ gapiLoaded が呼ばれました");
+  // ここで gapi.load("client", initClient) などを行う
 };
+
 
 // などなど、あなたのゲームに必要な処理をここに書く
