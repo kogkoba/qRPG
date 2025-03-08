@@ -802,4 +802,5 @@ function retryBattle() {
           alert("ログインエラーが発生しました。再度お試しください。");
         }
         
+        }
  
