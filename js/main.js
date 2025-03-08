@@ -11,7 +11,17 @@ window.startGame = function() {
 
 
     // ======================= 1) Google API 読み込み後の処理 =======================
-    function gapiLoaded() {
+// main.js
+window.gapiLoaded = function() {
+  console.log("✅ gapiLoaded が呼ばれました");
+  // ここで gapi.load("client", initClient) などを行う
+};
+
+function initClient() {
+  // Sheets API の初期化などを記述
+}  
+
+function gapiLoaded() {
       console.log("✅ gapiLoaded");
       gapi.load("client", initClient);
     }
