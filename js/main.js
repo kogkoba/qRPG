@@ -12,10 +12,6 @@ window.startGame = function() {
 
     // ======================= 1) Google API 読み込み後の処理 =======================
 
-function initClient() {
-  // Sheets API の初期化などを記述
-}  
-
 function gapiLoaded() {
       console.log("✅ gapiLoaded");
       gapi.load("client", initClient);
