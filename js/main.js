@@ -1,5 +1,8 @@
 // main.js
-
+window.gapiLoaded = function() {
+  console.log("✅ gapiLoaded が呼ばれました");
+  gapi.load("client", initClient);
+};
 
 // グローバル関数として定義すると、HTMLの onclick="startGame()" から呼べる
 window.startGame = function() {
@@ -9,10 +12,7 @@ window.startGame = function() {
 };
 
 
-window.gapiLoaded = function() {
-  console.log("✅ gapiLoaded が呼ばれました");
-  gapi.load("client", initClient);
-};
+
 
 
     // ======================= 1) Google API 読み込み後の処理 =======================
