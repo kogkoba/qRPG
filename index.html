@@ -8,7 +8,14 @@
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-   <script src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+  <script
+  async
+  defer
+  src="https://apis.google.com/js/api.js"
+  onload="gapiLoaded()"
+  onerror="console.error('❌ Google APIの読み込みに失敗しました');">
+</script>
+
 
     <!-- ローディングオーバーレイ -->
   <div id="loadingOverlay">Loading…</div>
@@ -103,7 +110,6 @@
  -->
   
 
-  <!-- main.js を読み込む -->
-  <script src="./js/main.js"></script>
+
 </body>
 </html>
