@@ -187,10 +187,10 @@ function playBattleBgm() {
   if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
 }
 
-function playBattleBgm() {
+function playdownBGM() {
   if (!isBgmPlaying) return;
-  const battleBgm = document.getElementById("battleBGM");
-  if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
+  const downBGM = document.getElementById("downBGM");
+  if (downBGM) downBGM.play().catch(err => console.warn("ダウンBGM再生エラー:", err));
 }
 
 // BGMスイッチをセットアップ
