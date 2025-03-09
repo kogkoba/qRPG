@@ -415,32 +415,18 @@ function startGame() {
 /*******************************************************
  *  7) マップ切り替え処理
  *******************************************************/
-// 例: tileMapVillage / tileMapField は外部スクリプトで定義
 function switchMap(newMap) {
-  if (newMap === "field") {
-    if (typeof tileMapField !== "undefined") {
-      currentMap = "field";
-      tileMap = tileMapField;
-    } else {
-      console.error("❌ tileMapField が定義されていません");
-      return;
-    }
-    // 村の出口付近
-    player.x = 7;
-    player.y = 1;
-
-    stopVillageBgm();
-    playFieldBgm();
-
-  } else if (newMap === "village") {
+  if (newMap === "village") {
     if (typeof tileMapVillage !== "undefined") {
+      console.log("✅ 村のマップデータ:", tileMapVillage); // ← デバッグ用
       currentMap = "village";
       tileMap = tileMapVillage;
     } else {
-      console.error("❌ tileMapVillage が定義されていません");
+      console.error("❌ tileMapVillage が定義されていません！");
       return;
     }
-    // フィールド入口付近
+
+    // フィールドの入口から村へ戻る
     player.x = 7;
     player.y = 13;
 
@@ -448,7 +434,7 @@ function switchMap(newMap) {
     playVillageBgm();
   }
 
-  // マップを描画 (別途定義)
+  // マップを描画
   drawMap();
   updatePlayerPosition();
 }
