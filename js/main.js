@@ -213,65 +213,6 @@ function toggleBgm() {
   updateBgmButton();
 }
 
-/** 村BGM再生 */
-function playVillageBgm() {
-  if (!isBgmPlaying) return; // OFFなら再生しない
-  const villageBgm = document.getElementById("villageBGM");
-  if (!villageBgm) {
-    console.warn("⚠ villageBGM がありません");
-    return;
-  }
-  villageBgm.currentTime = 0;
-  villageBgm.volume = 0.5;
-  villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
-}
-
-/** 村BGM停止 */
-function stopVillageBgm() {
-  const villageBgm = document.getElementById("villageBGM");
-  if (!villageBgm) return;
-  villageBgm.pause();
-  villageBgm.currentTime = 0;
-}
-
-/** フィールドBGM */
-function playFieldBgm() {
-  if (!isBgmPlaying) return;
-  const fieldBgm = document.getElementById("fieldBGM");
-  if (!fieldBgm) {
-    console.warn("⚠ fieldBGM がありません");
-    return;
-  }
-  fieldBgm.currentTime = 0;
-  fieldBgm.volume = 0.5;
-  fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
-}
-function stopFieldBgm() {
-  const fieldBgm = document.getElementById("fieldBGM");
-  if (!fieldBgm) return;
-  fieldBgm.pause();
-  fieldBgm.currentTime = 0;
-}
-
-/** 戦闘BGM */
-function playBattleBgm() {
-  if (!isBgmPlaying || isBattleBgmPlaying) return;
-  const battleBgm = document.getElementById("battleBGM");
-  if (!battleBgm) return;
-  battleBgm.currentTime = 0;
-  battleBgm.volume = 0.5;
-  battleBgm.play()
-    .then(() => { isBattleBgmPlaying = true; })
-    .catch(err => console.warn("戦闘BGM再生エラー:", err));
-}
-function stopBattleBgm() {
-  const battleBgm = document.getElementById("battleBGM");
-  if (!battleBgm) return;
-  battleBgm.pause();
-  battleBgm.currentTime = 0;
-  isBattleBgmPlaying = false;
-}
-
 
 
 /*******************************************************
