@@ -125,19 +125,6 @@ function hideLoadingOverlay() {
  *******************************************************/
 let isBgmPlaying = false; // BGMの状態を管理するフラグ
 
-// BGMのON/OFFを切り替える関数
-function toggleBgm() {
-  isBgmPlaying = !isBgmPlaying;
-  const button = document.getElementById("bgmToggleButton");
-
-  if (isBgmPlaying) {
-    button.textContent = "BGM ON";
-    playCurrentBgm(); // 現在のマップに応じたBGMを再生
-  } else {
-    button.textContent = "BGM OFF";
-    stopAllBgm();
-  }
-}
 
 // 現在のマップに応じたBGMを再生する関数
 function playCurrentBgm() {
@@ -208,23 +195,40 @@ function updateBgmButton() {
   button.textContent = isBgmPlaying ? "🎵 BGM ON" : "🔇 BGM OFF";
 }
 
-/** BGMオンオフ */
+/** BGMのON/OFFを切り替える関数 */
 function toggleBgm() {
   isBgmPlaying = !isBgmPlaying;
   const button = document.getElementById("bgmToggleButton");
+
   if (isBgmPlaying) {
     button.textContent = "🎵 BGM ON";
-    playFieldBgm();
+    playCurrentBgm(); // ✅ 現在のマップに応じたBGMを再生
   } else {
     button.textContent = "🔇 BGM OFF";
-    stopFieldBgm();
-    stopBattleBgm();
-    stopQuizBgm();
-    stopVillageBgm();
+    stopAllBgm();
   }
   updateBgmButton();
 }
 
+/** 現在のマップに応じたBGMを再生 */
+function playCurrentBgm() {
+  // 例えばマップの状態に応じてBGMを変更
+  if (currentMap === "field") {
+    playFieldBgm();
+  } else if (currentMap === "village") {
+    playVillageBgm();
+  } else if (currentMap === "battle") {
+    playBattleBgm();
+  }
+}
+
+/** すべてのBGMを停止 */
+function stopAllBgm() {
+  stopFieldBgm();
+  stopBattleBgm();
+  stopQuizBgm();
+  stopVillageBgm();
+}
 
 
 /*******************************************************
