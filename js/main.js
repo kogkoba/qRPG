@@ -282,6 +282,10 @@ document.addEventListener("DOMContentLoaded", () => {
   quizBgm = document.getElementById("quizBGM");
   if (quizBgm) quizBgm.loop = true;
   updateBgmButton();
+  
+  // ✅ ゲームスタートボタンのイベント登録
+  document.getElementById("startButton").addEventListener("click", startGame);
+});
 
 // ログインボタンのイベント
 const loginBtn = document.getElementById("loginButton");
@@ -329,5 +333,5 @@ loginBtn.addEventListener("click", async () => {
     hideLoadingOverlay();
     alert("ログインエラーが発生しました。再度お試しください。");
   }
-  });
+
 }); // ✅ 修正: `DOMContentLoaded` の閉じカッコを追加
