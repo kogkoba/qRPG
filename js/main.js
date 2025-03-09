@@ -367,7 +367,7 @@ function movePlayer(dx, dy) {
   if (player.steps - lastEncounterSteps >= encounterThreshold) {
     startEncounter();
   }
-}
+
 
 function getRandomEncounterThreshold() {
   return Math.floor(Math.random() * 11) + 5; // 5~15
