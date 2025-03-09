@@ -66,10 +66,10 @@ async function loadQuizData() {
 async function loadMonsterData() {
   try {
     const params = new URLSearchParams();
-    params.append("mode", "monster"); // 🔹 modeをPOSTで送信
+    params.append("mode", "monster"); // ✅ 必ず "monster" を送る
 
     const resp = await fetch(GAS_URL, {
-      method: "POST",  // ✅ GET → POST に変更
+      method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: params
     });
@@ -80,12 +80,13 @@ async function loadMonsterData() {
       console.warn("モンスターデータ取得失敗:", json.error);
       return;
     }
-    monsterData = json.monsterData || []; // 🔹 JSONキーを正しく指定
+    monsterData = json.monsters || []; // ✅ "monsters" に統一
     console.log("✅ Monster Data:", monsterData);
   } catch (err) {
     console.error("⛔ loadMonsterData Error:", err);
   }
 }
+
 
 
 function getRandomQuiz() {
