@@ -294,16 +294,19 @@ function changeHp(amount) {
  *  6) ゲーム開始処理
  *******************************************************/
 function startGame() {
-  console.log("ゲーム開始！");
+  console.log("🎮 ゲーム開始！");
 
-  // タイトル画面を非表示
+  // タイトル画面を消す
   document.getElementById("titleScreen").style.display = "none";
 
   // ゲーム画面を表示
   document.getElementById("gameContainer").style.display = "block";
   document.getElementById("gameArea").style.display = "block";
 
-  // フィールドBGMを再生
+  // **村から開始**
+  switchMap("village");
+
+  // BGM開始
   playFieldBgm();
 
   // 初期化処理
@@ -311,8 +314,46 @@ function startGame() {
   updatePlayerStatusUI();
 }
 
+
 console.log("✅ startGame() が正しく定義されました！"); // ✅ デバッグ用
 
+/** マップの切り替え */
+function switchMap(newMap) {
+  if (newMap === "field") {
+    currentMap = "field";
+    tileMap = tileMapField;
+    tileImages = tileImagesField;
+  } else if (newMap === "village") {
+    currentMap = "village";
+    tileMap = tileMapVillage;
+    tileImages = tileImagesVillage;
+  }
+
+  // プレイヤーの位置をリセット
+  player.x = 5;  // 村 → フィールド: 出口付近
+  player.y = 5;  // フィールド → 村: 入口付近
+
+  // 画面を更新
+  drawMap();
+  updatePlayerPosition();
+}
+// マップ遷移ポイントのチェック
+function checkMapTransition() {
+  if (currentMap === "village" && player.x === 7 && player.y === 14) {
+    switchMap("field");  // 村からフィールドへ
+  } else if (currentMap === "field" && player.x === 5 && player.y === 0) {
+    switchMap("village"); // フィールドから村へ
+  }
+}
+
+// プレイヤー移動時にチェック
+function movePlayer(dx, dy) {
+  player.x += dx;
+  player.y += dy;
+
+  checkMapTransition();  // マップ切り替えチェック
+  updatePlayerPosition();
+}
 
 
 /*******************************************************
