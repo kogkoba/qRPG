@@ -18,9 +18,9 @@ let currentImageIndex = 0;
 
 /** プレイヤーの歩行アニメーション画像 */
 const playerImages = [
-  "./assets/images/plyerfront.PNG",  // 正面（立ち止まり）
-  "./assets/images/plyerleft.PNG",   // 左足前
-  "./assets/images/plyerright.PNG"   // 右足前
+  "./assets/images/playerfront.PNG",  // 正面（立ち止まり）
+  "./assets/images/playerleft.PNG",   // 左足前
+  "./assets/images/playerright.PNG"   // 右足前
 ];
 
 /** 戦闘・エンカウント */
@@ -148,15 +148,24 @@ function stopBattleBgm() {
  *  5) ゲーム開始処理
  *******************************************************/
 
+/** D-Pad のセットアップ */
+function setupDpadControls() {
+  const controls = ["up", "down", "left", "right"];
+  controls.forEach(dir => {
+    const btn = document.getElementById(`dpad-${dir}`);
+    if (btn) btn.addEventListener("click", () => {
+      const moveMap = { up: [0, -STEP], down: [0, STEP], left: [-STEP, 0], right: [STEP, 0] };
+      movePlayer(...moveMap[dir]);
+    });
+  });
+}
+
+/** DOM の読み込み完了後にセットアップ */
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("startButton").addEventListener("click", () => {
     document.getElementById("titleScreen").style.display = "none";
     document.getElementById("gameContainer").style.display = "block";
     playFieldBgm();
   });
-
-  document.getElementById("dpad-up").addEventListener("click", () => movePlayer(0, -STEP));
-  document.getElementById("dpad-down").addEventListener("click", () => movePlayer(0, STEP));
-  document.getElementById("dpad-left").addEventListener("click", () => movePlayer(-STEP, 0));
-  document.getElementById("dpad-right").addEventListener("click", () => movePlayer(STEP, 0));
+  setupDpadControls();
 });
