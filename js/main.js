@@ -600,17 +600,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 🎮 キーボード (WASD or 矢印キー) の移動
 document.addEventListener("keydown", (event) => {
-  if (event.key && typeof event.key === "string") {
-    const key = event.key.toLowerCase(); // 先に変数に入れる
-
-    if (key === "arrowup" || key === "w") movePlayer(0, -STEP);
-    if (key === "arrowdown" || key === "s") movePlayer(0, STEP);
-    if (key === "arrowleft" || key === "a") movePlayer(-STEP, 0);
-    if (key === "arrowright" || key === "d") movePlayer(STEP, 0);
-  }
-});
-
-  console.log("✅ DOMContentLoaded イベント完了！");
+    if (event.key && typeof event.key === "string") {
+        if (event.key.toLowerCase() === "w") {
+            movePlayer(0, -STEP);
+        } else if (event.key.toLowerCase() === "s") {
+            movePlayer(0, STEP);
+        } else if (event.key.toLowerCase() === "a") {
+            movePlayer(-STEP, 0);
+        } else if (event.key.toLowerCase() === "d") {
+            movePlayer(STEP, 0);
+        }
+    }
 });
 
 /*******************************************************
