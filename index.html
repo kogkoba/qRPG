@@ -4,17 +4,13 @@
   <meta charset="UTF-8">
   <title>ドラクエ風クイズRPG</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- 外部のCSSファイルを読み込む -->
   <link rel="stylesheet" href="./css/style.css">
-  <!-- ファビコン（お持ちでなければコメントアウトしてください） -->
   <link rel="icon" type="image/png" href="assets/images/favicon.png">
 </head>
 <body>
 
 <!-- ローディングオーバーレイ -->
-<div id="loadingOverlay" style="display: none;">
-  Loading…
-</div>
+<div id="loadingOverlay" style="display: none;">Loading…</div>
 
 <!-- ログイン画面 -->
 <div id="loginScreen">
@@ -23,84 +19,62 @@
   <button id="loginButton">ログイン</button>
 </div>
 
-<!-- タイトル画面：最初は表示（flex） -->
-<div id="titleScreen" style="display: flex;">
+<!-- タイトル画面 -->
+<div id="titleScreen" style="display: none;">
   <h1>ドラクエ風クイズRPG</h1>
   <button id="startButton">ゲームスタート</button>
 </div>
 
-<!-- ゲーム画面：最初は非表示 -->
+<!-- ゲーム画面 -->
 <div id="gameContainer" style="display: none;">
-  <!-- ステータス表示 -->
   <div id="status">
-    プレイヤーのHP: <span id="field-hp">50</span>
-    / レベル: <span id="level">1</span>
-    / G: <span id="field-g">0</span>
-    
-    <!-- BGMトグルボタン -->
-    <div id="bgmToggleContainer">
-      <button id="bgmToggleButton">🔇 BGM OFF</button>
-    </div>
-  </div>
-  
-  <!-- フィールド画面：最初は非表示 -->
-  <div id="gameArea" style="display: none;">
-    <img id="player"
-         src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh"
-         alt="hero">
-
-    <!-- 十字キー移動ボタン（任意で使用） -->
-    <div id="dpad">
-      <div class="dpad-button up"    onclick="movePlayer(0,  -STEP)"></div>
-      <div class="dpad-button left"  onclick="movePlayer(-STEP, 0)"></div>
-      <div class="dpad-button center"></div>
-      <div class="dpad-button right" onclick="movePlayer(STEP,  0)"></div>
-      <div class="dpad-button down"  onclick="movePlayer(0,   STEP)"></div>
-    </div>
-
-    <!-- フィールド遷移用の演出（任意） -->
-    <div id="transition-overlay">
-      <div id="transition-circle"></div>
-    </div>
+    HP: <span id="field-hp">50</span> / レベル: <span id="level">1</span> / G: <span id="field-g">0</span>
+    <button id="bgmToggleButton">🔇 BGM OFF</button>
   </div>
 
-  <!-- 戦闘画面：最初は非表示 -->
-  <div id="battle-screen" style="display: none;">
-    <div id="top-text-box">敵があらわれた！</div>
-    <div id="enemy-container"></div>
-    <img id="quiz-image" src="">
-    <div id="hp-container">
-      HP: <span id="battle-hp">50</span>
-    </div>
-
-    <!-- クイズエリア -->
-    <div id="quiz-area">
-      <div id="choice-area"></div>
-    </div>
-
-    <button id="zaorikuButton" onclick="onZaoriku()">ザオリク</button>
+  <div id="gameArea">
+    <img id="player" src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh">
   </div>
 
-  <!-- HP回復ボタン (フィールド画面) -->
-  <button id="healButton" onclick="changeHp(10)">💖 回復する (+10 HP)</button>
+  <button id="healButton" onclick="changeHp(10)">💖 回復 (+10 HP)</button>
 </div>
 
-<!-- BGM・効果音の定義 -->
+<!-- 戦闘画面 -->
+<div id="battle-screen" style="display: none;">
+  <div id="top-text-box">敵があらわれた！</div>
+  <div id="enemy-container"></div>
+  <img id="quiz-image" src="">
+  <div id="hp-container">
+    HP: <span id="battle-hp">50</span>
+  </div>
+
+  <div id="quiz-area">
+    <div id="choice-area"></div>
+  </div>
+
+  <button id="zaorikuButton" onclick="onZaoriku()">ザオリク</button>
+</div>
+
+<!-- ゲームオーバー画面 -->
+<div id="game-over-screen" style="display: none;">
+  <h2>ゲームオーバー</h2>
+  <button onclick="retryBattle()">再挑戦</button>
+  <button onclick="restartFromChurch()">教会へ行く</button>
+</div>
+
+<!-- BGM -->
 <audio id="fieldBGM" loop preload="auto">
   <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
 </audio>
+
 <audio id="battleBGM" loop preload="auto">
   <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
 </audio>
-<audio id="quizBGM" loop preload="auto">
-  <source src="./assets/audio/quiz.mp3" type="audio/mpeg">
-</audio>
+
 <audio id="dqDownAudio" preload="auto">
   <source src="./assets/audio/DQ down long.mp3" type="audio/mpeg">
 </audio>
 
-<!-- JavaScriptファイルの読み込み。deferでDOM構築後に実行 -->
 <script src="./js/main.js" defer></script>
-
 </body>
 </html>
