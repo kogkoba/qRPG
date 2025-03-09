@@ -13,6 +13,15 @@ let playerData = { name: "", level: 1, exp: 0, g: 0, hp: 50 };
 let quizData = [];
 let monsterData = [];
 
+if (typeof tileMap !== "undefined" && tileMap.length > 0) {
+  const mapWidth = tileMap[0].length;
+  const mapHeight = tileMap.length;
+} else {
+  console.error("❌ tileMap が未定義または空です！");
+}
+
+
+
 // フィールド上のプレイヤー情報
 let player = { x: 0, y: 0, steps: 0 };
 let facingRight = true;
