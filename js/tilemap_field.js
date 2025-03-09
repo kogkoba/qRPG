@@ -7,7 +7,7 @@ const MAP_COLS = 15;
 const fieldTileImages = {
   1: "assets/images/tiles/field/1grass.png",
   2: "assets/images/tiles/field/2soil.png",
-  3: "assets/images/tiles/field/3lake.png",
+  3: "assets/images/tiles/field/3gake.png",
   4: "assets/images/tiles/field/4hanabatake.png",
   5: "assets/images/tiles/field/5ipponnnoki.png",
   6: "assets/images/tiles/field/6nihonnnoki.png",
