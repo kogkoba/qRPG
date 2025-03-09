@@ -433,8 +433,7 @@ function endBattle() { /* ... */ }
 
 // ======================= 11) DOMContentLoaded：ログイン & スタートボタン登録 =======================
 document.addEventListener("DOMContentLoaded", () => {
-   window.startGame = startGame;
-  // BGMをOFFから開始
+  // BGM オフから開始
   stopFieldBgm();
   stopBattleBgm();
   stopQuizBgm();
@@ -445,17 +444,14 @@ document.addEventListener("DOMContentLoaded", () => {
   quizBgm = document.getElementById("quizBGM");
   if (quizBgm) quizBgm.loop = true;
   updateBgmButton();
-
-
   
-  // ゲームスタートボタン
+  // ✅ ゲームスタートボタンのイベント登録（存在チェックつき）
   const startBtn = document.getElementById("startButton");
-  if (startBtn && !startBtn.dataset.bound) {
+  if (startBtn) {
     startBtn.addEventListener("click", startGame);
-    startBtn.dataset.bound = "true";
   }
 
-  // ログインボタン
+  // ✅ ログインボタンのイベント登録（この位置が正しい）
   const loginBtn = document.getElementById("loginButton");
   if (loginBtn) {
     loginBtn.addEventListener("click", async () => {
@@ -488,7 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
         playerData.hp    = parseInt(data.hp, 10) || 50;
         updatePlayerStatusUI();
 
-        // クイズ & モンスターをロード
+        // ✅ クイズ & モンスターをロードする処理を追加！
         await loadQuizData();
         await loadMonsterData();
 
@@ -505,3 +501,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// ✅ ゲームスタートの仮の処理（あとでしっかり作る）
+function startGame() {
+    console.log("ゲーム開始！");
+    // ここにゲーム開始の処理を追加！
+}
+
