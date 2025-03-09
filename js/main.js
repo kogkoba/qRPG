@@ -316,8 +316,6 @@ function startGame() {
   updatePlayerStatusUI();
 }
 
-
-
 console.log("✅ startGame() が正しく定義されました！"); // ✅ デバッグ用
 
 /** 村BGM */
@@ -367,6 +365,7 @@ function switchMap(newMap) {
 
 
 
+
   // プレイヤーの位置をリセット
   player.x = 5;  // 村 → フィールド: 出口付近
   player.y = 5;  // フィールド → 村: 入口付近
@@ -385,6 +384,7 @@ function checkMapTransition() {
     switchMap("village"); // フィールドから村へ
   }
 }
+
 
 
 
@@ -468,25 +468,12 @@ function movePlayer(dx, dy) {
   player.x = newX;
   player.y = newY;
 
-  // 画面外に出ないよう制限
-  const gameArea = document.getElementById("gameArea");
-  if (gameArea) {
-    const maxX = gameArea.clientWidth - playerElement.offsetWidth;
-    const maxY = gameArea.clientHeight - playerElement.offsetHeight;
-
-    if (player.x < 0) player.x = 0;
-    if (player.y < 0) player.y = 0;
-    if (player.x > maxX) player.x = maxX;
-    if (player.y > maxY) player.y = maxY;
-  }
-
   // 画面を更新
   updatePlayerPosition();
 
   // マップ遷移チェック
   checkMapTransition();
 }
-
 
   // 歩数をカウント & エンカウント判定
   player.steps++;
