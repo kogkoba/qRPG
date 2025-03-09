@@ -377,7 +377,7 @@ function switchMap(newMap) {
   // 画面を更新
   drawMap();
   updatePlayerPosition();
-}
+
 function checkMapTransition() {
   if (currentMap === "village" && player.x === 7 && player.y === 0) {
     console.log("🚪 村からフィールドへ移動！");
