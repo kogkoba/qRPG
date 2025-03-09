@@ -464,6 +464,10 @@ function startEncounter() {
   stopFieldBgm();
   playQuizBgm();
 
+  // クイズ開始時の状態を保存
+  battleStartHp = playerData.hp;
+  battleStartG = playerData.g;
+
   // クイズ出題
   showQuiz();
 }
@@ -621,11 +625,9 @@ function restartFromChurch() {
 
 /** クイズ再挑戦 (クイズ開始時の状態に戻し、再挑戦) */
 function retryBattle() {
-  console.log("🔄 クイズをやり直す (開始時の状態にリセット)");
-
-  // クイズ開始時のHPとGに戻す (仮に戦闘開始時に保存しておく)
   playerData.hp = battleStartHp;
-  playerData.g = battleStartG;
+  playerData.g = battleStartG; // ← ❌ `battleStartG` が未定義  // クイズ開始時のHPとGに戻す (仮に戦闘開始時に保存しておく)
+
 
   savePlayerData();
   updatePlayerStatusUI();
