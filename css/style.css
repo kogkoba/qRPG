@@ -85,33 +85,57 @@ html, body {
 
 /* ---------- D-Pad (十字キー) ---------- */
 #dpad {
-  position: absolute;
-  bottom: 70px;
-  right: 50px;
+  position: fixed; /* 絶対位置ではなく固定 */
+  bottom: 70px;    /* 画面下からの距離 */
+  right: 50px;     /* 画面右からの距離 */
   width: 150px;
   height: 150px;
   display: grid;
-  grid-gap: 10px;
   grid-template-areas:
     ".    up    ."
     "left center right"
     ".    down  .";
+  gap: 8px; /* ボタンの間隔 */
+  justify-content: center;
+  align-items: center;
 }
+
 .dpad-button {
   width: 50px;
   height: 50px;
-  background: rgba(0,0,0,0.3);
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  background: #222; /* 変更: 黒に近い色 */
+  color: white;
   border: 2px solid #fff;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   touch-action: none;
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.dpad-button:hover {
+  background-color: #444; /* 変更: マウスホバーで明るく */
+}
+
+.dpad-button:active {
+  background-color: #666; /* 変更: クリック時に色を暗く */
+}
+
 .up    { grid-area: up; }
 .down  { grid-area: down; }
 .left  { grid-area: left; }
 .right { grid-area: right; }
-.center{ grid-area: center; }
+.center {
+  grid-area: center;
+  background: transparent;
+  border: none;
+  pointer-events: none;
+}
 
 /* ========== 戦闘画面 ========== */
 /* 最初は表示しない */
