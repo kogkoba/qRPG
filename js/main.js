@@ -369,9 +369,16 @@ function switchMap(newMap) {
     playVillageBgm();
   }
 
-  drawMap();
+  // ✅ `drawMap()` が存在する場合だけ実行する
+  if (typeof drawMap === "function") {
+    drawMap();
+  } else {
+    console.warn("⚠ drawMap() が未定義のため、マップを描画できません");
+  }
+
   updatePlayerPosition();
 }
+
 
   // プレイヤーの位置をリセット
   player.x = 5;  // 村 → フィールド: 出口付近
