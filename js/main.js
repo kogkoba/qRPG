@@ -404,22 +404,99 @@ function initGame() {
 }
 
 /** キーボード & 十字キーの移動イベント */
+// これが正しい `DOMContentLoaded` の位置 (最初の1つだけ残す)
 document.addEventListener("DOMContentLoaded", () => {
-  initGame(); // プレイヤーの初期位置設定
+  stopFieldBgm();
+  stopBattleBgm();
+  stopQuizBgm();
+  isBgmPlaying = false;
 
-  // 十字キーのクリックイベント
-  document.getElementById("dpad-up").addEventListener("click", () => movePlayer(0, -STEP));
-  document.getElementById("dpad-down").addEventListener("click", () => movePlayer(0, STEP));
-  document.getElementById("dpad-left").addEventListener("click", () => movePlayer(-STEP, 0));
-  document.getElementById("dpad-right").addEventListener("click", () => movePlayer(STEP, 0));
+  const bgmButton = document.getElementById("bgmToggleButton");
+  if (bgmButton) {
+    bgmButton.textContent = "🔇 BGM OFF";
+  }
+  quizBgm = document.getElementById("quizBGM");
+  if (quizBgm) quizBgm.loop = true;
+  updateBgmButton();
 
-  // キーボードの矢印キーでも移動可能にする
+  // 🎮 スタートボタン
+  const startBtn = document.getElementById("startButton");
+  if (startBtn) {
+    startBtn.addEventListener("click", startGame);
+  }
+
+  // 🎮 ログインボタン
+  const loginBtn = document.getElementById("loginButton");
+  if (loginBtn) {
+    loginBtn.addEventListener("click", async () => {
+      const enteredName = document.getElementById("playerNameInput").value.trim();
+      if (!enteredName) {
+        alert("名前を入力してください！");
+        return;
+      }
+      try {
+        showLoadingOverlay();
+        const params = new URLSearchParams();
+        params.append("mode", "player");
+        params.append("name", enteredName);
+
+        const resp = await fetch(GAS_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: params
+        });
+
+        if (!resp.ok) throw new Error("ネットワークエラーです");
+        const data = await resp.json();
+        if (!data.success) throw new Error(data.error || "不明なエラー");
+
+        console.log("データ取得成功:", data);
+        playerData.name  = data.name;
+        playerData.level = parseInt(data.level, 10);
+        playerData.exp   = parseInt(data.exp, 10);
+        playerData.g     = parseInt(data.g, 10);
+        playerData.hp    = parseInt(data.hp, 10) || 50;
+        updatePlayerStatusUI();
+
+        // クイズ & モンスターをロード
+        await loadQuizData();
+        await loadMonsterData();
+
+        setTimeout(() => {
+          hideLoadingOverlay();
+          // ログイン画面を非表示 → タイトル画面
+          document.getElementById("loginScreen").style.display = "none";
+          document.getElementById("titleScreen").style.display = "flex";
+        }, 500);
+
+      } catch (err) {
+        console.error("ログインエラー:", err);
+        hideLoadingOverlay();
+        alert("ログインエラーが発生しました。再度お試しください。");
+      }
+    });
+  }
+
+  // 🎮 十字キーのイベント登録 (D-Pad)
+  const upBtn    = document.getElementById("dpad-up");
+  const downBtn  = document.getElementById("dpad-down");
+  const leftBtn  = document.getElementById("dpad-left");
+  const rightBtn = document.getElementById("dpad-right");
+
+  if (upBtn)    upBtn.addEventListener("click", () => movePlayer(0, -STEP));
+  if (downBtn)  downBtn.addEventListener("click", () => movePlayer(0, STEP));
+  if (leftBtn)  leftBtn.addEventListener("click", () => movePlayer(-STEP, 0));
+  if (rightBtn) rightBtn.addEventListener("click", () => movePlayer(STEP, 0));
+
+  // 🎮 キーボード (WASD or 矢印キー) の移動
   document.addEventListener("keydown", (event) => {
     if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") movePlayer(0, -STEP);
     if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") movePlayer(0, STEP);
     if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") movePlayer(-STEP, 0);
     if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") movePlayer(STEP, 0);
   });
+
+  console.log("✅ DOMContentLoaded イベント完了！");
 });
 
 /*******************************************************
@@ -502,100 +579,5 @@ function onZaoriku() { /* ... */ }
 function endBattle() { /* ... */ }
 
 
-/*******************************************************
- * 11) DOMContentLoaded（ログイン処理 & スタートボタン）
- *******************************************************/
-document.addEventListener("DOMContentLoaded", () => {
-  // BGM をOFFから開始
-  stopFieldBgm();
-  stopBattleBgm();
-  stopQuizBgm();
-  isBgmPlaying = false;
 
-  const bgmButton = document.getElementById("bgmToggleButton");
-  if (bgmButton) {
-    bgmButton.textContent = "🔇 BGM OFF";
-  }
-  quizBgm = document.getElementById("quizBGM");
-  if (quizBgm) quizBgm.loop = true;
-  updateBgmButton();
-
-  // 「スタート」ボタン
-  const startBtn = document.getElementById("startButton");
-  if (startBtn) {
-    startBtn.addEventListener("click", startGame);
-  }
-
-  // ログインボタン
-  const loginBtn = document.getElementById("loginButton");
-  if (loginBtn) {
-    loginBtn.addEventListener("click", async () => {
-      const enteredName = document.getElementById("playerNameInput").value.trim();
-      if (!enteredName) {
-        alert("名前を入力してください！");
-        return;
-      }
-      try {
-        showLoadingOverlay();
-        const params = new URLSearchParams();
-        params.append("mode", "player");
-        params.append("name", enteredName);
-
-        const resp = await fetch(GAS_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: params
-        });
-
-        if (!resp.ok) throw new Error("ネットワークエラーです");
-        const data = await resp.json();
-        if (!data.success) throw new Error(data.error || "不明なエラー");
-
-        console.log("データ取得成功:", data);
-
-        playerData.name  = data.name;
-        playerData.level = parseInt(data.level, 10);
-        playerData.exp   = parseInt(data.exp, 10);
-        playerData.g     = parseInt(data.g, 10);
-        playerData.hp    = parseInt(data.hp, 10) || 50;
-        updatePlayerStatusUI();
-
-        // クイズ & モンスターをロード
-        await loadQuizData();
-        await loadMonsterData();
-
-        setTimeout(() => {
-          hideLoadingOverlay();
-          // ログイン画面を非表示 → タイトル画面
-          document.getElementById("loginScreen").style.display = "none";
-          document.getElementById("titleScreen").style.display = "flex";
-        }, 500);
-
-      } catch (err) {
-        console.error("ログインエラー:", err);
-        hideLoadingOverlay();
-        alert("ログインエラーが発生しました。再度お試しください。");
-      }
-    });
-  }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const upBtn    = document.getElementById("dpad-up");
-  const downBtn  = document.getElementById("dpad-down");
-  const leftBtn  = document.getElementById("dpad-left");
-  const rightBtn = document.getElementById("dpad-right");
-
-  if (upBtn)    upBtn.addEventListener("click", () => movePlayer(0, -STEP));
-  if (downBtn)  downBtn.addEventListener("click", () => movePlayer(0, STEP));
-  if (leftBtn)  leftBtn.addEventListener("click", () => movePlayer(-STEP, 0));
-  if (rightBtn) rightBtn.addEventListener("click", () => movePlayer(STEP, 0));
-
-  // 🔹 キーボード (WASD or 矢印キー) でも移動可能にする
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") movePlayer(0, -STEP);
-    if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") movePlayer(0, STEP);
-    if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") movePlayer(-STEP, 0);
-    if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") movePlayer(STEP, 0);
-  });
-});
 
