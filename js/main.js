@@ -287,27 +287,34 @@ function switchMap(newMap) {
     if (typeof tileMapVillage !== "undefined") {
       console.log("✅ 村のマップデータ:", tileMapVillage);
       currentMap = "village";
-      tileMap = tileMapVillage;
+      tileMap = tileMapVillage; // 村のタイルマップを設定
     } else {
       console.error("❌ tileMapVillage が定義されていません！");
       return;
     }
+    // 村用のプレイヤー初期位置（例）
     player.x = 7;
     player.y = 13;
     stopFieldBgm();
     playVillageBgm();
+  } else if (newMap === "field") {
+    if (typeof tileMapField !== "undefined") {
+      console.log("✅ フィールドのマップデータ:", tileMapField);
+      currentMap = "field";
+      tileMap = tileMapField; // フィールドのタイルマップを設定
+    } else {
+      console.error("❌ tileMapField が定義されていません！");
+      return;
+    }
+    // フィールド用のプレイヤー初期位置（例）
+    player.x = 10;
+    player.y = 10;
+    stopVillageBgm();
+    playFieldBgm();
   }
+  // マップの再描画
   drawMap();
   updatePlayerPosition();
-}
-function checkMapTransition() {
-  if (currentMap === "village" && player.x === 7 && player.y === 0) {
-    console.log("🚪 村からフィールドへ移動");
-    switchMap("field");
-  } else if (currentMap === "field" && player.x === 7 && player.y === 14) {
-    console.log("🏠 フィールドから村へ移動");
-    switchMap("village");
-  }
 }
 
 /*******************************************************
