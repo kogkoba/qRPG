@@ -475,52 +475,88 @@ function restartFromChurch() {
 }
 
 /*******************************************************
- *  8) 戦闘関連 (ダミー)
+ *  8) 戦闘 (＝クイズ)
  *******************************************************/
 function startEncounter() {
   if (inBattle) return;
-  console.log("🐉 敵があらわれた！");
+  console.log("📖 クイズバトル開始！");
   inBattle = true;
 
   stopFieldBgm();
-  playBattleBgm();
+  playQuizBgm();
 
-  const monsters = getRandomMonsters();
-  showMonsters(monsters);
+  // クイズ出題
+  showQuiz();
 }
-function startBattleInit() { /* ... */ }
+
+/** HP表示更新 */
 function updateBattleHp() {
   const battleHpElem = document.getElementById("battle-hp");
   if (battleHpElem) {
     battleHpElem.textContent = playerData.hp;
   }
 }
-function showMonsters(monsters) { /* ... */ }
-function shakeGameScreen() { /* ... */ }
-function shakeAndRemoveMonster() { /* ... */ }
 
 /*******************************************************
- *  9) クイズ出題・解答処理 (ダミー)
+ *  9) クイズ出題・解答処理
  *******************************************************/
+
+/** クイズを表示 */
 function showQuiz() {
-  console.log("クイズを表示してください");
-}
-function disableChoiceButtons() {
-  console.log("選択肢を無効化してください");
+  console.log("📖 クイズを出題！");
+
+  // ランダムにクイズを選択
+  const quiz = getRandomQuiz();
+  if (!quiz) {
+    console.error("⛔ クイズデータがありません");
+    endBattle();
+    return;
+  }
+
+  // 画面にクイズを表示（仮の処理）
+  document.getElementById("top-text-box").textContent = quiz.question;
+  
+  const choiceArea = document.getElementById("choice-area");
+  choiceArea.innerHTML = ""; // 過去の選択肢をクリア
+
+  quiz.choices.forEach((choice, index) => {
+    const btn = document.createElement("button");
+    btn.textContent = choice;
+    btn.onclick = () => answerQuiz(index, quiz);
+    choiceArea.appendChild(btn);
+  });
 }
 
-/** クイズ解答 */
+/** 選択肢ボタンを無効化 */
+function disableChoiceButtons() {
+  const buttons = document.getElementById("choice-area").getElementsByTagName("button");
+  for (const btn of buttons) {
+    btn.disabled = true;
+  }
+}
+
+/** クイズの解答処理 */
 function answerQuiz(selected, quiz) {
+  disableChoiceButtons();
+
   if (selected === quiz.correct) {
+    console.log("⭕ 正解！");
     addExp(20);
     playerData.g += 5;
     savePlayerData();
-    console.log("○ 正解！");
+    setTimeout(endBattle, 1000); // 1秒後に戦闘終了
   } else {
+    console.log("❌ 不正解！");
     changeHp(-10);
-    console.log("× 不正解");
     if (quiz.questionId) {
       recordMistake(playerData.name, quiz.questionId);
+    }
+
+    // HPが0ならゲームオーバー処理
+    if (playerData.hp <= 0) {
+      setTimeout(showGameOverOptions, 1000);
+    } else {
+      setTimeout(endBattle, 1000);
     }
   }
 }
@@ -551,15 +587,25 @@ function recordMistake(playerName, questionId) {
 }
 
 /*******************************************************
- * 10) 戦闘終了 (ダミー)
+ * 10) クイズバトル終了処理
  *******************************************************/
-function onZaoriku() {
-  console.log("蘇生スキルを実行します（ダミー）");
-}
 function endBattle() {
-  console.log("戦闘終了（ダミー）");
+  console.log("✅ クイズバトル終了");
   inBattle = false;
+
+  stopQuizBgm();
+  playFieldBgm();
+
   updatePlayerStatusUI();
+  document.getElementById("battle-screen").style.display = "none";
+  document.getElementById("gameContainer").style.display = "block";
+}
+
+/** ゲームオーバー処理 */
+function showGameOverOptions() {
+  console.log("💀 ゲームオーバー！");
+  document.getElementById("top-text-box").textContent = "💀 ゲームオーバー！";
+  inBattle = false;
 }
 
 /*******************************************************
