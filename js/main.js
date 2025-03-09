@@ -345,8 +345,6 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("ログインエラーが発生しました。再度お試しください。");
       }
     });
-  }
-});
 
 function startGame() {
     console.log("ゲーム開始！");
