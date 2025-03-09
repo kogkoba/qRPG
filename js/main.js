@@ -175,10 +175,10 @@ function playFieldBgm() {
   if (fieldBgm) fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
 }
 
-function playBattleBgm() {
+function playwinBGM() {
   if (!isBgmPlaying) return;
-  const battleBgm = document.getElementById("battleBGM");
-  if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
+  const winBGM = document.getElementById("winBGM");
+  if (winBGM) winBGM.play().catch(err => console.warn("勝利のbgm再生エラー:", err));
 }
 
 function playBattleBgm() {
