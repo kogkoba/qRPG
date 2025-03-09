@@ -164,11 +164,18 @@ function toggleBgm() {
 /** フィールドBGM */
 function playFieldBgm() {
   if (!isBgmPlaying) return;
+
   const fieldBgm = document.getElementById("fieldBGM");
-  if (!fieldBgm) return;
+  if (!fieldBgm) {
+    console.warn("⚠ fieldBGM の要素が見つかりません");
+    return;
+  }
+
   fieldBgm.currentTime = 0;
+  fieldBgm.volume = 0.5;
   fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
 }
+
 
 function stopFieldBgm() {
   const fieldBgm = document.getElementById("fieldBGM");
@@ -180,13 +187,20 @@ function stopFieldBgm() {
 /** 戦闘BGM */
 function playBattleBgm() {
   if (!isBgmPlaying || isBattleBgmPlaying) return;
+
   const battleBgm = document.getElementById("battleBGM");
-  if (!battleBgm) return;
+  if (!battleBgm) {
+    console.warn("⚠ battleBGM の要素が見つかりません");
+    return;
+  }
+
   battleBgm.currentTime = 0;
+  battleBgm.volume = 0.5;
   battleBgm.play().then(() => {
     isBattleBgmPlaying = true;
   }).catch(err => console.warn("戦闘BGM再生エラー:", err));
 }
+
 
 function stopBattleBgm() {
   const battleBgm = document.getElementById("battleBGM");
@@ -194,20 +208,6 @@ function stopBattleBgm() {
   battleBgm.pause();
   battleBgm.currentTime = 0;
   isBattleBgmPlaying = false;
-}
-
-/** クイズBGM */
-function playQuizBgm() {
-  if (!quizBgm) quizBgm = document.getElementById("quizBGM");
-  if (!isBgmPlaying || !quizBgm.paused) return;
-  quizBgm.currentTime = 0;
-  quizBgm.play().catch(err => console.warn("クイズBGM再生エラー:", err));
-}
-
-function stopQuizBgm() {
-  if (!quizBgm) return;
-  quizBgm.pause();
-  quizBgm.currentTime = 0;
 }
 
 
@@ -317,18 +317,21 @@ function startGame() {
   player.y = 7;
   updatePlayerPosition();
 
- /** 村BGMを再生 */
-/** 村BGM */
 function playVillageBgm() {
   if (!isBgmPlaying) return; // BGMがOFFなら再生しない
+
   const villageBgm = document.getElementById("villageBGM");
   if (!villageBgm) {
     console.warn("⚠ villageBGM の要素が見つかりません");
     return;
   }
+
   villageBgm.currentTime = 0;
+  villageBgm.volume = 0.5; // 音量を調整
   villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
 }
+
+
 
 /** 村BGMを停止 */
 function stopVillageBgm() {
