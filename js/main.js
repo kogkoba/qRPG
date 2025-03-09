@@ -34,11 +34,6 @@ let lastEncounterSteps = 0;
 let encounterThreshold = 5; // 何歩ごとにエンカウントするか
 let battleStartHp = 50; // バトル開始時のHP
 
-// BGM関連フラグ
-let isBgmPlaying = false;
-let isBattleBgmPlaying = false;
-let quizBgm = null;
-
 // 現在のマップ (village / field)
 let currentMap = null;
 
