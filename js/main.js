@@ -720,10 +720,25 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/*******************************************************
- *  (オプション) drawMap (マップ描画ダミー)
- *******************************************************/
 function drawMap() {
-  // ここでタイルマップを描画する処理を実装してください (例: createElement で <div>など)
-  console.log("🗺 マップを描画 (ダミー)");
+  console.log("🗺 マップを描画 (デバッグ)"); 
+
+  const mapContainer = document.getElementById("mapContainer");
+  if (!mapContainer) {
+    console.error("❌ mapContainer の要素が見つかりません！");
+    return;
+  }
+
+  // 既存のマップを削除
+  mapContainer.innerHTML = "";
+
+  for (let y = 0; y < tileMap.length; y++) {
+    for (let x = 0; x < tileMap[y].length; x++) {
+      const tile = document.createElement("div");
+      tile.className = `tile tile-${tileMap[y][x]}`; // CSSでタイルを設定
+      tile.style.left = `${x * 32}px`;
+      tile.style.top = `${y * 32}px`;
+      mapContainer.appendChild(tile);
+    }
+  }
 }
