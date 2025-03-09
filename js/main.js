@@ -271,6 +271,14 @@ function onZaoriku() { /* ... */ }
 function endBattle() { /* ... */ }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // ✅ すでに登録済みの場合、再登録を防ぐ
+  const startBtn = document.getElementById("startButton");
+  if (startBtn && !startBtn.dataset.bound) {
+    startBtn.addEventListener("click", startGame);
+    startBtn.dataset.bound = "true"; // ✅ これで二重登録を防ぐ
+  }
+});
+
   // BGM オフから開始
   stopFieldBgm();
   stopBattleBgm();
