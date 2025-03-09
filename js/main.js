@@ -210,25 +210,7 @@ function toggleBgm() {
   updateBgmButton();
 }
 
-/** 現在のマップに応じたBGMを再生 */
-function playCurrentBgm() {
-  // 例えばマップの状態に応じてBGMを変更
-  if (currentMap === "field") {
-    playFieldBgm();
-  } else if (currentMap === "village") {
-    playVillageBgm();
-  } else if (currentMap === "battle") {
-    playBattleBgm();
-  }
-}
 
-/** すべてのBGMを停止 */
-function stopAllBgm() {
-  stopFieldBgm();
-  stopBattleBgm();
-  stopQuizBgm();
-  stopVillageBgm();
-}
 
 
 /*******************************************************
