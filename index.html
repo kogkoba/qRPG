@@ -4,6 +4,65 @@
   <meta charset="UTF-8">
   <title>ドラクエ風クイズRPG</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="icon" type="image/png" href="assets/images/favicon.png"> <!-- ファビコン修正 -->
+</head>
+<body>
+
+<div id="loadingOverlay" style="display: none;">Loading…</div>
+
+<!-- ログイン画面 -->
+<div id="loginScreen">
+  <h2>プレイヤー名を入力してください</h2>
+  <input type="text" id="playerNameInput" placeholder="名前を入力">
+  <button id="loginButton">ログイン</button>
+</div>
+
+<!-- タイトル画面 -->
+<div id="titleScreen" style="display: flex;">
+  <h1>ドラクエ風クイズRPG</h1>
+  <button id="startButton">ゲームスタート</button>
+</div>
+
+<!-- ゲーム画面 -->
+<div id="gameContainer" style="display: none;">
+  <div id="status">
+    HP: <span id="field-hp">50</span> / レベル: <span id="level">1</span> / G: <span id="field-g">0</span>
+    <button id="bgmToggleButton">🔇 BGM OFF</button>
+  </div>
+  
+  <div id="gameArea" style="display: none;">
+    <img id="player" src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh">
+  </div>
+
+  <button id="healButton" onclick="changeHp(10)">💖 回復 (+10 HP)</button>
+</div>
+
+<!-- BGM -->
+<audio id="fieldBGM" loop preload="auto">
+  <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="battleBGM" loop preload="auto">
+  <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="quizBGM" loop preload="auto">
+  <source src="./assets/audio/quiz.mp3" type="audio/mpeg">
+</audio>
+
+<script src="./js/main.js" defer></script> <!-- defer で確実に読み込む -->
+</body>
+</html>
+
+<!--
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ドラクエ風クイズRPG</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- 外部のCSSファイルを読み込む -->
   <link rel="stylesheet" href="./css/style.css">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -95,3 +154,5 @@
 
 </body>
 </html>
+
+-->
