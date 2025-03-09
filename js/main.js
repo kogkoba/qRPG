@@ -471,9 +471,9 @@ function startEncounter() {
   // ✅ HP は毎回リセット
   battleStartHp = playerData.hp;
 
+
   // ✅ G は初回の戦闘時にのみ保存し、それ以降は変更しない
-  if (battleStartG === null) {
-    battleStartG = playerData.g;
+  battleStartG = battleStartG === null ? playerData.g : battleStartG; // ✅ 初回のみ保存
   }
 
   showQuiz();
