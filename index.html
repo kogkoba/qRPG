@@ -19,9 +19,22 @@
   <button id="loginButton">ログイン</button>
 </div>
 
-<script src="js/tilemap_field.js"></script>  <!-- フィールド用 -->
+  <!-- BGM -->
+<audio id="fieldBGM" loop preload="auto">
+  <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
+</audio>
 
-  <script src="js/tilemap_village.js"></script>  <!-- 村用 -->
+<audio id="battleBGM" loop preload="auto">
+  <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="dqDownAudio" preload="auto">
+  <source src="./assets/audio/DQ down long.mp3" type="audio/mpeg">
+</audio>
+  
+<!-- マップデータを読み込む -->
+<script src="js/tilemap_village.js"></script>
+<script src="js/tilemap_field.js"></script>
 
 
 <!-- タイトル画面 -->
@@ -77,19 +90,9 @@
   <button onclick="restartFromChurch()">教会へ行く</button>
 </div>
 
-<!-- BGM -->
-<audio id="fieldBGM" loop preload="auto">
-  <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
-</audio>
 
-<audio id="battleBGM" loop preload="auto">
-  <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
-</audio>
 
-<audio id="dqDownAudio" preload="auto">
-  <source src="./assets/audio/DQ down long.mp3" type="audio/mpeg">
-</audio>
-
-<script src="./js/main.js" defer></script>
+<!-- メインスクリプトを最後に読み込む -->
+<script src="js/main.js"></script>
 </body>
 </html>
