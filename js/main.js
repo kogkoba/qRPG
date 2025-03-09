@@ -374,9 +374,6 @@ function switchMap(newMap) {
   player.x = 5;  // 村 → フィールド: 出口付近
   player.y = 5;  // フィールド → 村: 入口付近
 
-  // 画面を更新
-  drawMap();
-  updatePlayerPosition();
 
 function checkMapTransition() {
   if (currentMap === "village" && player.x === 7 && player.y === 0) {
