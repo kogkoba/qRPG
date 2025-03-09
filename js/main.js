@@ -558,7 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // D-Pad の移動イベント
+document.addEventListener("DOMContentLoaded", () => {
   const upBtn    = document.getElementById("dpad-up");
   const downBtn  = document.getElementById("dpad-down");
   const leftBtn  = document.getElementById("dpad-left");
@@ -568,4 +568,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (downBtn)  downBtn.addEventListener("click", () => movePlayer(0, STEP));
   if (leftBtn)  leftBtn.addEventListener("click", () => movePlayer(-STEP, 0));
   if (rightBtn) rightBtn.addEventListener("click", () => movePlayer(STEP, 0));
+
+  // 🔹 キーボード (WASD or 矢印キー) でも移動可能にする
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") movePlayer(0, -STEP);
+    if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") movePlayer(0, STEP);
+    if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") movePlayer(-STEP, 0);
+    if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") movePlayer(STEP, 0);
+  });
 });
+
