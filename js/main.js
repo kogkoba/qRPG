@@ -333,7 +333,7 @@ function playVillageBgm() {
     // **村から開始（未設定時のみ）**
   if (!currentMap) {
     switchMap("village");
-
+}
   // **ステータスUIを更新**
   updatePlayerStatusUI();
 }
@@ -624,6 +624,7 @@ document.addEventListener("keydown", (event) => {
             movePlayer(STEP, 0);
         }
     }
+});
 });
 
 /*******************************************************
