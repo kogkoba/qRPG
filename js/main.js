@@ -181,6 +181,18 @@ function playBattleBgm() {
   if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
 }
 
+function playBattleBgm() {
+  if (!isBgmPlaying) return;
+  const battleBgm = document.getElementById("battleBGM");
+  if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
+}
+
+function playBattleBgm() {
+  if (!isBgmPlaying) return;
+  const battleBgm = document.getElementById("battleBGM");
+  if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
+}
+
 // BGMスイッチをセットアップ
 document.addEventListener("DOMContentLoaded", () => {
   const bgmButton = document.getElementById("bgmToggleButton");
