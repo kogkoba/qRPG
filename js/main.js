@@ -44,7 +44,6 @@ const MAX_MISS = 4;
 let lastEncounterSteps = 0;
 let encounterThreshold = 5; // 何歩ごとにエンカウントするか
 let battleStartHp = 50; // バトル開始時のHP
-let battleStartG = 0;
 
 // 現在のマップ (village / field)
 let currentMap = null;
@@ -469,11 +468,14 @@ function startEncounter() {
   stopFieldBgm();
   playQuizBgm();
 
-  // ✅ クイズ開始時のプレイヤーデータを保存
+  // ✅ HP は毎回リセット
   battleStartHp = playerData.hp;
-  battleStartG = playerData.g;
 
-  // クイズを出題
+  // ✅ G は初回の戦闘時にのみ保存し、それ以降は変更しない
+  if (battleStartG === null) {
+    battleStartG = playerData.g;
+  }
+
   showQuiz();
 }
 
