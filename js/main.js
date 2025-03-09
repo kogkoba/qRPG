@@ -290,7 +290,6 @@ function startGame() {
 
     // ✅ 初期プレイヤー位置を設定（必要なら）
     updatePlayerPosition();
-}
 
 
   // タイトル画面を非表示
@@ -305,7 +304,7 @@ function startGame() {
   // 初期化処理
   initGame();
   updatePlayerStatusUI();
-
+}
 
 function updatePlayerPosition() {
   const playerElement = document.getElementById("player");
