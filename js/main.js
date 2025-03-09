@@ -275,18 +275,18 @@ function savePlayerData() {
   });
 }
 
-/** HP増減 */
 function changeHp(amount) {
   playerData.hp += amount;
   if (playerData.hp < 0) playerData.hp = 0;
   if (playerData.hp > 50) playerData.hp = 50;
 
   updatePlayerStatusUI();
-  updateBattleHp(); 
+  updateBattleHp();
   savePlayerData();
 
   if (playerData.hp === 0) {
-    showGameOverOptions();
+    console.log("💀 ゲームオーバー！");
+    showGameOverScreen();
   }
 }
 
@@ -341,28 +341,33 @@ function switchMap(newMap) {
     currentMap = "field";
     tileMap = tileMapField;
     tileImages = tileImagesField;
-    player.x = 7;  // フィールドの村の出口
-    player.y = 0;
+
+    // プレイヤー位置を適切に設定
+    if (player.y === 0) {
+      player.x = 7;
+      player.y = 1; // 村の出口付近に配置
+    }
 
     stopVillageBgm();
-    playFieldBgm();  // フィールドBGMを再生
+    playFieldBgm();
 
   } else if (newMap === "village") {
     currentMap = "village";
     tileMap = tileMapVillage;
     tileImages = tileImagesVillage;
-    player.x = 7;  // 村の入口
-    player.y = 14;
+
+    if (player.y === 14) {
+      player.x = 7;
+      player.y = 13; // フィールド入口付近に配置
+    }
 
     stopFieldBgm();
-    playVillageBgm();  // 村BGMを再生
+    playVillageBgm();
   }
 
-  // マップを描画
   drawMap();
   updatePlayerPosition();
 }
-
 
   // プレイヤーの位置をリセット
   player.x = 5;  // 村 → フィールド: 出口付近
@@ -372,28 +377,49 @@ function switchMap(newMap) {
   drawMap();
   updatePlayerPosition();
 }
-// マップ遷移ポイントのチェック
 function checkMapTransition() {
   if (currentMap === "village" && player.x === 7 && player.y === 0) {
     console.log("🚪 村からフィールドへ移動！");
-    switchMap("field");  // 村からフィールドへ
+    switchMap("field");
   } else if (currentMap === "field" && player.x === 7 && player.y === 14) {
     console.log("🏠 フィールドから村へ移動！");
-    switchMap("village"); // フィールドから村へ
+    switchMap("village");
   }
 }
 
-
-
-
-
-// プレイヤー移動時にチェック
 function movePlayer(dx, dy) {
-  player.x += dx;
-  player.y += dy;
+  if (inBattle) return; // 戦闘中なら移動不可
 
-  checkMapTransition();  // マップ切り替えチェック
+  // 向きを変更
+  facingRight = dx >= 0;
+
+  // 歩行アニメーションの切り替え
+  currentImageIndex = (currentImageIndex + 1) % playerImages.length;
+  const playerElement = document.getElementById("player");
+  if (playerElement) {
+    playerElement.src = playerImages[currentImageIndex];
+  }
+
+  // 新しい座標を計算
+  let newX = player.x + dx;
+  let newY = player.y + dy;
+
+  // **マップの範囲外に出ないよう制限**
+  const mapWidth = tileMap[0].length;
+  const mapHeight = tileMap.length;
+  if (newX < 0 || newX >= mapWidth || newY < 0 || newY >= mapHeight) {
+    console.warn("🚧 これ以上進めません！");
+    return;
+  }
+
+  // プレイヤー位置の更新
+  player.x = newX;
+  player.y = newY;
+
   updatePlayerPosition();
+
+  // マップ遷移チェック
+  checkMapTransition();
 }
 
 
@@ -475,7 +501,7 @@ function movePlayer(dx, dy) {
 }
 
 
- // 歩数をカウント & エンカウント判定
+// 歩数をカウント & エンカウント判定
 player.steps++;
 if (player.steps - lastEncounterSteps >= encounterThreshold) {
   console.log("⚔ モンスターがあらわれた！");
