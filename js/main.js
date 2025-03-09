@@ -327,5 +327,6 @@ loginBtn.addEventListener("click", async () => {
     console.error("ログインエラー:", err);
     hideLoadingOverlay();
     alert("ログインエラーが発生しました。再度お試しください。");
-  } // ✅ ここで catch を正しく閉じる
-}); // ✅ `DOMContentLoaded` を閉じる
+  }
+  });
+}); // ✅ 修正: `DOMContentLoaded` の閉じカッコを追加
