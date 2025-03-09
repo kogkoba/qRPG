@@ -464,16 +464,14 @@ function startEncounter() {
   console.log("📖 クイズバトル開始！");
   inBattle = true;
 
-  // フィールドBGMを止め、クイズBGMを再生
   stopFieldBgm();
   playQuizBgm();
 
-  // ✅ HP は毎回リセット
   battleStartHp = playerData.hp;
 
-
-  // ✅ G は初回の戦闘時にのみ保存し、それ以降は変更しない
-  battleStartG = battleStartG === null ? playerData.g : battleStartG; // ✅ 初回のみ保存
+  // ✅ 初回の戦闘のみ G を保存
+  if (battleStartG === null) {
+    battleStartG = playerData.g;
   }
 
   showQuiz();
@@ -640,11 +638,21 @@ function showGameOverOptions() {
   churchButton.onclick = restartFromChurch;
   choiceArea.appendChild(churchButton);
 
-  // ✅ クイズ再挑戦ボタン
-  const retryButton = document.createElement("button");
-  retryButton.textContent = "🔄 クイズをやり直す";
-  retryButton.onclick = retryBattle;
-  choiceArea.appendChild(retryButton);
+  /** クイズ再挑戦 (クイズ開始時の状態に戻し、再挑戦) */
+function retryBattle() {
+  console.log("🔄 クイズをやり直す (開始時の状態にリセット)");
+
+  // ✅ HPを復元
+  playerData.hp = battleStartHp;
+
+  // ✅ null チェックを入れ、G を適切に復元
+  if (battleStartG !== null) playerData.g = battleStartG;
+
+  savePlayerData();
+  updatePlayerStatusUI();
+
+  // クイズを再表示
+  showQuiz();
 }
 
 /** 教会に戻る処理 (Gが半分になり、村の教会からスタート) */
