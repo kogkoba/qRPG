@@ -294,6 +294,9 @@ function changeHp(amount) {
 /*******************************************************
  *  6) ゲーム開始処理
  *******************************************************/
+/*******************************************************
+ *  6) ゲーム開始処理
+ *******************************************************/
 function startGame() {
   console.log("🎮 ゲーム開始！");
 
@@ -322,33 +325,20 @@ function startGame() {
   updatePlayerStatusUI();
 }
 
-/** マップを描画する関数 */
-function drawMap() {
-  console.log("🗺 マップを描画しました！");
-}
-
-/** 村BGM */
-function playVillageBgm() {
-  if (!isBgmPlaying) return;
-  const villageBgm = document.getElementById("villageBGM");
-  if (!villageBgm) return;
-  villageBgm.currentTime = 0;
-  villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
-}
-
-function stopVillageBgm() {
-  const villageBgm = document.getElementById("villageBGM");
-  if (!villageBgm) return;
-  villageBgm.pause();
-  villageBgm.currentTime = 0;
-}
+/*******************************************************
+ *  7) マップ切り替え処理（外部スクリプトのデータを使用）
+ *******************************************************/
 
 /** マップを切り替える処理 */
 function switchMap(newMap) {
   if (newMap === "field") {
-    currentMap = "field";
-    tileMap = tileMapField;
-    tileImages = tileImagesField;
+    if (typeof tileMapField !== "undefined") {
+      currentMap = "field";
+      tileMap = tileMapField;  // **外部スクリプトから取得**
+    } else {
+      console.error("❌ tileMapField が定義されていません！");
+      return;
+    }
 
     // **村の出口からフィールドへ移動**
     player.x = 7;
@@ -358,9 +348,13 @@ function switchMap(newMap) {
     playFieldBgm();
 
   } else if (newMap === "village") {
-    currentMap = "village";
-    tileMap = tileMapVillage;
-    tileImages = tileImagesVillage;
+    if (typeof tileMapVillage !== "undefined") {
+      currentMap = "village";
+      tileMap = tileMapVillage;  // **外部スクリプトから取得**
+    } else {
+      console.error("❌ tileMapVillage が定義されていません！");
+      return;
+    }
 
     // **フィールドの入口から村へ戻る**
     player.x = 7;
@@ -375,7 +369,9 @@ function switchMap(newMap) {
   updatePlayerPosition();
 }
 
-/** マップ遷移のチェック */
+/*******************************************************
+ *  8) マップ遷移のチェック
+ *******************************************************/
 function checkMapTransition() {
   if (currentMap === "village" && player.x === 7 && player.y === 0) {
     console.log("🚪 村からフィールドへ移動！");
@@ -386,7 +382,9 @@ function checkMapTransition() {
   }
 }
 
-/** プレイヤーの移動処理 */
+/*******************************************************
+ *  9) プレイヤーの移動処理
+ *******************************************************/
 function movePlayer(dx, dy) {
   if (inBattle) return; // 戦闘中なら移動不可
 
