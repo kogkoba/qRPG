@@ -328,5 +328,4 @@ loginBtn.addEventListener("click", async () => {
     hideLoadingOverlay();
     alert("ログインエラーが発生しました。再度お試しください。");
  }
-
   }
