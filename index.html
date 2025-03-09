@@ -8,111 +8,88 @@
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-<!-- Google API スクリプトを読み込むだけ -->
-<script
-  async
-  defer
-  src="https://apis.google.com/js/api.js"
-  onerror="console.error('❌ Google APIの読み込みに失敗しました');">
-</script>
+
+<!-- ローディングオーバーレイ -->
+<div id="loadingOverlay">Loading…</div>
+
+<!-- ログイン画面 -->
+<div id="loginScreen">
+  <h2>プレイヤー名を入力してください</h2>
+  <input type="text" id="playerNameInput" placeholder="名前を入力">
+  <button id="loginButton">ログイン</button>
+</div>
+
+<!-- タイトル画面 -->
+<div id="titleScreen" style="display: block;"> <!-- ✅ 初期表示を "block" に -->
+  <h1>ドラクエ風クイズRPG</h1>
+  <button id="startButton">▶ ゲームスタート</button>
+</div>
+
+<!-- ゲーム画面 -->
+<div id="gameContainer" style="display: none;"> <!-- ✅ 初期表示を "none" に -->
+  <!-- ステータス表示 -->
+  <div id="status">
+    プレイヤーのHP: <span id="field-hp">50</span>
+    / レベル: <span id="level">1</span> 
+    / G: <span id="field-g">0</span>
+
+    <div id="bgmToggleContainer">
+      <button id="bgmToggleButton">🔇 BGM OFF</button>
+    </div>
+  </div>
+  
+  <!-- フィールド画面 -->
+  <div id="gameArea" style="display: none;"> <!-- ✅ 初期表示を "none" に -->
+    <img id="player" src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh" alt="hero">
+    <div id="dpad">
+      <div class="dpad-button up" onclick="movePlayer(0, -STEP)"></div>
+      <div class="dpad-button left" onclick="movePlayer(-STEP, 0)"></div>
+      <div class="dpad-button center"></div>
+      <div class="dpad-button right" onclick="movePlayer(STEP, 0)"></div>
+      <div class="dpad-button down" onclick="movePlayer(0, STEP)"></div>
+    </div>
+    <div id="transition-overlay">
+      <div id="transition-circle"></div>
+    </div>
+  </div>
+
+  <!-- 戦闘画面 -->
+  <div id="battle-screen" style="display: none;"> <!-- ✅ 初期表示を "none" に -->
+    <div id="top-text-box">mamがあらわれた！</div>
+    <div id="enemy-container"></div>
+    <img id="quiz-image" src="">
+    <div id="hp-container">
+      HP: <span id="battle-hp">50</span>
+    </div>
+
+    <!-- 問題と選択肢エリア -->
+    <div id="quiz-area">
+      <div id="choice-area"></div>
+    </div>
+
+    <button id="zaorikuButton" onclick="onZaoriku()">ザオリク</button>
+  </div>
+
+  <!-- HP回復ボタン (フィールド画面) -->
+  <button id="healButton" onclick="changeHp(10)">💖 回復する (+10 HP)</button>
+</div>
+
+<!-- BGM用オーディオタグ -->
+<audio id="fieldBGM" loop preload="auto">
+  <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
+</audio>
+<audio id="battleBGM" loop preload="auto">
+  <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
+</audio>
+<audio id="quizBGM" loop preload="auto">
+  <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
+</audio>
+<audio id="dqDownAudio" preload="auto">
+  <source src="./assets/audio/DQ down long.mp3" type="audio/mpeg">
+</audio>
+
+<!-- JavaScript -->
 <script src="./js/main.js"></script>
-
-
-    <!-- ローディングオーバーレイ -->
-  <div id="loadingOverlay">Loading…</div>
-
-  <!-- ログイン画面 -->
-  <div id="loginScreen">
-    <h2>プレイヤー名を入力してください</h2>
-    <input type="text" id="playerNameInput" placeholder="名前を入力">
-    <button id="loginButton">ログイン</button>
-  </div>
-
-  <!-- タイトル画面 -->
-  <div id="titleScreen">
-    <h1>ドラクエ風クイズRPG</h1>
-    <button id="startButton" onclick="startGame()">▶ ゲームスタート</button>
-  </div>
-
-  <!-- ゲーム画面 -->
-  <div id="gameContainer">
-    <!-- ステータス表示 -->
-    <div id="status">
-      プレイヤーのHP:
-      <span id="field-hp">50</span>
-      / レベル: <span id="level">1</span> 
-      / G: <span id="field-g">0</span>
-      
-      <div id="bgmToggleContainer">
-        <button id="bgmToggleButton" onclick="toggleBgm()">🔇 BGM OFF</button>
-      </div>
-    </div>
-    
-    <!-- フィールド画面 -->
-    <div id="gameArea">
-      <img id="player" src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh" alt="hero">
-      <div id="dpad">
-        <div class="dpad-button up" onclick="movePlayer(0, -STEP)"></div>
-        <div class="dpad-button left" onclick="movePlayer(-STEP, 0)"></div>
-        <div class="dpad-button center"></div>
-        <div class="dpad-button right" onclick="movePlayer(STEP, 0)"></div>
-        <div class="dpad-button down" onclick="movePlayer(0, STEP)"></div>
-      </div>
-      <div id="transition-overlay">
-        <div id="transition-circle"></div>
-      </div>
-    </div>
-    
-    <!-- 戦闘画面 -->
-    <div id="battle-screen">
-      <div id="top-text-box">mamがあらわれた！</div>
-
-
-       <div id="enemy-container"></div>
-      <img id="quiz-image" src="">
-
-      
-      <div id="hp-container">
-        HP: <span id="battle-hp">50</span>
-      </div>
-
-
-
-      <!-- 問題と選択肢エリア -->
-      <div id="quiz-area">
-        <div id="choice-area"></div>
-      </div>
-
-      <button id="zaorikuButton" onclick="onZaoriku()">ザオリク</button>
-    </div>
-
-    <!-- HP回復ボタン (フィールド画面) -->
-    <button id="healButton" onclick="changeHp(10)">💖 回復する (+10 HP)</button>
-  </div>
-
-  <!-- BGM用オーディオタグ -->
-  <audio id="fieldBGM" loop preload="auto">
-    <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="battleBGM" loop preload="auto">
-    <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="quizBGM" loop preload="auto">
-    <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="dqDownAudio" preload="auto">
-    <source src="./assets/audio/DQ down long.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- ======================= スクリプト群 =======================
-<script
-  async
-  defer
-  src="https://apis.google.com/js/api.js"
-  onload="gapiLoaded()"
-  onerror="console.error('❌ Google APIの読み込みに失敗しました');">
-</script>
-
 
 </body>
 </html>
