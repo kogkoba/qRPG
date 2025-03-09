@@ -277,61 +277,66 @@ document.addEventListener("DOMContentLoaded", () => {
   stopBattleBgm();
   stopQuizBgm();
   isBgmPlaying = false;
+
   const bgmButton = document.getElementById("bgmToggleButton");
   if (bgmButton) bgmButton.textContent = "🔇 BGM OFF";
   quizBgm = document.getElementById("quizBGM");
   if (quizBgm) quizBgm.loop = true;
   updateBgmButton();
   
-  // ✅ ゲームスタートボタンのイベント登録
-  document.getElementById("startButton").addEventListener("click", startGame);
-});
-
-// ログインボタンのイベント
-const loginBtn = document.getElementById("loginButton");
-loginBtn.addEventListener("click", async () => {
-  const enteredName = document.getElementById("playerNameInput").value.trim();
-  if (!enteredName) {
-    alert("名前を入力してください！");
-    return;
+  // ✅ ゲームスタートボタンのイベント登録（存在チェックつき）
+  const startBtn = document.getElementById("startButton");
+  if (startBtn) {
+    startBtn.addEventListener("click", startGame);
   }
-  try {
-    showLoadingOverlay();
-    const params = new URLSearchParams();
-    params.append("mode", "player");
-    params.append("name", enteredName);
 
-    const resp = await fetch(GAS_URL, {
-      method: "POST",  // ✅ GET → POST に変更
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params
+  // ✅ ログインボタンのイベント登録（この位置が正しい）
+  const loginBtn = document.getElementById("loginButton");
+  if (loginBtn) {
+    loginBtn.addEventListener("click", async () => {
+      const enteredName = document.getElementById("playerNameInput").value.trim();
+      if (!enteredName) {
+        alert("名前を入力してください！");
+        return;
+      }
+      try {
+        showLoadingOverlay();
+        const params = new URLSearchParams();
+        params.append("mode", "player");
+        params.append("name", enteredName);
+
+        const resp = await fetch(GAS_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: params
+        });
+
+        if (!resp.ok) throw new Error("ネットワークエラーです");
+        const data = await resp.json();
+        if (!data.success) throw new Error(data.error || "不明なエラー");
+
+        console.log("データ取得成功:", data);
+        playerData.name  = data.name;
+        playerData.level = parseInt(data.level, 10);
+        playerData.exp   = parseInt(data.exp, 10);
+        playerData.g     = parseInt(data.g, 10);
+        playerData.hp    = parseInt(data.hp, 10) || 50;
+        updatePlayerStatusUI();
+
+        // ✅ クイズ & モンスターをロードする処理を追加！
+        await loadQuizData();
+        await loadMonsterData();
+
+        setTimeout(() => {
+          hideLoadingOverlay();
+          document.getElementById("loginScreen").style.display = "none";
+          document.getElementById("titleScreen").style.display = "flex";
+        }, 500);
+      } catch (err) {
+        console.error("ログインエラー:", err);
+        hideLoadingOverlay();
+        alert("ログインエラーが発生しました。再度お試しください。");
+      }
     });
-
-    if (!resp.ok) throw new Error("ネットワークエラーです");
-    const data = await resp.json();
-    if (!data.success) throw new Error(data.error || "不明なエラー");
-
-    console.log("データ取得成功:", data);
-    playerData.name  = data.name;
-    playerData.level = parseInt(data.level, 10);
-    playerData.exp   = parseInt(data.exp, 10);
-    playerData.g     = parseInt(data.g, 10);
-    playerData.hp    = parseInt(data.hp, 10) || 50;
-    updatePlayerStatusUI();
-
-    // ✅ クイズ & モンスターをロードする処理を追加！
-    await loadQuizData();
-    await loadMonsterData();
-
-    setTimeout(() => {
-      hideLoadingOverlay();
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("titleScreen").style.display = "flex";
-    }, 500);
-  } catch (err) {
-    console.error("ログインエラー:", err);
-    hideLoadingOverlay();
-    alert("ログインエラーが発生しました。再度お試しください。");
   }
-
-}); // ✅ 修正: `DOMContentLoaded` の閉じカッコを追加
+});
