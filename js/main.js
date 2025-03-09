@@ -277,6 +277,8 @@ function initGame() {
 
 function startGame() {
     console.log("ゲーム開始！");
+    // ここにゲーム開始の処理を入れる
+}
 
     // ✅ タイトル画面を隠し、ゲーム画面を表示する
     document.getElementById("titleScreen").style.display = "none";
