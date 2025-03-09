@@ -297,24 +297,28 @@ function changeHp(amount) {
 function startGame() {
   console.log("🎮 ゲーム開始！");
 
-  // タイトル画面を消す
+  // **タイトル画面を消す**
   document.getElementById("titleScreen").style.display = "none";
 
-  // ゲーム画面を表示
+  // **ゲーム画面を表示**
   document.getElementById("gameContainer").style.display = "block";
   document.getElementById("gameArea").style.display = "block";
 
-  // 初期化処理
+  // **プレイヤーの初期化**
   initGame();
 
-  // **村から開始（未設定時のみ）**
-  if (!currentMap) {
-    switchMap("village");
-  }
+  // **必ず村 (`village`) からスタート**
+  switchMap("village");
 
-  // BGM開始（村のBGM）
+  // **プレイヤーを村の中央に配置**
+  player.x = 7;
+  player.y = 7;
+  updatePlayerPosition();
+
+  // **村のBGMを開始**
   playVillageBgm();
 
+  // **ステータスUIを更新**
   updatePlayerStatusUI();
 }
 
@@ -322,7 +326,6 @@ function startGame() {
 function drawMap() {
   console.log("🗺 マップを描画しました！");
 }
-
 
 /** 村BGM */
 function playVillageBgm() {
@@ -340,17 +343,16 @@ function stopVillageBgm() {
   villageBgm.currentTime = 0;
 }
 
-
+/** マップを切り替える処理 */
 function switchMap(newMap) {
   if (newMap === "field") {
     currentMap = "field";
     tileMap = tileMapField;
     tileImages = tileImagesField;
 
-    if (player.y === 0) {
-      player.x = 7;
-      player.y = 1; // 村の出口付近に配置
-    }
+    // **村の出口からフィールドへ移動**
+    player.x = 7;
+    player.y = 1; // 村の出口付近に配置
 
     stopVillageBgm();
     playFieldBgm();
@@ -360,31 +362,20 @@ function switchMap(newMap) {
     tileMap = tileMapVillage;
     tileImages = tileImagesVillage;
 
-    if (player.y === 14) {
-      player.x = 7;
-      player.y = 13; // フィールド入口付近に配置
-    }
+    // **フィールドの入口から村へ戻る**
+    player.x = 7;
+    player.y = 13; // フィールド入口付近に配置
 
     stopFieldBgm();
     playVillageBgm();
   }
 
-  // ✅ `drawMap()` が存在する場合だけ実行する
-  if (typeof drawMap === "function") {
-    drawMap();
-  } else {
-    console.warn("⚠ drawMap() が未定義のため、マップを描画できません");
-  }
-
+  // **マップを描画**
+  drawMap();
   updatePlayerPosition();
 }
 
-
-  // プレイヤーの位置をリセット
-  player.x = 5;  // 村 → フィールド: 出口付近
-  player.y = 5;  // フィールド → 村: 入口付近
-
-
+/** マップ遷移のチェック */
 function checkMapTransition() {
   if (currentMap === "village" && player.x === 7 && player.y === 0) {
     console.log("🚪 村からフィールドへ移動！");
@@ -395,6 +386,7 @@ function checkMapTransition() {
   }
 }
 
+/** プレイヤーの移動処理 */
 function movePlayer(dx, dy) {
   if (inBattle) return; // 戦闘中なら移動不可
 
@@ -420,16 +412,14 @@ function movePlayer(dx, dy) {
     return;
   }
 
-  // プレイヤー位置の更新
+  // **プレイヤー位置の更新**
   player.x = newX;
   player.y = newY;
-
   updatePlayerPosition();
 
-  // マップ遷移チェック
+  // **マップ遷移のチェック**
   checkMapTransition();
 }
-
 
 /*******************************************************
  *  6) ゲームオーバー・再挑戦 (ダミー)
