@@ -707,13 +707,18 @@ function recordMistake(playerName, questionId) {
     console.error("⛔ ネットワークエラー:", error);
   });
 }
-
 /*******************************************************
  * 10) 戦闘終了 (ダミー)
  *******************************************************/
-function onZaoriku() { /* ... */ }
-function endBattle() { /* ... */ }
+function onZaoriku() {
+  console.log("蘇生スキルを実行します！");
+  // TODO: 蘇生処理を追加
+}
 
-
+function endBattle() {
+  console.log("戦闘を終了します！");
+  inBattle = false; // 戦闘中フラグを解除
+  updatePlayerStatusUI();
+}
 
 
