@@ -431,6 +431,7 @@ function endBattle() { /* ... */ }
 
 // ======================= 11) DOMContentLoaded：ログイン & スタートボタン登録 =======================
 document.addEventListener("DOMContentLoaded", () => {
+   window.startGame = startGame;
   // BGMをOFFから開始
   stopFieldBgm();
   stopBattleBgm();
@@ -443,6 +444,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (quizBgm) quizBgm.loop = true;
   updateBgmButton();
 
+
+  
   // ゲームスタートボタン
   const startBtn = document.getElementById("startButton");
   if (startBtn && !startBtn.dataset.bound) {
