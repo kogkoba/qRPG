@@ -159,6 +159,8 @@ function toggleBgm() {
   updateBgmButton();
 }
 
+
+
 /** フィールドBGM */
 function playFieldBgm() {
   if (!isBgmPlaying) return;
@@ -294,9 +296,6 @@ function changeHp(amount) {
 /*******************************************************
  *  6) ゲーム開始処理
  *******************************************************/
-/*******************************************************
- *  6) ゲーム開始処理
- *******************************************************/
 function startGame() {
   console.log("🎮 ゲーム開始！");
 
@@ -318,8 +317,22 @@ function startGame() {
   player.y = 7;
   updatePlayerPosition();
 
-  // **村のBGMを開始**
-  playVillageBgm();
+ /** 村BGMを再生 */
+function playVillageBgm() {
+  if (!isBgmPlaying) return; // BGMがOFFなら再生しない
+  const villageBgm = document.getElementById("villageBGM");
+  if (!villageBgm) {
+    console.warn("⚠ villageBGM の要素が見つかりません");
+    return;
+  }
+  villageBgm.currentTime = 0;
+  villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
+}
+
+
+    // **村から開始（未設定時のみ）**
+  if (!currentMap) {
+    switchMap("village");
 
   // **ステータスUIを更新**
   updatePlayerStatusUI();
