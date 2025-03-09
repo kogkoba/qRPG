@@ -1,19 +1,14 @@
 // ======================= 1) 定数・グローバル変数 =======================
 
-// 🔽 すでにAPIキーやdiscoveryDocsは使わないため削除
-// const API_KEY = "..."; 
-// const QUIZ_SHEET_ID = "...";
-// const MONSTER_SHEET_ID = "...";
-
-// 🔽 GAS_PERSONAL_URL は個人ミス記録用のものがあるなら、そのまま or 統合
-// もし1つのGASにまとめるなら recordMistake も同じ GAS_URL で使うと良い
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwOcT2PzrIr6tlVfkQcrPYhz8d8AWz2tIi9XKQXqEVKDx9NikI6E94QDcjpbCQ4gODO/exec"; 
+// 🔽 すでにAPIキーやdiscoveryDocsは不要なので削除済み
+// もしAPI_KEYなどがまだ必要なら適宜追加してOK。
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwOcT2PzrIr6tlVfkQcrPYhz8d8AWz2tIi9XKQXqEVKDx9NikI6E94QDcjpbCQ4gODO/exec";
 
 const STEP = 20;
-
 let playerData = { name: "", level: 1, exp: 0, g: 0, hp: 50 };
 let quizData = [];
 let monsterData = [];
+
 let player = { x: 0, y: 0, steps: 0 };
 let facingRight = true;
 let currentImageIndex = 0;
@@ -29,23 +24,23 @@ const MAX_CORRECT = 4;
 const MAX_MISS = 4;
 let lastEncounterSteps = 0;
 let encounterThreshold = 5;
-let battleStartHp = 50; // バトル開始時のHPを記録
+let battleStartHp = 50; // バトル開始時のHP
 
 // BGM 関連
 let isBgmPlaying = false;
 let isBattleBgmPlaying = false;
 let quizBgm = null;
 
-// ======================= 2) データ取得: クイズ & モンスター =======================
 
+// ======================= 2) データ取得: クイズ & モンスター =======================
 // クイズデータをGASから取得
 async function loadQuizData() {
   try {
     const params = new URLSearchParams();
-    params.append("mode", "quiz"); // 🔹 modeをPOSTで送信
+    params.append("mode", "quiz"); 
 
     const resp = await fetch(GAS_URL, {
-      method: "POST",  // ✅ GET → POST に変更
+      method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: params
     });
@@ -56,17 +51,20 @@ async function loadQuizData() {
       console.warn("クイズデータ取得失敗:", json.error);
       return;
     }
-    quizData = json.quizzes || []; // 🔹 JSONキーを正しく指定
+
+    quizData = json.quizzes || [];
     console.log("✅ Quiz Data:", quizData);
+
   } catch (err) {
     console.error("⛔ loadQuizData Error:", err);
   }
 }
 
+// モンスターデータをGASから取得
 async function loadMonsterData() {
   try {
     const params = new URLSearchParams();
-    params.append("mode", "monster"); // ✅ 必ず "monster" を送る
+    params.append("mode", "monster"); 
 
     const resp = await fetch(GAS_URL, {
       method: "POST",
@@ -80,14 +78,14 @@ async function loadMonsterData() {
       console.warn("モンスターデータ取得失敗:", json.error);
       return;
     }
-    monsterData = json.monsters || []; // ✅ "monsters" に統一
+
+    monsterData = json.monsters || [];
     console.log("✅ Monster Data:", monsterData);
+
   } catch (err) {
     console.error("⛔ loadMonsterData Error:", err);
   }
 }
-
-
 
 function getRandomQuiz() {
   if (!quizData || quizData.length === 0) return null;
@@ -114,16 +112,74 @@ function hideLoadingOverlay() {
   if (overlay) overlay.style.display = "none";
 }
 
+
 // ======================= 4) BGM 関連 =======================
-// (以下は従来通り、変更不要)
-function updateBgmButton() { /* ... */ }
-function toggleBgm() { /* ... */ }
-function playFieldBgm() { /* ... */ }
-function stopFieldBgm() { /* ... */ }
-function playBattleBgm() { /* ... */ }
-function stopBattleBgm() { /* ... */ }
-function playQuizBgm() { /* ... */ }
-function stopQuizBgm() { /* ... */ }
+// (以下は元々のBGM管理ロジックをそのまま)
+function updateBgmButton() {
+  const button = document.getElementById("bgmToggleButton");
+  if (!button) return;
+  button.textContent = isBgmPlaying ? "🎵 BGM ON" : "🔇 BGM OFF";
+}
+
+function toggleBgm() {
+  isBgmPlaying = !isBgmPlaying;
+  const button = document.getElementById("bgmToggleButton");
+  if (isBgmPlaying) {
+    button.textContent = "🎵 BGM ON";
+    playFieldBgm();
+  } else {
+    button.textContent = "🔇 BGM OFF";
+    stopFieldBgm();
+    stopBattleBgm();
+    stopQuizBgm();
+  }
+  updateBgmButton();
+}
+
+function playFieldBgm() {
+  if (!isBgmPlaying) return;
+  const fieldBgm = document.getElementById("fieldBGM");
+  fieldBgm.currentTime = 0;
+  fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
+}
+
+function stopFieldBgm() {
+  const fieldBgm = document.getElementById("fieldBGM");
+  if (!fieldBgm) return;
+  fieldBgm.pause();
+  fieldBgm.currentTime = 0;
+}
+
+function playBattleBgm() {
+  if (!isBgmPlaying || isBattleBgmPlaying) return;
+  const battleBgm = document.getElementById("battleBGM");
+  battleBgm.currentTime = 0;
+  battleBgm.play()
+    .then(() => { isBattleBgmPlaying = true; })
+    .catch(err => console.warn("戦闘BGM再生エラー:", err));
+}
+
+function stopBattleBgm() {
+  const battleBgm = document.getElementById("battleBGM");
+  if (!battleBgm) return;
+  battleBgm.pause();
+  battleBgm.currentTime = 0;
+  isBattleBgmPlaying = false;
+}
+
+function playQuizBgm() {
+  if (!quizBgm) quizBgm = document.getElementById("quizBGM");
+  if (!isBgmPlaying || !quizBgm.paused) return;
+  quizBgm.currentTime = 0;
+  quizBgm.play().catch(err => console.warn("クイズBGM再生エラー:", err));
+}
+
+function stopQuizBgm() {
+  if (!quizBgm) return;
+  quizBgm.pause();
+  quizBgm.currentTime = 0;
+}
+
 
 // ======================= 5) プレイヤーデータ周り =======================
 function updatePlayerStatusUI() {
@@ -155,10 +211,8 @@ function addExp(amount) {
   savePlayerData();
 }
 
-// ★プレイヤーデータをGASに保存
 function savePlayerData() {
   const params = new URLSearchParams();
-  // POSTで updatePlayer モードを呼ぶ想定
   params.append("mode", "updatePlayer");
   params.append("name",  playerData.name);
   params.append("level", playerData.level);
@@ -190,7 +244,7 @@ function changeHp(amount) {
   if (playerData.hp > 50) playerData.hp = 50;
 
   updatePlayerStatusUI();
-  updateBattleHp();
+  updateBattleHp(); 
   savePlayerData();
 
   if (playerData.hp === 0) {
@@ -198,19 +252,83 @@ function changeHp(amount) {
   }
 }
 
+
 // ======================= 6) ゲームオーバー・再挑戦 =======================
-// (以下の戦闘ロジックは基本そのままでOK)
+// (戦闘ロジックは省略 or そのまま)
 function showGameOverOptions() { /* ... */ }
 function startBattleInitForRetry() { /* ... */ }
 function retryBattle() { /* ... */ }
 function restartFromChurch() { /* ... */ }
 
+
 // ======================= 7) フィールド初期化・移動 =======================
-function initGame() { /* ... */ }
-function startGame() { /* ... */ }
-function updatePlayerPosition() { /* ... */ }
-function movePlayer(dx, dy) { /* ... */ }
-function getRandomEncounterThreshold() { /* ... */ }
+function initGame() {
+  // 必要なら初期位置を設定
+  // player.x = 100; 
+  // player.y = 100;
+  updatePlayerPosition();
+}
+
+function startGame() {
+  console.log("ゲーム開始！");
+
+  // タイトル画面を非表示
+  document.getElementById("titleScreen").style.display = "none";
+  // ゲーム画面を表示
+  document.getElementById("gameContainer").style.display = "block";
+  document.getElementById("gameArea").style.display = "block";
+
+  // フィールドBGMを再生
+  playFieldBgm();
+
+  // 初期化処理
+  initGame();
+  updatePlayerStatusUI();
+}
+
+function updatePlayerPosition() {
+  const playerElement = document.getElementById("player");
+  playerElement.style.left = player.x + "px";
+  playerElement.style.top = player.y + "px";
+  playerElement.style.transform = 
+    "translate(-50%, -50%) " + (facingRight ? "scaleX(1)" : "scaleX(-1)");
+}
+
+function movePlayer(dx, dy) {
+  if (inBattle) return;
+
+  if (dx < 0) facingRight = false;
+  else if (dx > 0) facingRight = true;
+
+  currentImageIndex = (currentImageIndex + 1) % playerImages.length;
+  document.getElementById("player").src = playerImages[currentImageIndex];
+
+  player.x += dx;
+  player.y += dy;
+
+  // 画面外に出ないよう制限
+  const playerElement = document.getElementById("player");
+  const pw = playerElement.offsetWidth;
+  const ph = playerElement.offsetHeight;
+  const maxX = window.innerWidth - pw;
+  const maxY = document.getElementById("gameArea").clientHeight - ph;
+  if (player.x < 0) player.x = 0;
+  if (player.y < 0) player.y = 0;
+  if (player.x > maxX) player.x = maxX;
+  if (player.y > maxY) player.y = maxY;
+
+  updatePlayerPosition();
+
+  player.steps++;
+  if (player.steps - lastEncounterSteps >= encounterThreshold) {
+    startEncounter();
+  }
+}
+
+function getRandomEncounterThreshold() {
+  return Math.floor(Math.random() * 11) + 5; // 5~15
+}
+
 
 // ======================= 8) 戦闘関連 =======================
 function startEncounter() { /* ... */ }
@@ -220,31 +338,27 @@ function showMonsters(monsters) { /* ... */ }
 function shakeGameScreen() { /* ... */ }
 function shakeAndRemoveMonster() { /* ... */ }
 
+
 // ======================= 9) クイズ出題・解答処理 =======================
 function showQuiz() { /* ... */ }
 function disableChoiceButtons() { /* ... */ }
 function answerQuiz(selected, quiz) {
-  /* ... (変わらず) ... */
   if (selected === quiz.correct) {
-    // 正解
     addExp(20);
     playerData.g += 5;
     savePlayerData();
   } else {
-    // 不正解
     changeHp(-10);
     if (quiz.questionId) {
       recordMistake(playerData.name, quiz.questionId);
     }
   }
-  /* ... */
 }
 
-// ★ミス記録
 function recordMistake(playerName, questionId) {
   const params = new URLSearchParams();
   params.append("mode", "recordMistake");
-  params.append("name", playerName); // ✅ "player" → "name" に統一
+  params.append("name", playerName);
   params.append("questionId", questionId);
 
   fetch(GAS_URL, {
@@ -270,16 +384,10 @@ function recordMistake(playerName, questionId) {
 function onZaoriku() { /* ... */ }
 function endBattle() { /* ... */ }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // ✅ すでに登録済みの場合、再登録を防ぐ
-  const startBtn = document.getElementById("startButton");
-  if (startBtn && !startBtn.dataset.bound) {
-    startBtn.addEventListener("click", startGame);
-    startBtn.dataset.bound = "true"; // ✅ これで二重登録を防ぐ
-  }
-});
 
-  // BGM オフから開始
+// ======================= 11) DOMContentLoaded：ログイン & スタートボタン登録 =======================
+document.addEventListener("DOMContentLoaded", () => {
+  // BGMをOFFから開始
   stopFieldBgm();
   stopBattleBgm();
   stopQuizBgm();
@@ -290,14 +398,15 @@ document.addEventListener("DOMContentLoaded", () => {
   quizBgm = document.getElementById("quizBGM");
   if (quizBgm) quizBgm.loop = true;
   updateBgmButton();
-  
-  // ✅ ゲームスタートボタンのイベント登録（存在チェックつき）
+
+  // ゲームスタートボタン
   const startBtn = document.getElementById("startButton");
-  if (startBtn) {
+  if (startBtn && !startBtn.dataset.bound) {
     startBtn.addEventListener("click", startGame);
+    startBtn.dataset.bound = "true";
   }
 
-  // ✅ ログインボタンのイベント登録（この位置が正しい）
+  // ログインボタン
   const loginBtn = document.getElementById("loginButton");
   if (loginBtn) {
     loginBtn.addEventListener("click", async () => {
@@ -330,7 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
         playerData.hp    = parseInt(data.hp, 10) || 50;
         updatePlayerStatusUI();
 
-        // ✅ クイズ & モンスターをロードする処理を追加！
+        // クイズ & モンスターをロード
         await loadQuizData();
         await loadMonsterData();
 
@@ -343,23 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("ログインエラー:", err);
         hideLoadingOverlay();
         alert("ログインエラーが発生しました。再度お試しください。");
-       }
+      }
     });
   }
-}); 
-function startGame() {
-    console.log("ゲーム開始！");
-
-    // ✅ タイトル画面を隠し、ゲーム画面を表示する
-    document.getElementById("titleScreen").style.display = "none";
-    document.getElementById("gameContainer").style.display = "block"; // ← これを追加
-    document.getElementById("gameArea").style.display = "block"; // ← これも追加
-
-    // ✅ フィールドBGMを再生（あれば）
-    playFieldBgm();
-
-    // ✅ 初期プレイヤー位置を設定（必要なら）
-    updatePlayerPosition();
-}
-
-
+});
