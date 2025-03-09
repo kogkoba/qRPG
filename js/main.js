@@ -290,6 +290,7 @@ function changeHp(amount) {
   }
 }
 
+
 /*******************************************************
  *  6) ゲーム開始処理
  *******************************************************/
@@ -303,6 +304,9 @@ function startGame() {
   document.getElementById("gameContainer").style.display = "block";
   document.getElementById("gameArea").style.display = "block";
 
+  // 初期化処理
+  initGame();
+
   // **村から開始（未設定時のみ）**
   if (!currentMap) {
     switchMap("village");
@@ -311,10 +315,9 @@ function startGame() {
   // BGM開始（村のBGM）
   playVillageBgm();
 
-  // 初期化処理
-  initGame();
   updatePlayerStatusUI();
 }
+
 
 console.log("✅ startGame() が正しく定義されました！"); // ✅ デバッグ用
 
@@ -335,14 +338,12 @@ function stopVillageBgm() {
 }
 
 
-/** マップの切り替え */
 function switchMap(newMap) {
   if (newMap === "field") {
     currentMap = "field";
     tileMap = tileMapField;
     tileImages = tileImagesField;
 
-    // プレイヤー位置を適切に設定
     if (player.y === 0) {
       player.x = 7;
       player.y = 1; // 村の出口付近に配置
@@ -617,10 +618,20 @@ document.addEventListener("DOMContentLoaded", () => {
  *  8) 戦闘関連 (ダミー)
  *******************************************************/
 function startEncounter() {
-  console.log("🐉 敵があらわれた！（startEncounter を実装してください）");
+  if (inBattle) return; // すでに戦闘中なら何もしない
+
+  console.log("🐉 敵があらわれた！");
   inBattle = true;
-  // BGM切り替えなど
+
+  // 戦闘用のBGMを再生
+  stopFieldBgm();
+  playBattleBgm();
+
+  // モンスターをランダムに選択
+  let monsters = getRandomMonsters();
+  showMonsters(monsters);
 }
+
 function startBattleInit() { /* ... */ }
 function updateBattleHp() {
   const battleHpElem = document.getElementById("battle-hp");
@@ -672,7 +683,7 @@ function recordMistake(playerName, questionId) {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params
   })
-  .then(r => r.json())
+  .then(response => response.json())
   .then(data => {
     if (data.success) {
       console.log(`✅ ${playerName} の間違い記録を更新: 問題 ${questionId}`);
@@ -684,7 +695,6 @@ function recordMistake(playerName, questionId) {
     console.error("⛔ ネットワークエラー:", error);
   });
 }
-
 
 /*******************************************************
  * 10) 戦闘終了 (ダミー)
