@@ -351,11 +351,11 @@ document.addEventListener("DOMContentLoaded", () => {
 function startGame() {
     console.log("ゲーム開始！");
 
-    // ✅ タイトル画面を隠し、フィールド画面を表示する
+    // ✅ タイトル画面を隠し、ゲームエリアを表示する
     document.getElementById("titleScreen").style.display = "none";
-    document.getElementById("fieldScreen").style.display = "block";  // ← ここが重要！！
+    document.getElementById("gameArea").style.display = "block";  // ← ここを修正！
 
-    // ✅ フィールドのBGMを再生（あれば）
+    // ✅ フィールドBGMを再生（あれば）
     playFieldBgm();
 
     // ✅ 初期プレイヤー位置を設定（必要なら）
