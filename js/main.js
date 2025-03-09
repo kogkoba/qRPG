@@ -18,122 +18,149 @@ let currentImageIndex = 0;
 
 /** プレイヤーの歩行アニメーション画像 */
 const playerImages = [
-  "./assets/images/playerfront.PNG",  // 正面（立ち止まり）
-  "./assets/images/playerleft.PNG",   // 左足前
-  "./assets/images/playerright.PNG"   // 右足前
+  "./assets/images/plyerfront.PNG",  // 正面（立ち止まり）
+  "./assets/images/plyerleft.PNG",   // 左足前
+  "./assets/images/plyerright.PNG"   // 右足前
 ];
 
-/** 戦闘・エンカウント */
+/** エンカウント設定 */
 let inBattle = false;
-let encounterThreshold = getRandomEncounterThreshold();
+let encounterThreshold = getRandomEncounterThreshold();  // ← 修正後もOK ✅
 
 /** BGM管理 */
 let isBgmPlaying = false;
 
 /*******************************************************
- *  2) スプレッドシートからデータ取得
+ *  2) ランダムエンカウント設定 (修正済み)
  *******************************************************/
 
-/** クイズデータをGASから取得 */
-async function loadQuizData() {
-  try {
-    const params = new URLSearchParams();
-    params.append("mode", "quiz"); 
-
-    const resp = await fetch(GAS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params
-    });
-
-    if (!resp.ok) throw new Error("ネットワークエラー");
-    const json = await resp.json();
-    if (!json.success) {
-      console.warn("クイズデータ取得失敗:", json.error);
-      return;
-    }
-    quizData = json.quizzes || [];
-    console.log("✅ Quiz Data:", quizData);
-  } catch (err) {
-    console.error("⛔ loadQuizData Error:", err);
-  }
+/** 歩数ごとにランダムエンカウント（5～20歩） */
+function getRandomEncounterThreshold() {
+  return Math.floor(Math.random() * 16) + 5;  // 5～20歩の間
 }
 
-/** モンスターデータをGASから取得 */
-async function loadMonsterData() {
-  try {
-    const params = new URLSearchParams();
-    params.append("mode", "monster"); 
+/*******************************************************
+ *  3) プレイヤー移動 & 歩行アニメーション
+ *******************************************************/
 
-    const resp = await fetch(GAS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params
-    });
+/** プレイヤー位置更新 */
+function updatePlayerPosition() {
+  const playerElement = document.getElementById("player");
+  if (!playerElement) return;
 
-    if (!resp.ok) throw new Error("ネットワークエラー");
-    const json = await resp.json();
-    if (!json.success) {
-      console.warn("モンスターデータ取得失敗:", json.error);
-      return;
-    }
-    monsterData = json.monsters || [];
-    console.log("✅ Monster Data:", monsterData);
-  } catch (err) {
-    console.error("⛔ loadMonsterData Error:", err);
+  playerElement.style.left = `${player.x}px`;
+  playerElement.style.top = `${player.y}px`;
+  playerElement.style.transform = `translate(-50%, -50%) ${facingRight ? "scaleX(1)" : "scaleX(-1)"}`;
+  playerElement.src = playerImages[currentImageIndex];  // 歩行アニメーション
+}
+
+/** プレイヤー移動処理 */
+function movePlayer(dx, dy) {
+  if (inBattle) return; // 戦闘中は移動不可
+
+  // 向きを変更
+  if (dx < 0) facingRight = false;
+  if (dx > 0) facingRight = true;
+
+  // 歩行アニメーションを変更
+  currentImageIndex = (currentImageIndex + 1) % playerImages.length;
+
+  // 移動
+  player.x += dx;
+  player.y += dy;
+
+  // 画面外に出ないよう制限
+  const gameArea = document.getElementById("gameArea");
+  if (gameArea) {
+    const maxX = gameArea.clientWidth - 32;
+    const maxY = gameArea.clientHeight - 32;
+    if (player.x < 0) player.x = 0;
+    if (player.y < 0) player.y = 0;
+    if (player.x > maxX) player.x = maxX;
+    if (player.y > maxY) player.y = maxY;
+  }
+
+  // 画面更新
+  updatePlayerPosition();
+
+  // 歩数カウント & エンカウント判定
+  player.steps++;
+  if (player.steps >= encounterThreshold) {
+    startEncounter();
+    player.steps = 0;  // エンカウント後、歩数リセット
+    encounterThreshold = getRandomEncounterThreshold();  // 次のエンカウント歩数を設定
   }
 }
 
 /*******************************************************
- *  3) ログイン処理
+ *  4) エンカウント・戦闘関連
+ *******************************************************/
+
+/** ランダムエンカウント発生 */
+function startEncounter() {
+  console.log("🐉 敵があらわれた！");
+  inBattle = true;
+  stopFieldBgm();
+  playBattleBgm();
+
+  document.getElementById("gameContainer").style.display = "none";
+  document.getElementById("battle-screen").style.display = "block";
+}
+
+/** 戦闘終了（フィールドへ戻る） */
+function endBattle() {
+  console.log("🎉 戦闘終了！");
+  inBattle = false;
+  stopBattleBgm();
+  playFieldBgm();
+
+  document.getElementById("battle-screen").style.display = "none";
+  document.getElementById("gameContainer").style.display = "block";
+}
+
+/*******************************************************
+ *  5) BGM 関連
+ *******************************************************/
+
+function playFieldBgm() {
+  const fieldBgm = document.getElementById("fieldBGM");
+  if (fieldBgm) fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
+}
+
+function stopFieldBgm() {
+  const fieldBgm = document.getElementById("fieldBGM");
+  if (fieldBgm) {
+    fieldBgm.pause();
+    fieldBgm.currentTime = 0;
+  }
+}
+
+function playBattleBgm() {
+  const battleBgm = document.getElementById("battleBGM");
+  if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
+}
+
+function stopBattleBgm() {
+  const battleBgm = document.getElementById("battleBGM");
+  if (battleBgm) {
+    battleBgm.pause();
+    battleBgm.currentTime = 0;
+  }
+}
+
+/*******************************************************
+ *  6) ゲーム開始処理
  *******************************************************/
 
 document.addEventListener("DOMContentLoaded", () => {
-  const loginBtn = document.getElementById("loginButton");
-  if (loginBtn) {
-    loginBtn.addEventListener("click", async () => {
-      const enteredName = document.getElementById("playerNameInput").value.trim();
-      if (!enteredName) {
-        alert("名前を入力してください！");
-        return;
-      }
-      try {
-        showLoadingOverlay();
-        const params = new URLSearchParams();
-        params.append("mode", "player");
-        params.append("name", enteredName);
+  document.getElementById("startButton").addEventListener("click", () => {
+    document.getElementById("titleScreen").style.display = "none";
+    document.getElementById("gameContainer").style.display = "block";
+    playFieldBgm();
+  });
 
-        const resp = await fetch(GAS_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: params
-        });
-
-        if (!resp.ok) throw new Error("ネットワークエラーです");
-        const data = await resp.json();
-        if (!data.success) throw new Error(data.error || "不明なエラー");
-
-        console.log("データ取得成功:", data);
-        playerData.name = data.name;
-        playerData.level = parseInt(data.level, 10);
-        playerData.exp = parseInt(data.exp, 10);
-        playerData.g = parseInt(data.g, 10);
-        playerData.hp = parseInt(data.hp, 10) || 50;
-        updatePlayerStatusUI();
-
-        await loadQuizData();
-        await loadMonsterData();
-
-        setTimeout(() => {
-          hideLoadingOverlay();
-          document.getElementById("loginScreen").style.display = "none";
-          document.getElementById("titleScreen").style.display = "flex";
-        }, 500);
-      } catch (err) {
-        console.error("ログインエラー:", err);
-        hideLoadingOverlay();
-        alert("ログインエラーが発生しました。再度お試しください。");
-      }
-    });
-  }
+  document.getElementById("dpad-up").addEventListener("click", () => movePlayer(0, -STEP));
+  document.getElementById("dpad-down").addEventListener("click", () => movePlayer(0, STEP));
+  document.getElementById("dpad-left").addEventListener("click", () => movePlayer(-STEP, 0));
+  document.getElementById("dpad-right").addEventListener("click", () => movePlayer(STEP, 0));
 });
