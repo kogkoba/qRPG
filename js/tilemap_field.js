@@ -10,7 +10,7 @@ const fieldTileImages = {
   3: "assets/images/tiles/field/3lake.png",
   4: "assets/images/tiles/field/4hanabatake.png",
   5: "assets/images/tiles/field/5ipponnoki.png",
-  6: "assets/images/tiles/field/6nihonnoki.png",
+  6: "assets/images/tiles/field/6nihonnnoki.png",
   7: "assets/images/tiles/field/7kirikabu.png",
   8: "assets/images/tiles/field/8horaana.png"
 };
