@@ -293,18 +293,43 @@ function updatePlayerPosition() {
   playerElement.style.transform = 
     "translate(-50%, -50%) " + (facingRight ? "scaleX(1)" : "scaleX(-1)");
 }
-
 function movePlayer(dx, dy) {
-  if (inBattle) return;
+  if (inBattle) return; // 戦闘中は移動しない
 
+  // 向きの変更
   if (dx < 0) facingRight = false;
   else if (dx > 0) facingRight = true;
 
+  // プレイヤーの歩行アニメーション
   currentImageIndex = (currentImageIndex + 1) % playerImages.length;
   document.getElementById("player").src = playerImages[currentImageIndex];
 
+  // 新しい座標を計算
   player.x += dx;
   player.y += dy;
+
+  // 画面外に出ないように制限
+  const playerElement = document.getElementById("player");
+  const pw = playerElement.offsetWidth;
+  const ph = playerElement.offsetHeight;
+  const gameArea = document.getElementById("gameArea");
+  const maxX = gameArea.clientWidth - pw;
+  const maxY = gameArea.clientHeight - ph;
+
+  if (player.x < 0) player.x = 0;
+  if (player.y < 0) player.y = 0;
+  if (player.x > maxX) player.x = maxX;
+  if (player.y > maxY) player.y = maxY;
+
+  // プレイヤーの位置を更新
+  updatePlayerPosition();
+
+  // 歩数カウント & ランダムエンカウント判定
+  player.steps++;
+  if (player.steps - lastEncounterSteps >= encounterThreshold) {
+    startEncounter();
+  }
+}
 
   // 画面外に出ないよう制限
   const playerElement = document.getElementById("player");
