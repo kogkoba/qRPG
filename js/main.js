@@ -303,7 +303,7 @@ function startGame() {
   document.getElementById("gameContainer").style.display = "block";
   document.getElementById("gameArea").style.display = "block";
 
-  // **村から開始**
+  // **村から開始（未設定時のみ）**
   if (!currentMap) {
     switchMap("village");
   }
@@ -364,8 +364,6 @@ function switchMap(newMap) {
 }
 
 
-
-
   // プレイヤーの位置をリセット
   player.x = 5;  // 村 → フィールド: 出口付近
   player.y = 5;  // フィールド → 村: 入口付近
@@ -384,6 +382,7 @@ function checkMapTransition() {
     switchMap("village"); // フィールドから村へ
   }
 }
+
 
 
 
@@ -475,13 +474,15 @@ function movePlayer(dx, dy) {
   checkMapTransition();
 }
 
-  // 歩数をカウント & エンカウント判定
-  player.steps++;
-  if (player.steps - lastEncounterSteps >= encounterThreshold) {
-    startEncounter();
-    lastEncounterSteps = player.steps; // エンカウント後、歩数リセット
-  }
+
+ // 歩数をカウント & エンカウント判定
+player.steps++;
+if (player.steps - lastEncounterSteps >= encounterThreshold) {
+  console.log("⚔ モンスターがあらわれた！");
+  startEncounter();
+  lastEncounterSteps = player.steps; // エンカウント後、歩数リセット
 }
+
 
 /** プレイヤーを初期化する関数 */
 function initGame() {
