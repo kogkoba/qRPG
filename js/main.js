@@ -526,8 +526,6 @@ function initGame() {
   updatePlayerPosition();
 }
 
-/** キーボード & 十字キーの移動イベント */
-// これが正しい `DOMContentLoaded` の位置 (最初の1つだけ残す)
 document.addEventListener("DOMContentLoaded", () => {
   stopFieldBgm();
   stopBattleBgm();
@@ -541,7 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
   quizBgm = document.getElementById("quizBGM");
   if (quizBgm) quizBgm.loop = true;
   updateBgmButton();
-});
+
   // 🎮 スタートボタン
   const startBtn = document.getElementById("startButton");
   if (startBtn) {
@@ -574,11 +572,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!data.success) throw new Error(data.error || "不明なエラー");
 
         console.log("データ取得成功:", data);
-        playerData.name  = data.name;
+        playerData.name = data.name;
         playerData.level = parseInt(data.level, 10);
-        playerData.exp   = parseInt(data.exp, 10);
-        playerData.g     = parseInt(data.g, 10);
-        playerData.hp    = parseInt(data.hp, 10) || 50;
+        playerData.exp = parseInt(data.exp, 10);
+        playerData.g = parseInt(data.g, 10);
+        playerData.hp = parseInt(data.hp, 10) || 50;
         updatePlayerStatusUI();
 
         // クイズ & モンスターをロード
@@ -591,7 +589,6 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("loginScreen").style.display = "none";
           document.getElementById("titleScreen").style.display = "flex";
         }, 500);
-
       } catch (err) {
         console.error("ログインエラー:", err);
         hideLoadingOverlay();
@@ -601,15 +598,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 🎮 十字キーのイベント登録 (D-Pad)
-  const upBtn    = document.getElementById("dpad-up");
-  const downBtn  = document.getElementById("dpad-down");
-  const leftBtn  = document.getElementById("dpad-left");
+  const upBtn = document.getElementById("dpad-up");
+  const downBtn = document.getElementById("dpad-down");
+  const leftBtn = document.getElementById("dpad-left");
   const rightBtn = document.getElementById("dpad-right");
 
-  if (upBtn)    upBtn.addEventListener("click", () => movePlayer(0, -STEP));
-  if (downBtn)  downBtn.addEventListener("click", () => movePlayer(0, STEP));
-  if (leftBtn)  leftBtn.addEventListener("click", () => movePlayer(-STEP, 0));
+  if (upBtn) upBtn.addEventListener("click", () => movePlayer(0, -STEP));
+  if (downBtn) downBtn.addEventListener("click", () => movePlayer(0, STEP));
+  if (leftBtn) leftBtn.addEventListener("click", () => movePlayer(-STEP, 0));
   if (rightBtn) rightBtn.addEventListener("click", () => movePlayer(STEP, 0));
+
+  // 🎮 キーボード (WASD or 矢印キー) の移動
+  document.addEventListener("keydown", (event) => {
+    if (event.key && typeof event.key === "string") {
+      if (event.key.toLowerCase() === "w") movePlayer(0, -STEP);
+      if (event.key.toLowerCase() === "s") movePlayer(0, STEP);
+      if (event.key.toLowerCase() === "a") movePlayer(-STEP, 0);
+      if (event.key.toLowerCase() === "d") movePlayer(STEP, 0);
+    }
+  });
+
+}); // ✅ **閉じカッコを1つだけにする**
 
 // 🎮 キーボード (WASD or 矢印キー) の移動
 document.addEventListener("keydown", (event) => {
