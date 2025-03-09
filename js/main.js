@@ -329,4 +329,4 @@ loginBtn.addEventListener("click", async () => {
     alert("ログインエラーが発生しました。再度お試しください。");
   
 
-  ｝
+  });
