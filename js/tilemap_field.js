@@ -1,38 +1,62 @@
-// tilemap.js
+/** フィールド用タイルマップ */
+const TILE_SIZE = 32; // 1タイルのサイズ
+const MAP_ROWS = 15;
+const MAP_COLS = 15;
 
-/** タイルマップデータ（0 = 安全地帯, 1 = エンカウント可能エリア） */
-const tileMap = [
-  [0, 0, 1, 1, 1, 0, 0],
-  [0, 1, 1, 1, 1, 1, 0],
-  [1, 1, 1, 0, 1, 1, 1],
-  [1, 1, 0, 0, 0, 1, 1],
-  [0, 1, 1, 1, 1, 1, 0],
-  [0, 0, 1, 1, 1, 0, 0]
+/** フィールドのタイル画像対応 */
+const fieldTileImages = {
+  1: "assets/images/tiles/field/1grass.png",
+  2: "assets/images/tiles/field/2soil.png",
+  3: "assets/images/tiles/field/3lake.png",
+  4: "assets/images/tiles/field/4hanabatake.png",
+  5: "assets/images/tiles/field/5ipponnoki.png",
+  6: "assets/images/tiles/field/6nihonnoki.png",
+  7: "assets/images/tiles/field/7kirikabu.png",
+  8: "assets/images/tiles/field/8horaana.png"
+};
+
+/** フィールドのタイルマップデータ */
+const fieldTileMap = [
+  [6, 6, 6, 6, 6, 6, 2, 2, 6, 6, 6, 6, 6, 6, 6],
+  [6, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 6],
+  [6, 5, 5, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 6],
+  [6, 5, 1, 1, 1, 1, 2, 2, 2, 2, 1, 5, 5, 5, 6],
+  [6, 5, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 5, 5, 6],
+  [6, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 5, 6],
+  [6, 1, 1, 1, 5, 5, 5, 1, 2, 2, 1, 1, 1, 1, 6],
+  [6, 5, 5, 5, 5, 2, 2, 2, 2, 2, 1, 1, 1, 1, 6],
+  [6, 7, 2, 2, 2, 2, 1, 1, 2, 2, 1, 1, 1, 1, 6],
+  [6, 3, 4, 4, 4, 3, 1, 1, 2, 2, 1, 1, 1, 1, 6],
+  [6, 5, 3, 8, 3, 5, 1, 1, 2, 2, 2, 2, 2, 7, 6],
+  [6, 1, 1, 2, 1, 5, 5, 5, 2, 2, 1, 1, 1, 1, 6],
+  [6, 1, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 6],
+  [6, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 6],
+  [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]
 ];
 
-/** 1タイルのサイズ（ピクセル単位） */
-const TILE_SIZE = 32;
+/** フィールドを描画 */
+function drawFieldMap() {
+  const gameArea = document.getElementById("gameArea");
+  gameArea.innerHTML = "";
 
-/** プレイヤーの位置をタイル座標に変換 */
-function getPlayerTilePosition() {
-  return {
-    x: Math.floor(player.x / TILE_SIZE),
-    y: Math.floor(player.y / TILE_SIZE)
-  };
-}
+  for (let row = 0; row < MAP_ROWS; row++) {
+    for (let col = 0; col < MAP_COLS; col++) {
+      const tileValue = fieldTileMap[row][col];
+      const tileSrc = fieldTileImages[tileValue];
 
-/** エンカウント判定（20%の確率で戦闘開始） */
-function checkForEncounter() {
-  const { x, y } = getPlayerTilePosition();
+      if (!tileSrc) continue;
 
-  if (x < 0 || y < 0 || y >= tileMap.length || x >= tileMap[0].length) {
-    return;
-  }
+      const tileElement = document.createElement("img");
+      tileElement.src = tileSrc;
+      tileElement.style.position = "absolute";
+      tileElement.style.width = `${TILE_SIZE}px`;
+      tileElement.style.height = `${TILE_SIZE}px`;
+      tileElement.style.left = `${col * TILE_SIZE}px`;
+      tileElement.style.top = `${row * TILE_SIZE}px`;
 
-  if (tileMap[y][x] === 1) { // 1 = 敵が出るエリア
-    if (Math.random() < 0.2) {
-      startEncounter();
+      gameArea.appendChild(tileElement);
     }
   }
 }
 
+document.addEventListener("DOMContentLoaded", drawFieldMap);
