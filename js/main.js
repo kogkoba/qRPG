@@ -44,6 +44,7 @@ const MAX_MISS = 4;
 let lastEncounterSteps = 0;
 let encounterThreshold = 5; // 何歩ごとにエンカウントするか
 let battleStartHp = 50; // バトル開始時のHP
+let battleStartG = 0;
 
 // 現在のマップ (village / field)
 let currentMap = null;
@@ -456,19 +457,23 @@ function updatePlayerPosition() {
 /*******************************************************
  *  8) 戦闘 (＝クイズ)
  *******************************************************/
+/*******************************************************
+ *  8) 戦闘 (＝クイズ)
+ *******************************************************/
 function startEncounter() {
   if (inBattle) return;
   console.log("📖 クイズバトル開始！");
   inBattle = true;
 
+  // フィールドBGMを止め、クイズBGMを再生
   stopFieldBgm();
   playQuizBgm();
 
-  // クイズ開始時の状態を保存
+  // ✅ クイズ開始時のプレイヤーデータを保存
   battleStartHp = playerData.hp;
   battleStartG = playerData.g;
 
-  // クイズ出題
+  // クイズを出題
   showQuiz();
 }
 
@@ -510,6 +515,37 @@ function showQuiz() {
   });
 }
 
+/*******************************************************
+ *  9) クイズ出題・解答処理
+ *******************************************************/
+
+/** クイズを表示 */
+function showQuiz() {
+  console.log("📖 クイズを出題！");
+
+  // ✅ ランダムにクイズを取得
+  const quiz = getRandomQuiz();
+  if (!quiz) {
+    console.error("⛔ クイズデータがありません");
+    endBattle(); // クイズがない場合、戦闘終了
+    return;
+  }
+
+  // ✅ 画面にクイズを表示
+  document.getElementById("top-text-box").textContent = quiz.question;
+  
+  const choiceArea = document.getElementById("choice-area");
+  choiceArea.innerHTML = ""; // 過去の選択肢をクリア
+
+  // ✅ 選択肢をボタンとして表示
+  quiz.choices.forEach((choice, index) => {
+    const btn = document.createElement("button");
+    btn.textContent = choice;
+    btn.onclick = () => answerQuiz(index, quiz); // クイズ解答処理を呼び出す
+    choiceArea.appendChild(btn);
+  });
+}
+
 /** 選択肢ボタンを無効化 */
 function disableChoiceButtons() {
   const buttons = document.getElementById("choice-area").getElementsByTagName("button");
@@ -519,23 +555,32 @@ function disableChoiceButtons() {
 }
 
 /** クイズの解答処理 */
+/** クイズの解答処理 */
 function answerQuiz(selected, quiz) {
-  disableChoiceButtons();
+  disableChoiceButtons(); // 解答後にボタンを無効化
 
   if (selected === quiz.correct) {
     console.log("⭕ 正解！");
+    
+    // ✅ 経験値とゴールドを加算
     addExp(20);
     playerData.g += 5;
     savePlayerData();
-    setTimeout(endBattle, 1000); // 1秒後に戦闘終了
+
+    // ✅ 1秒後に戦闘終了
+    setTimeout(endBattle, 1000);
   } else {
     console.log("❌ 不正解！");
+
+    // ✅ HPを減少
     changeHp(-10);
+
+    // ✅ 間違えた問題を記録
     if (quiz.questionId) {
       recordMistake(playerData.name, quiz.questionId);
     }
 
-    // HPが0ならゲームオーバー処理
+    // ✅ HPが0ならゲームオーバー、それ以外は戦闘終了
     if (playerData.hp <= 0) {
       setTimeout(showGameOverOptions, 1000);
     } else {
@@ -544,6 +589,7 @@ function answerQuiz(selected, quiz) {
   }
 }
 
+/** 間違い記録 */
 /** 間違い記録 */
 function recordMistake(playerName, questionId) {
   const params = new URLSearchParams();
