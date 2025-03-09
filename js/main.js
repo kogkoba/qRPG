@@ -318,8 +318,11 @@ function startGame() {
   updatePlayerStatusUI();
 }
 
+/** マップを描画する関数 */
+function drawMap() {
+  console.log("🗺 マップを描画しました！");
+}
 
-console.log("✅ startGame() が正しく定義されました！"); // ✅ デバッグ用
 
 /** 村BGM */
 function playVillageBgm() {
