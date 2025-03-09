@@ -458,21 +458,7 @@ function updatePlayerPosition() {
     `translate(-50%, -50%) ${facingRight ? "scaleX(1)" : "scaleX(-1)"}`;
 }
 
-/*******************************************************
- *  6) ゲームオーバー・再挑戦 (ダミー実装)
- *******************************************************/
-function showGameOverOptions() {
-  console.log("⚠ ゲームオーバー。再挑戦or教会へ行く選択を実装してください。");
-}
-function startBattleInitForRetry() {
-  console.log("再挑戦時の戦闘初期化を実装してください。");
-}
-function retryBattle() {
-  console.log("バトルをリトライする処理を実装してください。");
-}
-function restartFromChurch() {
-  console.log("教会へ戻る処理を実装してください。");
-}
+
 
 /*******************************************************
  *  8) 戦闘 (＝クイズ)
@@ -587,25 +573,72 @@ function recordMistake(playerName, questionId) {
 }
 
 /*******************************************************
- * 10) クイズバトル終了処理
+ *  6) ゲームオーバー・再挑戦
  *******************************************************/
-function endBattle() {
-  console.log("✅ クイズバトル終了");
-  inBattle = false;
-
-  stopQuizBgm();
-  playFieldBgm();
-
-  updatePlayerStatusUI();
-  document.getElementById("battle-screen").style.display = "none";
-  document.getElementById("gameContainer").style.display = "block";
-}
 
 /** ゲームオーバー処理 */
 function showGameOverOptions() {
-  console.log("💀 ゲームオーバー！");
-  document.getElementById("top-text-box").textContent = "💀 ゲームオーバー！";
+  console.log("💀 ゲームオーバー！選択肢を表示");
+
   inBattle = false;
+  stopQuizBgm();
+  
+  const topText = document.getElementById("top-text-box");
+  topText.textContent = "💀 ゲームオーバー！";
+
+  const choiceArea = document.getElementById("choice-area");
+  choiceArea.innerHTML = ""; // 選択肢をクリア
+
+  // ✅ 教会に戻るボタン
+  const churchButton = document.createElement("button");
+  churchButton.textContent = "🏥 教会へ戻る";
+  churchButton.onclick = restartFromChurch;
+  choiceArea.appendChild(churchButton);
+
+  // ✅ クイズ再挑戦ボタン
+  const retryButton = document.createElement("button");
+  retryButton.textContent = "🔄 クイズをやり直す";
+  retryButton.onclick = retryBattle;
+  choiceArea.appendChild(retryButton);
+}
+
+/** 教会に戻る処理 (Gが半分になり、村の教会からスタート) */
+function restartFromChurch() {
+  console.log("⛪ 教会へ戻る (Gが半分になり、村の教会からスタート)");
+
+  // Gを半分にする
+  playerData.g = Math.floor(playerData.g / 2);
+  playerData.hp = 50; // HP全回復
+
+  // プレイヤーを村の教会の位置へ
+  player.x = 100; // 教会のX座標 (適宜変更)
+  player.y = 150; // 教会のY座標 (適宜変更)
+
+  savePlayerData();
+  updatePlayerStatusUI();
+  updatePlayerPosition();
+
+  // 画面を切り替え
+  document.getElementById("battle-screen").style.display = "none";
+  document.getElementById("gameContainer").style.display = "block";
+
+  stopQuizBgm();
+  playFieldBgm();
+}
+
+/** クイズ再挑戦 (クイズ開始時の状態に戻し、再挑戦) */
+function retryBattle() {
+  console.log("🔄 クイズをやり直す (開始時の状態にリセット)");
+
+  // クイズ開始時のHPとGに戻す (仮に戦闘開始時に保存しておく)
+  playerData.hp = battleStartHp;
+  playerData.g = battleStartG;
+
+  savePlayerData();
+  updatePlayerStatusUI();
+
+  // クイズを再表示
+  showQuiz();
 }
 
 /*******************************************************
