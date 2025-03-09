@@ -266,8 +266,14 @@ function initGame() {
   // 必要なら初期位置を設定
   // player.x = 100; 
   // player.y = 100;
-  updatePlayerPosition();
+  function updatePlayerPosition() {
+  const playerElement = document.getElementById("player");
+  playerElement.style.left = player.x + "px";
+  playerElement.style.top = player.y + "px";
+  playerElement.style.transform = 
+    "translate(-50%, -50%) " + (facingRight ? "scaleX(1)" : "scaleX(-1)");
 }
+
 
 function startGame() {
   console.log("ゲーム開始！");
