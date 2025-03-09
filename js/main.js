@@ -128,6 +128,71 @@ function hideLoadingOverlay() {
 /*******************************************************
  *  4) BGM関連
  *******************************************************/
+let isBgmPlaying = false; // BGMの状態を管理するフラグ
+
+// BGMのON/OFFを切り替える関数
+function toggleBgm() {
+  isBgmPlaying = !isBgmPlaying;
+  const button = document.getElementById("bgmToggleButton");
+
+  if (isBgmPlaying) {
+    button.textContent = "BGM ON";
+    playCurrentBgm(); // 現在のマップに応じたBGMを再生
+  } else {
+    button.textContent = "BGM OFF";
+    stopAllBgm();
+  }
+}
+
+// 現在のマップに応じたBGMを再生する関数
+function playCurrentBgm() {
+  if (!isBgmPlaying) return;
+
+  stopAllBgm(); // すべてのBGMを停止
+
+  if (currentMap === "village") {
+    playVillageBgm();
+  } else if (currentMap === "field") {
+    playFieldBgm();
+  } else if (inBattle) {
+    playBattleBgm();
+  }
+}
+
+// すべてのBGMを停止する関数
+function stopAllBgm() {
+  document.querySelectorAll("audio").forEach(audio => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+}
+
+// 各BGMを再生する関数
+function playVillageBgm() {
+  if (!isBgmPlaying) return;
+  const villageBgm = document.getElementById("villageBGM");
+  if (villageBgm) villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
+}
+
+function playFieldBgm() {
+  if (!isBgmPlaying) return;
+  const fieldBgm = document.getElementById("fieldBGM");
+  if (fieldBgm) fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
+}
+
+function playBattleBgm() {
+  if (!isBgmPlaying) return;
+  const battleBgm = document.getElementById("battleBGM");
+  if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
+}
+
+// BGMスイッチをセットアップ
+document.addEventListener("DOMContentLoaded", () => {
+  const bgmButton = document.getElementById("bgmToggleButton");
+  if (bgmButton) {
+    bgmButton.addEventListener("click", toggleBgm);
+  }
+});
 
 /** BGMボタンの表示を更新 */
 function updateBgmButton() {
