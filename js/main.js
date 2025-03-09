@@ -290,6 +290,30 @@ function changeHp(amount) {
   }
 }
 
+/*******************************************************
+ *  6) ゲーム開始処理
+ *******************************************************/
+function startGame() {
+  console.log("ゲーム開始！");
+
+  // タイトル画面を非表示
+  document.getElementById("titleScreen").style.display = "none";
+
+  // ゲーム画面を表示
+  document.getElementById("gameContainer").style.display = "block";
+  document.getElementById("gameArea").style.display = "block";
+
+  // フィールドBGMを再生
+  playFieldBgm();
+
+  // 初期化処理
+  initGame();
+  updatePlayerStatusUI();
+}
+
+console.log("✅ startGame() が正しく定義されました！"); // ✅ デバッグ用
+
+
 
 /*******************************************************
  *  6) ゲームオーバー・再挑戦 (ダミー)
