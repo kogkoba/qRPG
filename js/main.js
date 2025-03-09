@@ -7,7 +7,7 @@
 
 // 🔽 GAS_PERSONAL_URL は個人ミス記録用のものがあるなら、そのまま or 統合
 // もし1つのGASにまとめるなら recordMistake も同じ GAS_URL で使うと良い
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzOcSUqWYxKorgWkveD3dRznc7V6SbqivpBFpdn2nD3sXr1NKkq6zW4AQSjjFotNWp8xQ/exec"; 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwOcT2PzrIr6tlVfkQcrPYhz8d8AWz2tIi9XKQXqEVKDx9NikI6E94QDcjpbCQ4gODO/exec"; 
 
 const STEP = 20;
 
