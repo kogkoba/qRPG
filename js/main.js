@@ -305,7 +305,7 @@ function startGame() {
   // 初期化処理
   initGame();
   updatePlayerStatusUI();
-}
+
 
 function updatePlayerPosition() {
   const playerElement = document.getElementById("player");
