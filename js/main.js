@@ -343,63 +343,84 @@ function initGame() {
   updatePlayerStatusUI();
 }
 
-/** プレイヤー位置を更新 */
+/** プレイヤーの位置を更新する関数 */
 function updatePlayerPosition() {
   const playerElement = document.getElementById("player");
-  if (!playerElement) return;
+  if (!playerElement) return; // プレイヤー要素が存在しない場合は何もしない
+
   playerElement.style.left = `${player.x}px`;
-  playerElement.style.top  = `${player.y}px`;
+  playerElement.style.top = `${player.y}px`;
   playerElement.style.transform =
     `translate(-50%, -50%) ${facingRight ? "scaleX(1)" : "scaleX(-1)"}`;
 }
 
-/** プレイヤー移動 */
+/** プレイヤーの移動処理 */
 function movePlayer(dx, dy) {
-  if (inBattle) return; // 戦闘中は移動不可
+  if (inBattle) return; // 戦闘中なら移動不可
 
-  // 向き
+  // 向きを変更
   if (dx < 0) facingRight = false;
-  else if (dx > 0) facingRight = true;
+  if (dx > 0) facingRight = true;
 
-  // 歩行アニメ
+  // 歩行アニメーションの切り替え
   currentImageIndex = (currentImageIndex + 1) % playerImages.length;
   const playerElement = document.getElementById("player");
   if (playerElement) {
     playerElement.src = playerImages[currentImageIndex];
   }
 
-  // 移動
+  // プレイヤー位置の更新
   player.x += dx;
   player.y += dy;
 
   // 画面外に出ないよう制限
-  const pW = playerElement ? playerElement.offsetWidth : 0;
-  const pH = playerElement ? playerElement.offsetHeight : 0;
   const gameArea = document.getElementById("gameArea");
   if (gameArea) {
-    const maxX = gameArea.clientWidth - pW;
-    const maxY = gameArea.clientHeight - pH;
+    const maxX = gameArea.clientWidth - playerElement.offsetWidth;
+    const maxY = gameArea.clientHeight - playerElement.offsetHeight;
+
     if (player.x < 0) player.x = 0;
     if (player.y < 0) player.y = 0;
     if (player.x > maxX) player.x = maxX;
     if (player.y > maxY) player.y = maxY;
   }
 
-  // 位置更新
+  // 画面を更新
   updatePlayerPosition();
 
-  // 歩数 & ランダムエンカウント
+  // 歩数をカウント & エンカウント判定
   player.steps++;
   if (player.steps - lastEncounterSteps >= encounterThreshold) {
     startEncounter();
+    lastEncounterSteps = player.steps; // エンカウント後、歩数リセット
   }
 }
 
-/** ランダムエンカウント閾値 */
-function getRandomEncounterThreshold() {
-  return Math.floor(Math.random() * 11) + 5; // 5~15
+/** プレイヤーを初期化する関数 */
+function initGame() {
+  player.x = 100; // 初期X座標
+  player.y = 100; // 初期Y座標
+  updatePlayerPosition();
 }
 
+/** キーボード & 十字キーの移動イベント */
+document.addEventListener("DOMContentLoaded", () => {
+  initGame(); // プレイヤーの初期位置設定
+
+  // 十字キーのクリックイベント
+  document.getElementById("dpad-up").addEventListener("click", () => movePlayer(0, -STEP));
+  document.getElementById("dpad-down").addEventListener("click", () => movePlayer(0, STEP));
+  document.getElementById("dpad-left").addEventListener("click", () => movePlayer(-STEP, 0));
+  document.getElementById("dpad-right").addEventListener("click", () => movePlayer(STEP, 0));
+
+  // キーボードの矢印キーでも移動可能にする
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") movePlayer(0, -STEP);
+    if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") movePlayer(0, STEP);
+    if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") movePlayer(-STEP, 0);
+    if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") movePlayer(STEP, 0);
+  });
+});
 
 /*******************************************************
  *  8) 戦闘関連 (ダミー)
