@@ -318,6 +318,7 @@ function startGame() {
   updatePlayerPosition();
 
  /** 村BGMを再生 */
+/** 村BGM */
 function playVillageBgm() {
   if (!isBgmPlaying) return; // BGMがOFFなら再生しない
   const villageBgm = document.getElementById("villageBGM");
@@ -328,6 +329,15 @@ function playVillageBgm() {
   villageBgm.currentTime = 0;
   villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
 }
+
+/** 村BGMを停止 */
+function stopVillageBgm() {
+  const villageBgm = document.getElementById("villageBGM");
+  if (!villageBgm) return;
+  villageBgm.pause();
+  villageBgm.currentTime = 0;
+}
+
 
 
     // **村から開始（未設定時のみ）**
