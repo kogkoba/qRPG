@@ -270,7 +270,6 @@ function recordMistake(playerName, questionId) {
 function onZaoriku() { /* ... */ }
 function endBattle() { /* ... */ }
 
-// ======================= 11) DOMContentLoaded：ログイン処理 =======================
 document.addEventListener("DOMContentLoaded", () => {
   // BGM オフから開始
   stopFieldBgm();
@@ -340,3 +339,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// ✅ ゲームスタートの仮の処理（あとでしっかり作る）
+function startGame() {
+    console.log("ゲーム開始！");
+    // ここにゲーム開始の処理を追加！
+}
+
