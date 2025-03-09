@@ -541,7 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
   quizBgm = document.getElementById("quizBGM");
   if (quizBgm) quizBgm.loop = true;
   updateBgmButton();
-
+}
   // 🎮 スタートボタン
   const startBtn = document.getElementById("startButton");
   if (startBtn) {
