@@ -304,7 +304,9 @@ function startGame() {
   document.getElementById("gameArea").style.display = "block";
 
   // **村から開始**
-  switchMap("village");
+  if (!currentMap) {
+    switchMap("village");
+  }
 
   // BGM開始（村のBGM）
   playVillageBgm();
@@ -376,11 +378,14 @@ function switchMap(newMap) {
 // マップ遷移ポイントのチェック
 function checkMapTransition() {
   if (currentMap === "village" && player.x === 7 && player.y === 0) {
+    console.log("🚪 村からフィールドへ移動！");
     switchMap("field");  // 村からフィールドへ
   } else if (currentMap === "field" && player.x === 7 && player.y === 14) {
+    console.log("🏠 フィールドから村へ移動！");
     switchMap("village"); // フィールドから村へ
   }
 }
+
 
 
 // プレイヤー移動時にチェック
@@ -447,9 +452,21 @@ function movePlayer(dx, dy) {
     playerElement.src = playerImages[currentImageIndex];
   }
 
+  // 新しい座標を計算
+  let newX = player.x + dx;
+  let newY = player.y + dy;
+
+  // **タイルマップの範囲外に出ないよう制限**
+  const mapWidth = tileMap[0].length;
+  const mapHeight = tileMap.length;
+  if (newX < 0 || newX >= mapWidth || newY < 0 || newY >= mapHeight) {
+    console.warn("🚧 これ以上進めません！");
+    return; // 範囲外なら移動しない
+  }
+
   // プレイヤー位置の更新
-  player.x += dx;
-  player.y += dy;
+  player.x = newX;
+  player.y = newY;
 
   // 画面外に出ないよう制限
   const gameArea = document.getElementById("gameArea");
@@ -465,6 +482,11 @@ function movePlayer(dx, dy) {
 
   // 画面を更新
   updatePlayerPosition();
+
+  // マップ遷移チェック
+  checkMapTransition();
+}
+
 
   // 歩数をカウント & エンカウント判定
   player.steps++;
