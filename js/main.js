@@ -306,8 +306,8 @@ function startGame() {
   // **村から開始**
   switchMap("village");
 
-  // BGM開始
-  playFieldBgm();
+  // BGM開始（村のBGM）
+  playVillageBgm();
 
   // 初期化処理
   initGame();
@@ -315,7 +315,25 @@ function startGame() {
 }
 
 
+
 console.log("✅ startGame() が正しく定義されました！"); // ✅ デバッグ用
+
+/** 村BGM */
+function playVillageBgm() {
+  if (!isBgmPlaying) return;
+  const villageBgm = document.getElementById("villageBGM");
+  if (!villageBgm) return;
+  villageBgm.currentTime = 0;
+  villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
+}
+
+function stopVillageBgm() {
+  const villageBgm = document.getElementById("villageBGM");
+  if (!villageBgm) return;
+  villageBgm.pause();
+  villageBgm.currentTime = 0;
+}
+
 
 /** マップの切り替え */
 function switchMap(newMap) {
@@ -323,11 +341,29 @@ function switchMap(newMap) {
     currentMap = "field";
     tileMap = tileMapField;
     tileImages = tileImagesField;
+    player.x = 7;  // フィールドの村の出口
+    player.y = 0;
+
+    stopVillageBgm();
+    playFieldBgm();  // フィールドBGMを再生
+
   } else if (newMap === "village") {
     currentMap = "village";
     tileMap = tileMapVillage;
     tileImages = tileImagesVillage;
+    player.x = 7;  // 村の入口
+    player.y = 14;
+
+    stopFieldBgm();
+    playVillageBgm();  // 村BGMを再生
   }
+
+  // マップを描画
+  drawMap();
+  updatePlayerPosition();
+}
+
+
 
   // プレイヤーの位置をリセット
   player.x = 5;  // 村 → フィールド: 出口付近
@@ -339,12 +375,13 @@ function switchMap(newMap) {
 }
 // マップ遷移ポイントのチェック
 function checkMapTransition() {
-  if (currentMap === "village" && player.x === 7 && player.y === 14) {
+  if (currentMap === "village" && player.x === 7 && player.y === 0) {
     switchMap("field");  // 村からフィールドへ
-  } else if (currentMap === "field" && player.x === 5 && player.y === 0) {
+  } else if (currentMap === "field" && player.x === 7 && player.y === 14) {
     switchMap("village"); // フィールドから村へ
   }
 }
+
 
 // プレイヤー移動時にチェック
 function movePlayer(dx, dy) {
