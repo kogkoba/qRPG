@@ -598,13 +598,17 @@ document.addEventListener("DOMContentLoaded", () => {
   if (leftBtn)  leftBtn.addEventListener("click", () => movePlayer(-STEP, 0));
   if (rightBtn) rightBtn.addEventListener("click", () => movePlayer(STEP, 0));
 
-  // 🎮 キーボード (WASD or 矢印キー) の移動
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") movePlayer(0, -STEP);
-    if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") movePlayer(0, STEP);
-    if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") movePlayer(-STEP, 0);
-    if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") movePlayer(STEP, 0);
-  });
+// 🎮 キーボード (WASD or 矢印キー) の移動
+document.addEventListener("keydown", (event) => {
+  if (event.key && typeof event.key === "string") {
+    const key = event.key.toLowerCase(); // 先に変数に入れる
+
+    if (key === "arrowup" || key === "w") movePlayer(0, -STEP);
+    if (key === "arrowdown" || key === "s") movePlayer(0, STEP);
+    if (key === "arrowleft" || key === "a") movePlayer(-STEP, 0);
+    if (key === "arrowright" || key === "d") movePlayer(STEP, 0);
+  }
+});
 
   console.log("✅ DOMContentLoaded イベント完了！");
 });
