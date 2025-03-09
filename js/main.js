@@ -2,7 +2,7 @@
  *  1) 定数・グローバル変数
  *******************************************************  */
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxGVmYEFp0gbXU3cs0-BlWQNvIGBbZzqiRv2HWhbWycTkqXuYwXjVq3ShK8oh51RDtG/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyePG3YFqoowQO3M77iXS83AsOPc832tKy1LAdN-YdoiigyQcvxZFF5dZnvns3r0h-q/exec";
 
 const STEP = 20;  // 1歩の移動距離
 
