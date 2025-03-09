@@ -272,19 +272,7 @@ function stopBattleBgm() {
   isBattleBgmPlaying = false;
 }
 
-/** クイズBGM（使うかどうかはお好みで） */
-function playQuizBgm() {
-  if (!quizBgm) quizBgm = document.getElementById("quizBGM");
-  if (!isBgmPlaying || !quizBgm || !quizBgm.paused) return;
-  quizBgm.currentTime = 0;
-  quizBgm.play().catch(err => console.warn("クイズBGM再生エラー:", err));
-}
-function stopQuizBgm() {
-  if (!quizBgm) quizBgm = document.getElementById("quizBGM");
-  if (!quizBgm) return;
-  quizBgm.pause();
-  quizBgm.currentTime = 0;
-}
+
 
 /*******************************************************
  *  5) プレイヤーデータ周り
