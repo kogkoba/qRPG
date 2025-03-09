@@ -170,6 +170,13 @@ function startGame() {
 
 
 // ======================= 12) DOM読み込み完了後の処理 =======================
+function stopFieldBgm() {
+  const fieldBgm = document.getElementById("fieldBGM");
+  if (!fieldBgm) return;
+  fieldBgm.pause();
+  fieldBgm.currentTime = 0;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   // BGMをオフから開始
   stopFieldBgm();
