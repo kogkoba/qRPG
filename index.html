@@ -47,8 +47,9 @@
 
   
 <!-- マップデータを読み込む -->
-<script src="js/tilemap_village.js"></script>
-<script src="js/tilemap_field.js"></script>
+<script src="js/tilemap_village.js"></script>  <!-- ✅ 先に読み込む -->
+<script src="js/tilemap_field.js"></script>    <!-- ✅ 次にフィールド -->
+<script src="js/main.js"></script>  
 
 
 <!-- タイトル画面 -->
@@ -104,9 +105,5 @@
   <button onclick="restartFromChurch()">教会へ行く</button>
 </div>
 
-
-
-<!-- メインスクリプトを最後に読み込む -->
-<script src="js/main.js"></script>
 </body>
 </html>
