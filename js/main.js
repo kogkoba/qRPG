@@ -506,4 +506,3 @@ function startGame() {
     console.log("ゲーム開始！");
     // ここにゲーム開始の処理を追加！
 }
-
