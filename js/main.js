@@ -348,9 +348,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ✅ ゲームスタートの仮の処理（あとでしっかり作る）
 function startGame() {
     console.log("ゲーム開始！");
-    // ここにゲーム開始の処理を追加！
+
+    // ✅ タイトル画面を隠し、フィールド画面を表示する
+    document.getElementById("titleScreen").style.display = "none";
+    document.getElementById("fieldScreen").style.display = "block";  // ← ここが重要！！
+
+    // ✅ フィールドのBGMを再生（あれば）
+    playFieldBgm();
+
+    // ✅ 初期プレイヤー位置を設定（必要なら）
+    updatePlayerPosition();
 }
 
