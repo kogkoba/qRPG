@@ -276,7 +276,20 @@ function initGame() {
 
 
 function startGame() {
-  console.log("ゲーム開始！");
+    console.log("ゲーム開始！");
+
+    // ✅ タイトル画面を隠し、ゲーム画面を表示する
+    document.getElementById("titleScreen").style.display = "none";
+    document.getElementById("gameContainer").style.display = "block"; // ← これを追加
+    document.getElementById("gameArea").style.display = "block"; // ← これも追加
+
+    // ✅ フィールドBGMを再生（あれば）
+    playFieldBgm();
+
+    // ✅ 初期プレイヤー位置を設定（必要なら）
+    updatePlayerPosition();
+}
+
 
   // タイトル画面を非表示
   document.getElementById("titleScreen").style.display = "none";
