@@ -351,9 +351,10 @@ document.addEventListener("DOMContentLoaded", () => {
 function startGame() {
     console.log("ゲーム開始！");
 
-    // ✅ タイトル画面を隠し、ゲームエリアを表示する
+    // ✅ タイトル画面を隠し、ゲーム画面を表示する
     document.getElementById("titleScreen").style.display = "none";
-    document.getElementById("gameArea").style.display = "block";  // ← ここを修正！
+    document.getElementById("gameContainer").style.display = "block"; // ← これを追加
+    document.getElementById("gameArea").style.display = "block"; // ← これも追加
 
     // ✅ フィールドBGMを再生（あれば）
     playFieldBgm();
@@ -361,4 +362,5 @@ function startGame() {
     // ✅ 初期プレイヤー位置を設定（必要なら）
     updatePlayerPosition();
 }
+
 
