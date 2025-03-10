@@ -604,6 +604,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (startBtn) startBtn.addEventListener("click", startGame);
 
   // ログインボタン
+document.addEventListener("DOMContentLoaded", () => {
+  // ログインボタンのイベント登録
   const loginBtn = document.getElementById("loginButton");
   if (loginBtn) {
     loginBtn.addEventListener("click", async () => {
@@ -618,9 +620,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const loadingOverlay = document.getElementById("loadingOverlay");
         const loadingMessage = document.getElementById("loadingMessage");
         loadingMessage.textContent = "ロード中…";  // 初期メッセージ
+        loadingMessage.style.display = "block"; // 必要なら表示
         loadingOverlay.style.display = "flex";
 
-        // プレイヤーデータ読み込み
+        // プレイヤーデータの読み込み
         const params = new URLSearchParams();
         params.append("mode", "player");
         params.append("name", enteredName);
@@ -634,7 +637,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await resp.json();
         if (!data.success) throw new Error(data.error || "不明なエラー");
 
-        // 取得データをセット
+        // 取得したプレイヤーデータをセット
         playerData.name  = data.name;
         playerData.level = parseInt(data.level, 10);
         playerData.exp   = parseInt(data.exp, 10);
@@ -653,16 +656,20 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           // ロード完了後、ログイン画面を非表示にしてタイトル画面を表示
           loadingOverlay.style.display = "none";
+          loadingMessage.style.display = "none";
           document.getElementById("loginScreen").style.display = "none";
           document.getElementById("titleScreen").style.display = "flex";
         }, 500);
       } catch (err) {
         console.error("ログインエラー:", err);
         document.getElementById("loadingOverlay").style.display = "none";
+        loadingMessage.style.display = "none";
         alert("ログインエラーが発生しました。再度お試しください。");
       }
     });
   }
+
+  // その他のイベント登録…
 });
 
 
