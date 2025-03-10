@@ -1,4 +1,6 @@
-/* ========== 共通設定 ========== */
+/*******************************************************
+ * 共通設定
+ *******************************************************/
 html, body {
   margin: 0;
   padding: 0;
@@ -9,8 +11,9 @@ html, body {
   color: #fff;
 }
 
-/* ========== ログイン画面 ========== */
-/* 最初に表示されるように display: flex; にする */
+/*******************************************************
+ * ログイン画面
+ *******************************************************/
 #loginScreen {
   display: flex;
   flex-direction: column;
@@ -18,45 +21,51 @@ html, body {
   align-items: center;
   width: 100%;
   height: 100%;
-  background: black;
+  background-color: #000;
 }
 #loginScreen input,
 #loginScreen button {
   font-size: 18px;
-  padding: 5px;
+  padding: 8px 12px;
   margin: 10px;
+  border-radius: 4px;
 }
 
-/* ========== タイトル画面 ========== */
-/* ログイン後に表示するので最初は display: none; */
+/*******************************************************
+ * タイトル画面
+ *******************************************************/
 #titleScreen {
-  display: none;
+  display: none;  /* ログイン後に表示 */
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
-  background: black;
+  background-color: #000;
 }
 #startButton {
   font-size: 24px;
   padding: 10px 20px;
-  cursor: pointer;
   border: 2px solid #fff;
-  background: #444;
+  background-color: #444;
   color: #fff;
   border-radius: 5px;
+  cursor: pointer;
 }
 
-/* ========== ゲーム画面全体 ========== */
-/* ゲーム開始後に表示するので最初は display: none; */
+/*******************************************************
+ * ゲーム画面全体
+ *******************************************************/
 #gameContainer {
-  display: none;
+  display: none;  /* ゲーム開始後に表示 */
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
-/* ---------- ステータス表示 ---------- */
+/*******************************************************
+ * ステータス表示
+ *******************************************************/
 #status {
   padding: 10px;
   text-align: center;
@@ -64,30 +73,44 @@ html, body {
   background-color: #111;
 }
 
-/* ========== フィールド画面 ========== */
-/* ゲーム開始後、スタートボタン押下でようやく表示するので最初は none */
+/*******************************************************
+ * フィールド画面（タイルマップ表示用）
+ *******************************************************/
 #gameArea {
   position: relative;
   width: 100%;
-  height: calc(100% - 50px);
-  background: url("https://lh3.googleusercontent.com/d/1jDckidA8IqAdhUncYX09kzOQd2IqanYQ") no-repeat center center;
-  background-size: cover;
+  height: calc(100% - 50px); /* ステータス表示分を除く高さ */
+  /* 背景は drawMap() でタイルが描画されるため、ここではシンプルな背景色を設定 */
+  background-color: #333;
   overflow: hidden;
-  display: none; /* 必要に応じてJSから"block"等に切り替え */
 }
 
-/* プレイヤーキャラ */
+/* マップ描画用コンテナ（drawMap() で利用） */
+#mapContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*******************************************************
+ * プレイヤーキャラ
+ *******************************************************/
 #player {
   position: absolute;
   width: 30px;
   height: auto;
+  z-index: 10;
 }
 
-/* ---------- D-Pad (十字キー) ---------- */
+/*******************************************************
+ * D-Pad（スマホ操作用）
+ *******************************************************/
 #dpad {
-  position: fixed; /* 絶対位置ではなく固定 */
-  bottom: 70px;    /* 画面下からの距離 */
-  right: 50px;     /* 画面右からの距離 */
+  position: fixed;
+  bottom: 70px;
+  right: 50px;
   width: 150px;
   height: 150px;
   display: grid;
@@ -95,37 +118,29 @@ html, body {
     ".    up    ."
     "left center right"
     ".    down  .";
-  gap: 8px; /* ボタンの間隔 */
+  gap: 8px;
   justify-content: center;
   align-items: center;
 }
-
 .dpad-button {
   width: 50px;
   height: 50px;
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-  background: #222; /* 変更: 黒に近い色 */
-  color: white;
+  background-color: #222;
+  color: #fff;
   border: 2px solid #fff;
   border-radius: 8px;
   cursor: pointer;
-  touch-action: none;
-  user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
 }
-
 .dpad-button:hover {
-  background-color: #444; /* 変更: マウスホバーで明るく */
+  background-color: #444;
 }
-
-.dpad-button:active {
-  background-color: #666; /* 変更: クリック時に色を暗く */
-}
-
 .up    { grid-area: up; }
 .down  { grid-area: down; }
 .left  { grid-area: left; }
@@ -137,8 +152,9 @@ html, body {
   pointer-events: none;
 }
 
-/* ========== 戦闘画面 ========== */
-/* 最初は表示しない */
+/*******************************************************
+ * 戦闘（＝クイズ）画面
+ *******************************************************/
 #battle-screen {
   display: none;
   position: absolute;
@@ -146,15 +162,15 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: black;
+  background-color: #000;
+  z-index: 100;
   padding: 10px;
   text-align: center;
-  z-index: 100;
 }
 #top-text-box {
-  border: 2px solid white;
-  padding: 5px;
-  margin-bottom: 5px;
+  border: 2px solid #fff;
+  padding: 8px;
+  margin-bottom: 10px;
   min-height: 40px;
   font-size: 16px;
 }
@@ -162,7 +178,7 @@ html, body {
   display: flex;
   justify-content: center;
   gap: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 .monster {
   width: 50px;
@@ -173,9 +189,8 @@ html, body {
   display: none;
   width: 300px;
   height: 300px;
-  margin: 5px auto;
+  margin: 10px auto;
 }
-/* 戦闘画面のHP表示 */
 #hp-container {
   display: flex;
   justify-content: center;
@@ -185,41 +200,29 @@ html, body {
 .choice-button {
   display: block;
   margin: 5px auto;
-  padding: 5px;
+  padding: 8px;
   width: 150px;
   font-size: 16px;
   cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: #555;
+  color: #fff;
 }
 .choice-button:disabled {
   opacity: 0.5;
   cursor: default;
 }
 
-/* クイズエリア調整 */
-#quiz-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-#explanation { 
-  display: none; 
-}
-#zaorikuButton {
-  display: none;
-  font-size: 18px;
-  padding: 5px 10px;
-  margin-top: 10px;
-  cursor: pointer;
-}
-
-/* ========== 円拡大演出用オーバーレイ ========== */
+/*******************************************************
+ * 円拡大演出用オーバーレイ
+ *******************************************************/
 #transition-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   z-index: 200;
   display: none;
   pointer-events: none;
@@ -228,7 +231,7 @@ html, body {
   position: absolute;
   width: 200vmax;
   height: 200vmax;
-  background: black;
+  background-color: #000;
   border-radius: 50%;
   top: 50%;
   left: 50%;
@@ -239,7 +242,9 @@ html, body {
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* ========== シェイクアニメーション ========== */
+/*******************************************************
+ * シェイクアニメーション
+ *******************************************************/
 @keyframes shake {
   0%   { transform: translate(0, 0); }
   20%  { transform: translate(-10px, 0); }
@@ -252,70 +257,39 @@ html, body {
   animation: shake 0.5s;
 }
 
-/* ========== ローディングオーバーレイ ========== */
+/*******************************************************
+ * ローディングオーバーレイ
+ *******************************************************/
 #loadingOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
   align-items: center;
   justify-content: center;
   font-size: 24px;
   color: #fff;
   z-index: 300;
-  /* すでにHTML内で display: none; が指定されているなら不要 */
 }
 
-/* ========== レスポンシブ調整 ========== */
+/*******************************************************
+ * レスポンシブ調整
+ *******************************************************/
 @media (max-width: 600px) {
-  #status {
-    font-size: 16px;
-    padding: 10px;
-  }
-  #top-text-box {
-    font-size: 14px;
-    padding: 5px;
-  }
-  .choice-button {
-    width: 120px;
-    font-size: 14px;
-  }
-  #player {
-    width: 25px;
-  }
-  #dpad {
-    width: 120px;
-    height: 120px;
-    grid-gap: 5px;
-  }
-  .dpad-button {
-    width: 40px;
-    height: 40px;
-  }
-  .heart {
-    font-size: 20px;
-  }
+  #status { font-size: 16px; padding: 10px; }
+  #top-text-box { font-size: 14px; padding: 5px; }
+  .choice-button { width: 120px; font-size: 14px; }
+  #player { width: 25px; }
+  #dpad { width: 120px; height: 120px; gap: 5px; }
 }
 
 @media (min-width: 768px) {
-  #battle-screen {
-    font-size: 20px;
-  }
-  #top-text-box {
-    font-size: 18px;
-  }
-  .choice-button {
-    width: 200px;
-    font-size: 18px;
-  }
-  .monster {
-    width: 80px;
-    height: 80px;
-  }
-  #hp-container {
-    font-size: 22px;
-  }
+  #battle-screen { font-size: 20px; }
+  #top-text-box { font-size: 18px; }
+  .choice-button { width: 200px; font-size: 18px; }
+  .monster { width: 80px; height: 80px; }
+  #hp-container { font-size: 22px; }
 }
