@@ -24,6 +24,8 @@ html, body {
   background-color: #000;
 }
 #loginScreen input,
+  color: #fff;
+  background-color: #333; /* お好みで */
 #loginScreen button {
   font-size: 18px;
   padding: 8px 12px;
