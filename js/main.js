@@ -629,33 +629,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loginBtn.disabled = false;  // 念のため有効化
 
-  loginBtn.addEventListener("click", async () => {
-    console.log("🎮 ログインボタンがクリックされました");
+function showLoadingOverlay() {
+  const overlay = document.getElementById("loadingOverlay");
+  const message = document.getElementById("loadingMessage");
 
-    const nameInput = document.getElementById("playerNameInput");
-    console.log("🔎 playerNameInput:", nameInput); // ← 確認
+  console.log("🔎 showLoadingOverlay() が呼ばれました");
+  console.log("🔎 overlay:", overlay);
+  console.log("🔎 message:", message);
 
-    if (!nameInput) {
-      console.error("❌ 名前入力欄が見つかりません");
-      return;
-    }
-
-    const enteredName = nameInput.value.trim();
-    if (!enteredName) {
-      alert("名前を入力してください！");
-      return;
-    }
-
-    try {
-      const loadingOverlay = document.getElementById("loadingOverlay");
-      const loadingMessage = document.getElementById("loadingMessage");
-      console.log("🔎 loadingOverlay:", loadingOverlay); // ← 確認
-
-      if (loadingMessage) loadingMessage.textContent = "ロード中…";
-      if (loadingOverlay) loadingOverlay.style.display = "flex";
-
-      console.log(`📡 プレイヤーデータ取得中: ${enteredName}`);
-
+  if (overlay && message) {
+    message.textContent = "ロード中…";
+    overlay.style.display = "flex"; // ✅ これでしっかり表示
+  } else {
+    console.error("❌ ローディングオーバーレイが見つかりません！");
+  }
+}
       // プレイヤーデータの取得
       const params = new URLSearchParams();
       params.append("mode", "player");
