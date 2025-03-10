@@ -280,14 +280,21 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  display: none;
+  background: rgba(0, 0, 0, 0.7); /* 黒半透明 */
+  display: none; /* デフォルトでは非表示 */
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  color: #fff;
+  color: white;
   z-index: 300;
 }
+
+#loadingMessage {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+}
+
 
 /*******************************************************
  * レスポンシブ調整
