@@ -1,20 +1,22 @@
 /*******************************************************
  *  1) 定数・グローバル変数
  *******************************************************/
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzqM5gZr3HBY5LMo7U7uB0_dvEl29BW_2TpdBZjSH23OjiNfk0A6SsWXx6KRXF9x97T/exec";
+// 例：GAS の公開URL
+const GAS_URL = "https://script.google.com/macros/s/---YOUR_SCRIPT_ID---/exec";
 
+// 移動距離
 const STEP = 20;
 
-// プレイヤーデータ、クイズ、モンスター
+// プレイヤーデータ、クイズ、モンスターデータ
 let playerData = { name: "", level: 1, exp: 0, g: 0, hp: 50 };
-let quizData = [];
-let monsterData = [];
+let quizData = [];      // ← ログイン時に一度だけ取得
+let monsterData = [];   // ← 同上
 
-// タイルマップ（外部ファイル tilemap_village.js, tilemap_field.js で定義される変数を利用）
-let tileMap = null; // 現在選択中のタイルマップ
-let currentMap = null; // "village" または "field"
+// タイルマップ関連
+let tileMap = null;     // switchMap で tileMapVillage or tileMapField をセット
+let currentMap = null;  // "village" / "field"
 
-// プレイヤー情報（フィールド上）
+// プレイヤーのフィールド上ステータス
 let player = { x: 7, y: 7, steps: 0 };
 let facingRight = true;
 let currentImageIndex = 0;
@@ -26,20 +28,21 @@ const playerImages = [
 
 // 戦闘状態管理
 let inBattle = false;
-const MAX_CORRECT = 4;
-const MAX_MISS = 4;
 let lastEncounterSteps = 0;
 let encounterThreshold = 5;
 let battleStartHp = 50;
-let battleStartG = 0; // 戦闘開始時のゴールド
+let battleStartG = null; // 戦闘開始時のGを保存する
+// （正解数や不正解数などは必要に応じて別途管理）
 
 /*******************************************************
- *  2) データ取得（クイズ & モンスター）
+ *  2) クイズ & モンスターデータ取得
  *******************************************************/
+/** クイズデータをGASから一度だけ取得 */
 async function loadQuizData() {
   try {
     const params = new URLSearchParams();
     params.append("mode", "quiz");
+
     const resp = await fetch(GAS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -52,16 +55,18 @@ async function loadQuizData() {
       return;
     }
     quizData = json.quizzes || [];
-    console.log("✅ Quiz Data:", quizData);
+    console.log("✅ Quiz Data:", quizData.length, "件");
   } catch (err) {
     console.error("⛔ loadQuizData Error:", err);
   }
 }
 
+/** モンスターデータをGASから一度だけ取得 */
 async function loadMonsterData() {
   try {
     const params = new URLSearchParams();
     params.append("mode", "monster");
+
     const resp = await fetch(GAS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -74,18 +79,20 @@ async function loadMonsterData() {
       return;
     }
     monsterData = json.monsters || [];
-    console.log("✅ Monster Data:", monsterData);
+    console.log("✅ Monster Data:", monsterData.length, "件");
   } catch (err) {
     console.error("⛔ loadMonsterData Error:", err);
   }
 }
 
+/** ランダムにクイズ1問を取得 */
 function getRandomQuiz() {
   if (!quizData || quizData.length === 0) return null;
   const idx = Math.floor(Math.random() * quizData.length);
   return quizData[idx];
 }
 
+/** ランダムにモンスター4体を取得 */
 function getRandomMonsters() {
   if (!monsterData || monsterData.length < 4) {
     console.warn("Not enough monsters");
@@ -112,67 +119,6 @@ function hideLoadingOverlay() {
  *******************************************************/
 let isBgmPlaying = false;
 
-function playCurrentBgm() {
-  if (!isBgmPlaying) return;
-  stopAllBgm();
-  if (currentMap === "village") {
-    playVillageBgm();
-  } else if (currentMap === "field") {
-    playFieldBgm();
-  } else if (currentMap === "battle") {
-    playBattleBgm();
-  }
-}
-
-function stopAllBgm() {
-  document.querySelectorAll("audio").forEach(audio => {
-    audio.pause();
-    audio.currentTime = 0;
-  });
-}
-
-function playVillageBgm() {
-  const villageBgm = document.getElementById("villageBGM");
-  if (villageBgm) villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
-}
-
-function playFieldBgm() {
-  const fieldBgm = document.getElementById("fieldBGM");
-  if (fieldBgm) fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
-}
-
-function playBattleBgm() {
-  const battleBgm = document.getElementById("battleBGM");
-  if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
-}
-
-function playQuizBgm() {
-  const quizBgm = document.getElementById("quizBGM");
-  if (!isBgmPlaying || !quizBgm) return;
-  quizBgm.currentTime = 0;
-  quizBgm.play().catch(err => console.warn("クイズBGM再生エラー:", err));
-}
-
-function stopVillageBgm() {
-  const villageBgm = document.getElementById("villageBGM");
-  if (villageBgm) { villageBgm.pause(); villageBgm.currentTime = 0; }
-}
-
-function stopFieldBgm() {
-  const fieldBgm = document.getElementById("fieldBGM");
-  if (fieldBgm) { fieldBgm.pause(); fieldBgm.currentTime = 0; }
-}
-
-function stopBattleBgm() {
-  const battleBgm = document.getElementById("battleBGM");
-  if (battleBgm) { battleBgm.pause(); battleBgm.currentTime = 0; }
-}
-
-function stopQuizBgm() {
-  const quizBgm = document.getElementById("quizBGM");
-  if (quizBgm) { quizBgm.pause(); quizBgm.currentTime = 0; }
-}
-
 function toggleBgm() {
   isBgmPlaying = !isBgmPlaying;
   const button = document.getElementById("bgmToggleButton");
@@ -192,16 +138,80 @@ function updateBgmButton() {
   button.textContent = isBgmPlaying ? "🎵 BGM ON" : "🔇 BGM OFF";
 }
 
+function playCurrentBgm() {
+  if (!isBgmPlaying) return;
+  stopAllBgm();
+
+  // currentMap の状態によってBGMを切り替える
+  if (currentMap === "village") {
+    playVillageBgm();
+  } else if (currentMap === "field") {
+    playFieldBgm();
+  } else if (inBattle) {
+    playBattleBgm();
+  }
+}
+
+/** すべてのBGMを停止 */
+function stopAllBgm() {
+  document.querySelectorAll("audio").forEach(audio => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+}
+
+/** 各BGM再生/停止 */
+function playVillageBgm() {
+  if (!isBgmPlaying) return;
+  const villageBgm = document.getElementById("villageBGM");
+  if (villageBgm) villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
+}
+
+function stopVillageBgm() {
+  const villageBgm = document.getElementById("villageBGM");
+  if (villageBgm) { villageBgm.pause(); villageBgm.currentTime = 0; }
+}
+
+function playFieldBgm() {
+  if (!isBgmPlaying) return;
+  const fieldBgm = document.getElementById("fieldBGM");
+  if (fieldBgm) fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
+}
+
+function stopFieldBgm() {
+  const fieldBgm = document.getElementById("fieldBGM");
+  if (fieldBgm) { fieldBgm.pause(); fieldBgm.currentTime = 0; }
+}
+
+function playBattleBgm() {
+  if (!isBgmPlaying) return;
+  const battleBgm = document.getElementById("battleBGM");
+  if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
+}
+
+function stopBattleBgm() {
+  const battleBgm = document.getElementById("battleBGM");
+  if (battleBgm) { battleBgm.pause(); battleBgm.currentTime = 0; }
+}
+
+function playQuizBgm() {
+  if (!isBgmPlaying) return;
+  const quizBgm = document.getElementById("quizBGM");
+  if (quizBgm) quizBgm.play().catch(err => console.warn("クイズBGM再生エラー:", err));
+}
+
+function stopQuizBgm() {
+  const quizBgm = document.getElementById("quizBGM");
+  if (quizBgm) { quizBgm.pause(); quizBgm.currentTime = 0; }
+}
+
 /*******************************************************
  *  5) プレイヤーデータ周り
  *******************************************************/
 function updatePlayerStatusUI() {
-  const hpElem = document.getElementById("field-hp");
-  if (hpElem) hpElem.textContent = playerData.hp;
-  const lvlElem = document.getElementById("level");
-  if (lvlElem) lvlElem.textContent = playerData.level;
-  const gElem = document.getElementById("field-g");
-  if (gElem) gElem.textContent = playerData.g;
+  document.getElementById("field-hp").textContent = playerData.hp;
+  document.getElementById("level").textContent   = playerData.level;
+  document.getElementById("field-g").textContent = playerData.g;
 }
 
 function checkLevelUp() {
@@ -224,89 +234,102 @@ function addExp(amount) {
   savePlayerData();
 }
 
+/** プレイヤーデータをGASへ保存 */
 function savePlayerData() {
   const params = new URLSearchParams();
-  params.append("mode", "updatePlayer");
-  params.append("name", playerData.name);
+  params.append("mode",  "updatePlayer");
+  params.append("name",  playerData.name);
   params.append("level", playerData.level);
-  params.append("exp", playerData.exp);
-  params.append("g", playerData.g);
-  params.append("hp", playerData.hp);
+  params.append("exp",   playerData.exp);
+  params.append("g",     playerData.g);
+  params.append("hp",    playerData.hp);
 
   fetch(GAS_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params
   })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        console.log("✅ プレイヤーデータ保存成功");
-      } else {
-        console.error("⛔ プレイヤーデータ保存エラー:", data.error || "不明なエラー");
-      }
-    })
-    .catch(err => {
-      console.error("⛔ ネットワークエラー:", err);
-    });
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      console.log("✅ プレイヤーデータ保存成功");
+    } else {
+      console.error("⛔ プレイヤーデータ保存エラー:", data.error);
+    }
+  })
+  .catch(err => {
+    console.error("⛔ ネットワークエラー:", err);
+  });
 }
 
 function changeHp(amount) {
   playerData.hp += amount;
-  if (playerData.hp < 0) playerData.hp = 0;
-  if (playerData.hp > 50) playerData.hp = 50;
+  if (playerData.hp < 0)   playerData.hp = 0;
+  if (playerData.hp > 50)  playerData.hp = 50;
   updatePlayerStatusUI();
   updateBattleHp();
   savePlayerData();
+
+  // HP0 → ゲームオーバー
   if (playerData.hp === 0) {
-    console.log("💀 HPが0になりゲームオーバー！");
+    console.log("💀 HPが0になりゲームオーバー");
     showGameOverOptions();
   }
 }
 
 /*******************************************************
- *  6) ゲーム開始処理
+ *  6) ゲーム開始
  *******************************************************/
 function startGame() {
   console.log("🎮 ゲーム開始！");
   document.getElementById("titleScreen").style.display = "none";
   document.getElementById("gameContainer").style.display = "block";
   document.getElementById("gameArea").style.display = "block";
+
+  // フィールド初期化
   initGame();
+
+  // 村マップへ
   currentMap = null;
   switchMap("village");
+
+  // 村の中央に配置 (例)
   player.x = 7;
   player.y = 7;
   updatePlayerPosition();
+
+  // ステータス表示
   updatePlayerStatusUI();
 }
 
 /*******************************************************
- *  7) マップ切り替え処理
+ *  7) マップ切り替え
  *******************************************************/
 function switchMap(newMap) {
   if (newMap === "village") {
     if (typeof tileMapVillage !== "undefined") {
-      console.log("✅ 村のマップデータ:", tileMapVillage);
-      currentMap = "village";
       tileMap = tileMapVillage;
+      currentMap = "village";
+      console.log("✅ 村マップ読み込み");
     } else {
-      console.error("❌ tileMapVillage が定義されていません！");
+      console.error("❌ tileMapVillage が定義されていません");
       return;
     }
+    // 入口座標 (例)
     player.x = 7;
     player.y = 13;
     stopFieldBgm();
     playVillageBgm();
   } else if (newMap === "field") {
     if (typeof tileMapField !== "undefined") {
-      console.log("✅ フィールドのマップデータ:", tileMapField);
-      currentMap = "field";
       tileMap = tileMapField;
+      currentMap = "field";
+      console.log("✅ フィールドマップ読み込み");
     } else {
-      console.error("❌ tileMapField が定義されていません！");
+      console.error("❌ tileMapField が定義されていません");
       return;
     }
+    // 入口座標 (例)
     player.x = 7;
     player.y = 0;
     stopVillageBgm();
@@ -321,10 +344,10 @@ function switchMap(newMap) {
  *******************************************************/
 function checkMapTransition() {
   if (currentMap === "village" && player.x === 7 && player.y === 0) {
-    console.log("🚪 村からフィールドへ移動");
+    console.log("🚪 村→フィールド");
     switchMap("field");
   } else if (currentMap === "field" && player.x === 7 && player.y === 14) {
-    console.log("🏠 フィールドから村へ移動");
+    console.log("🏠 フィールド→村");
     switchMap("village");
   }
 }
@@ -333,26 +356,33 @@ function checkMapTransition() {
  *  9) プレイヤー移動
  *******************************************************/
 function movePlayer(dx, dy) {
-  if (inBattle) return;
+  if (inBattle) return; // 戦闘中は移動不可
+
+  // 向き & 歩行アニメ
   facingRight = (dx >= 0);
   currentImageIndex = (currentImageIndex + 1) % playerImages.length;
-  const playerElement = document.getElementById("player");
-  if (playerElement) playerElement.src = playerImages[currentImageIndex];
-  let newX = player.x + dx;
-  let newY = player.y + dy;
-  const mapWidth = tileMap[0].length;
+  const pElem = document.getElementById("player");
+  if (pElem) pElem.src = playerImages[currentImageIndex];
+
+  // 新座標
+  const newX = player.x + dx;
+  const newY = player.y + dy;
+  const mapWidth  = tileMap[0].length;
   const mapHeight = tileMap.length;
   if (newX < 0 || newX >= mapWidth || newY < 0 || newY >= mapHeight) {
     console.warn("🚧 これ以上進めません");
     return;
   }
+
   player.x = newX;
   player.y = newY;
   updatePlayerPosition();
   checkMapTransition();
+
+  // 歩数カウント & エンカウント
   player.steps++;
   if (player.steps - lastEncounterSteps >= encounterThreshold) {
-    console.log("⚔ モンスターがあらわれた！");
+    console.log("⚔ 敵出現");
     startEncounter();
     lastEncounterSteps = player.steps;
   }
@@ -366,22 +396,23 @@ function initGame() {
   updatePlayerStatusUI();
 }
 
-/** プレイヤー位置更新 */
+/** プレイヤー位置をCSSに反映 (32px刻み) */
 function updatePlayerPosition() {
-  const playerElement = document.getElementById("player");
-  if (!playerElement) return;
-  playerElement.style.left = `${player.x * 32}px`;
-  playerElement.style.top = `${player.y * 32}px`;
-  playerElement.style.transform = `translate(-50%, -50%) ${facingRight ? "scaleX(1)" : "scaleX(-1)"}`;
+  const pElem = document.getElementById("player");
+  if (!pElem) return;
+  pElem.style.left = (player.x * 32) + "px";
+  pElem.style.top  = (player.y * 32) + "px";
+  pElem.style.transform =
+    `translate(-50%, -50%) ${facingRight ? "scaleX(1)" : "scaleX(-1)"}`;
 }
 
 /*******************************************************
- * 10) タイルマップ描画
+ *  10) タイルマップ描画
  *******************************************************/
 function drawMap() {
   const mapContainer = document.getElementById("mapContainer");
   if (!mapContainer) {
-    console.error("❌ mapContainer の要素が見つかりません！");
+    console.error("❌ #mapContainer が見つかりません");
     return;
   }
   mapContainer.innerHTML = "";
@@ -390,25 +421,30 @@ function drawMap() {
       const tile = document.createElement("div");
       tile.className = `tile tile-${tileMap[y][x]}`;
       tile.style.left = `${x * 32}px`;
-      tile.style.top = `${y * 32}px`;
+      tile.style.top  = `${y * 32}px`;
       mapContainer.appendChild(tile);
     }
   }
 }
 
 /*******************************************************
- * 11) 戦闘（クイズ）処理
+ * 11) 戦闘(=クイズ)処理
  *******************************************************/
 function startEncounter() {
   if (inBattle) return;
-  console.log("📖 クイズバトル開始！");
+  console.log("📖 クイズバトル開始");
   inBattle = true;
+  currentMap = "battle"; // BGM切り替え用
+
   stopFieldBgm();
   playQuizBgm();
+
+  // 戦闘開始時のHPとGを保存
   battleStartHp = playerData.hp;
   if (battleStartG === null) {
     battleStartG = playerData.g;
   }
+
   showQuiz();
 }
 
@@ -418,10 +454,10 @@ function updateBattleHp() {
 }
 
 function showQuiz() {
-  console.log("📖 クイズを出題！");
+  console.log("📖 クイズを出題");
   const quiz = getRandomQuiz();
   if (!quiz) {
-    console.error("⛔ クイズデータがありません");
+    console.warn("⛔ クイズデータが空");
     endBattle();
     return;
   }
@@ -437,22 +473,22 @@ function showQuiz() {
 }
 
 function disableChoiceButtons() {
-  const buttons = document.getElementById("choice-area").getElementsByTagName("button");
-  for (const btn of buttons) {
-    btn.disabled = true;
+  const btns = document.getElementById("choice-area").getElementsByTagName("button");
+  for (const b of btns) {
+    b.disabled = true;
   }
 }
 
 function answerQuiz(selected, quiz) {
   disableChoiceButtons();
   if (selected === quiz.correct) {
-    console.log("⭕ 正解！");
+    console.log("⭕ 正解");
     addExp(20);
     playerData.g += 5;
     savePlayerData();
     setTimeout(endBattle, 1000);
   } else {
-    console.log("❌ 不正解！");
+    console.log("❌ 不正解");
     changeHp(-10);
     if (quiz.questionId) {
       recordMistake(playerData.name, quiz.questionId);
@@ -467,52 +503,59 @@ function answerQuiz(selected, quiz) {
 
 function recordMistake(playerName, questionId) {
   const params = new URLSearchParams();
-  params.append("mode", "recordMistake");
-  params.append("name", playerName);
+  params.append("mode",       "recordMistake");
+  params.append("name",       playerName);
   params.append("questionId", questionId);
+
   fetch(GAS_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params
   })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        console.log(`✅ 間違い記録更新: ${playerName} - QID ${questionId}`);
-      } else {
-        console.error("⛔ 記録エラー:", data.error || "不明なエラー");
-      }
-    })
-    .catch(error => {
-      console.error("⛔ ネットワークエラー:", error);
-    });
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      console.log(`✅ 間違い記録更新: ${playerName} - QID ${questionId}`);
+    } else {
+      console.error("⛔ 記録エラー:", data.error);
+    }
+  })
+  .catch(err => {
+    console.error("⛔ ネットワークエラー:", err);
+  });
 }
 
 function endBattle() {
   console.log("✅ クイズバトル終了");
   inBattle = false;
+  currentMap = "field"; // BGM切り替え用
   stopQuizBgm();
   playFieldBgm();
-  updatePlayerStatusUI();
+
+  // 戦闘画面を閉じてフィールドへ戻す
   document.getElementById("battle-screen").style.display = "none";
   document.getElementById("gameContainer").style.display = "block";
+  updatePlayerStatusUI();
 }
 
 /*******************************************************
  * 12) ゲームオーバー・再挑戦
  *******************************************************/
 function showGameOverOptions() {
-  console.log("💀 ゲームオーバー！選択肢を表示");
+  console.log("💀 ゲームオーバー！");
   inBattle = false;
   stopQuizBgm();
   const topText = document.getElementById("top-text-box");
   topText.textContent = "💀 ゲームオーバー！";
+
   const choiceArea = document.getElementById("choice-area");
   choiceArea.innerHTML = "";
+
   const churchButton = document.createElement("button");
   churchButton.textContent = "🏥 教会へ戻る";
   churchButton.onclick = restartFromChurch;
   choiceArea.appendChild(churchButton);
+
   const retryButton = document.createElement("button");
   retryButton.textContent = "🔄 クイズをやり直す";
   retryButton.onclick = retryBattle;
@@ -520,65 +563,73 @@ function showGameOverOptions() {
 }
 
 function restartFromChurch() {
-  console.log("⛪ 教会へ戻る (Gが半分になり、村の教会からスタート)");
-  playerData.g = Math.floor(playerData.g / 2);
+  console.log("⛪ 教会へ戻る (Gが半分, HP全回復)");
+  playerData.g  = Math.max(0, Math.floor(playerData.g / 2));
   playerData.hp = 50;
+
+  // 教会座標(例)
   player.x = 100;
   player.y = 150;
+
   savePlayerData();
   updatePlayerStatusUI();
   updatePlayerPosition();
+
   document.getElementById("battle-screen").style.display = "none";
   document.getElementById("gameContainer").style.display = "block";
+
   stopQuizBgm();
   playFieldBgm();
 }
 
 function retryBattle() {
-  console.log("🔄 クイズをやり直す (開始時の状態にリセット)");
+  console.log("🔄 クイズ再挑戦 (開始時に戻す)");
   playerData.hp = battleStartHp;
   if (battleStartG !== null) {
     playerData.g = battleStartG;
   }
   savePlayerData();
   updatePlayerStatusUI();
+
+  // クイズを再表示
   showQuiz();
 }
 
 /*******************************************************
- * 13) DOMContentLoaded：イベント登録
+ * 13) DOMContentLoaded：ログイン時に一度だけデータ取得
  *******************************************************/
 document.addEventListener("DOMContentLoaded", () => {
-  // BGM初期化
-  stopFieldBgm();
-  stopBattleBgm();
-  stopQuizBgm();
-  stopVillageBgm();
+  // BGM 初期 OFF
+  stopAllBgm();
   isBgmPlaying = false;
-  const bgmButton = document.getElementById("bgmToggleButton");
-  if (bgmButton) bgmButton.textContent = "🔇 BGM OFF";
-  const quizBgmElem = document.getElementById("quizBGM");
-  if (quizBgmElem) quizBgmElem.loop = true;
+  const bgmBtn = document.getElementById("bgmToggleButton");
+  if (bgmBtn) bgmBtn.textContent = "🔇 BGM OFF";
   updateBgmButton();
 
-  // スタートボタン登録
+  // スタートボタン
   const startBtn = document.getElementById("startButton");
-  if (startBtn) startBtn.addEventListener("click", startGame);
+  if (startBtn) {
+    startBtn.addEventListener("click", startGame);
+  }
 
-  // ログインボタン登録
+  // ログインボタン
   const loginBtn = document.getElementById("loginButton");
   if (loginBtn) {
     loginBtn.addEventListener("click", async () => {
-      const enteredName = document.getElementById("playerNameInput").value.trim();
+      const nameInput = document.getElementById("playerNameInput");
+      const enteredName = nameInput.value.trim();
       if (!enteredName) {
         alert("名前を入力してください！");
         return;
       }
       try {
         showLoadingOverlay();
+
+        // プレイヤーデータ読み込み
         const params = new URLSearchParams();
         params.append("mode", "player");
         params.append("name", enteredName);
+
         const resp = await fetch(GAS_URL, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -587,17 +638,22 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!resp.ok) throw new Error("ネットワークエラーです");
         const data = await resp.json();
         if (!data.success) throw new Error(data.error || "不明なエラー");
-        console.log("データ取得成功:", data);
+
+        // 取得したデータを playerData に反映
         playerData.name  = data.name;
         playerData.level = parseInt(data.level, 10);
         playerData.exp   = parseInt(data.exp, 10);
         playerData.g     = parseInt(data.g, 10);
         playerData.hp    = parseInt(data.hp, 10) || 50;
         updatePlayerStatusUI();
+
+        // クイズ & モンスターデータを1度だけ取得
         await loadQuizData();
         await loadMonsterData();
+
         setTimeout(() => {
           hideLoadingOverlay();
+          // ログイン画面を閉じてタイトル画面へ
           document.getElementById("loginScreen").style.display = "none";
           document.getElementById("titleScreen").style.display = "flex";
         }, 500);
@@ -609,46 +665,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // D-Pad イベント登録
-  const upBtn = document.getElementById("dpad-up");
-  const downBtn = document.getElementById("dpad-down");
-  const leftBtn = document.getElementById("dpad-left");
+  // D-Pad イベント
+  const upBtn    = document.getElementById("dpad-up");
+  const downBtn  = document.getElementById("dpad-down");
+  const leftBtn  = document.getElementById("dpad-left");
   const rightBtn = document.getElementById("dpad-right");
-  if (upBtn) upBtn.addEventListener("click", () => movePlayer(0, -STEP));
-  if (downBtn) downBtn.addEventListener("click", () => movePlayer(0, STEP));
-  if (leftBtn) leftBtn.addEventListener("click", () => movePlayer(-STEP, 0));
+  if (upBtn)    upBtn.addEventListener("click", () => movePlayer(0, -STEP));
+  if (downBtn)  downBtn.addEventListener("click", () => movePlayer(0, STEP));
+  if (leftBtn)  leftBtn.addEventListener("click", () => movePlayer(-STEP, 0));
   if (rightBtn) rightBtn.addEventListener("click", () => movePlayer(STEP, 0));
 
-  // キーボード操作 (WASD / 矢印キー)
-  document.addEventListener("keydown", (event) => {
-    if (event.key && typeof event.key === "string") {
-      const key = event.key.toLowerCase();
-      if (key === "w") movePlayer(0, -STEP);
-      else if (key === "s") movePlayer(0, STEP);
-      else if (key === "a") movePlayer(-STEP, 0);
-      else if (key === "d") movePlayer(STEP, 0);
+  // キーボード操作
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key) {
+      const k = ev.key.toLowerCase();
+      if (k === "w" ) movePlayer(0, -STEP);
+      if (k === "s" ) movePlayer(0,  STEP);
+      if (k === "a" ) movePlayer(-STEP, 0);
+      if (k === "d" ) movePlayer(STEP,  0);
     }
   });
 });
-
-/*******************************************************
- *  14) タイルマップ描画
- *******************************************************/
-function drawMap() {
-  console.log("🗺 マップを描画 (デバッグ)");
-  const mapContainer = document.getElementById("mapContainer");
-  if (!mapContainer) {
-    console.error("❌ mapContainer の要素が見つかりません！");
-    return;
-  }
-  mapContainer.innerHTML = "";
-  for (let y = 0; y < tileMap.length; y++) {
-    for (let x = 0; x < tileMap[y].length; x++) {
-      const tile = document.createElement("div");
-      tile.className = `tile tile-${tileMap[y][x]}`;
-      tile.style.left = `${x * 32}px`;
-      tile.style.top = `${y * 32}px`;
-      mapContainer.appendChild(tile);
-    }
-  }
-}
