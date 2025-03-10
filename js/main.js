@@ -612,7 +612,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById("startButton");
   if (startBtn) startBtn.addEventListener("click", startGame);
 
-  // ログインボタン
 document.addEventListener("DOMContentLoaded", () => {
   // ログインボタンのイベント登録
   const loginBtn = document.getElementById("loginButton");
@@ -628,9 +627,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // ロード中メッセージを表示
         const loadingOverlay = document.getElementById("loadingOverlay");
         const loadingMessage = document.getElementById("loadingMessage");
-        loadingMessage.textContent = "ロード中…";  // 初期メッセージ
-        loadingMessage.style.display = "block"; // 必要なら表示
-        loadingOverlay.style.display = "flex";
+        if (loadingMessage) {
+          loadingMessage.textContent = "ロード中…"; // 初期メッセージ
+          loadingMessage.style.display = "block"; // 必要なら表示
+        }
+        if (loadingOverlay) {
+          loadingOverlay.style.display = "flex";
+        }
 
         // プレイヤーデータの読み込み
         const params = new URLSearchParams();
@@ -655,31 +658,30 @@ document.addEventListener("DOMContentLoaded", () => {
         updatePlayerStatusUI();
 
         // クイズデータ取得
-        loadingMessage.textContent = "クイズデータを取得中…";
+        if (loadingMessage) loadingMessage.textContent = "クイズデータを取得中…";
         await loadQuizData();
 
         // モンスターデータ取得
-        loadingMessage.textContent = "モンスターデータを取得中…";
+        if (loadingMessage) loadingMessage.textContent = "モンスターデータを取得中…";
         await loadMonsterData();
 
         setTimeout(() => {
           // ロード完了後、ログイン画面を非表示にしてタイトル画面を表示
-          loadingOverlay.style.display = "none";
-          loadingMessage.style.display = "none";
+          if (loadingOverlay) loadingOverlay.style.display = "none";
+          if (loadingMessage) loadingMessage.style.display = "none";
           document.getElementById("loginScreen").style.display = "none";
           document.getElementById("titleScreen").style.display = "flex";
         }, 500);
       } catch (err) {
         console.error("ログインエラー:", err);
-        document.getElementById("loadingOverlay").style.display = "none";
-        loadingMessage.style.display = "none";
-        alert("ログインエラーが発生しました。再度お試しください。");
+        if (loadingOverlay) loadingOverlay.style.display = "none";
+        if (loadingMessage) loadingMessage.style.display = "none";
+        alert("ログインエラーが発生しました。再度お試しください。\n" + err.message);
       }
     });
   }
-
-  // その他のイベント登録…
 });
+
 
 
   // D-Pad イベント
