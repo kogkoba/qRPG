@@ -71,44 +71,61 @@ html, body {
   height: auto;
 }
 
-/* 十字キー (D-Pad) の復元例 */
+
+/* 以前の十字キーCSSをコメントアウトで残す
 #dpad {
-  position: absolute;
-  bottom: 70px; /* 元に戻す */
+  position: fixed;
+  bottom: 70px;
   right: 50px;
   width: 150px;
   height: 150px;
   display: grid;
-  grid-template-areas:
-    ".    up    ."
-    "left center right"
-    ".    down  .";
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
-  z-index: 100; /* 上に重なるように */
+  ...
+}
+*/
+
+/* 新しい十字キーCSS */
+#dpad {
+  position: absolute;
+  bottom: 70px;
+  right: 50px;
+  width: 128px;   /* 画像のサイズに合わせる */
+  height: 128px;
+  background: url("./assets/images/dpad-cross.png") no-repeat center center;
+  background-size: contain; /* or 100% 100%; */
+  /* z-indexが必要なら指定 */
+  z-index: 200;
 }
 
+/* ボタンを透明にして、位置だけ合わせる例 */
 .dpad-button {
-  width: 50px;
-  height: 50px;
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  background: #222;
-  color: white;
-  border: 2px solid #fff;
-  border-radius: 8px;
+  position: absolute;
+  background: rgba(255,255,255,0); /* 透明 */
+  border: none;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-/* 例: クリック時など */
-.dpad-button:active {
-  background-color: #444;
+
+/* それぞれのボタン位置を微調整 */
+#dpad-up {
+  top: 0; left: 44px;  /* 十字上部 */
 }
+#dpad-left {
+  top: 44px; left: 0;  /* 十字左 */
+}
+#dpad-center {
+  top: 44px; left: 44px;
+  pointer-events: none; /* 中心は使わないなら無効化 */
+}
+#dpad-right {
+  top: 44px; left: 88px;
+}
+#dpad-down {
+  top: 88px; left: 44px;
+}
+
+
 
 
 /* 戦闘画面 */
