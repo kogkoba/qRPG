@@ -23,9 +23,13 @@ html, body {
   height: 100%;
   background-color: #000;
 }
-#loginScreen input,
-  color: #fff;
-  background-color: #333; /* お好みで */
+#loginScreen input {
+  color: #fff;            /* 白文字 */
+  background-color: #333; /* ほどよく暗い背景 */
+  border: 1px solid #fff; /* 枠を白に */
+  padding: 8px;
+  margin: 8px;
+}
 #loginScreen button {
   font-size: 18px;
   padding: 8px 12px;
