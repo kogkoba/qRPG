@@ -287,7 +287,9 @@ function switchMap(newMap) {
     if (typeof tileMapVillage !== "undefined") {
       console.log("✅ 村のマップデータ:", tileMapVillage);
       currentMap = "village";
-      tileMap = tileMapVillage;
+      tileMap = tileMapVillage; // 村マップデータをグローバル変数 tileMap に代入
+      // 元は個別描画関数 drawvillageMap() を使用していたが、以下共通の drawMap() を使うためコメントアウト
+      // drawvillageMap();
     } else {
       console.error("❌ tileMapVillage が定義されていません！");
       return;
@@ -301,7 +303,9 @@ function switchMap(newMap) {
     if (typeof tileMapField !== "undefined") {
       console.log("✅ フィールドのマップデータ:", tileMapField);
       currentMap = "field";
-      tileMap = tileMapField;
+      tileMap = tileMapField; // フィールドマップデータをグローバル変数 tileMap に代入
+      // 元は個別描画関数 drawFieldMap() を使用していたが、以下共通の drawMap() を使うためコメントアウト
+      // drawFieldMap();
     } else {
       console.error("❌ tileMapField が定義されていません！");
       return;
@@ -312,9 +316,11 @@ function switchMap(newMap) {
     stopVillageBgm();
     playFieldBgm();
   }
+  // 共通の描画関数を呼び出す
   drawMap();
   updatePlayerPosition();
 }
+
 
 /*******************************************************
  *  8) マップ遷移のチェック
@@ -380,7 +386,7 @@ function updatePlayerPosition() {
 }
 
 /*******************************************************
- * 10) タイルマップ描画
+ * 10) タイルマップ描画（共通）
  *******************************************************/
 function drawMap() {
   const mapContainer = document.getElementById("mapContainer");
@@ -389,37 +395,89 @@ function drawMap() {
     return;
   }
   mapContainer.innerHTML = "";
+
+  // 現在のマップ（村 or フィールド）に合わせて画像対応表を選択
+  let tileImages = null;
+  if (currentMap === "village") {
+    tileImages = tileImagesVillage; // tileImagesVillage は tilemap_village.js で定義
+  } else if (currentMap === "field") {
+    tileImages = fieldTileImages; // fieldTileImages は tilemap_field.js で定義
+  } else {
+    console.error("❌ currentMap が未定義です");
+    return;
+  }
+
   for (let y = 0; y < tileMap.length; y++) {
     for (let x = 0; x < tileMap[y].length; x++) {
-      const tile = document.createElement("div");
-      tile.className = `tile tile-${tileMap[y][x]}`;
-      tile.style.left = `${x * 32}px`;
-      tile.style.top = `${y * 32}px`;
-      mapContainer.appendChild(tile);
+      const tileValue = tileMap[y][x];
+      const tileSrc = tileImages[tileValue];
+      if (!tileSrc) continue; // 画像が定義されていないタイルは描画しない
+
+      // 描画は img 要素で行う（もしくは div と背景画像でも可）
+      const tileElement = document.createElement("img");
+      tileElement.src = tileSrc;
+      tileElement.style.position = "absolute";
+      tileElement.style.width = `${TILE_SIZE || 32}px`; // TILE_SIZE が定義されていれば使用、なければ32px
+      tileElement.style.height = `${TILE_SIZE || 32}px`;
+      tileElement.style.left = `${x * (TILE_SIZE || 32)}px`;
+      tileElement.style.top = `${y * (TILE_SIZE || 32)}px`;
+      mapContainer.appendChild(tileElement);
     }
   }
 }
 
-/* ※ 以下、重複していた drawMap() の定義をコメントアウト
-function drawMap() {
-  console.log("🗺 マップを描画 (デバッグ)");
-  const mapContainer = document.getElementById("mapContainer");
-  if (!mapContainer) {
-    console.error("❌ mapContainer の要素が見つかりません！");
-    return;
-  }
-  mapContainer.innerHTML = "";
-  for (let y = 0; y < tileMap.length; y++) {
-    for (let x = 0; x < tileMap[y].length; x++) {
-      const tile = document.createElement("div");
-      tile.className = `tile tile-${tileMap[y][x]}`;
-      tile.style.left = `${x * 32}px`;
-      tile.style.top = `${y * 32}px`;
-      mapContainer.appendChild(tile);
+/* 以下は以前の個別描画関数（参考用・削除候補）
+------------------------------------------------------
+function drawvillageMap() {
+  const gameArea = document.getElementById("gameArea");
+  gameArea.innerHTML = "";
+
+  for (let row = 0; row < MAP_ROWS; row++) {
+    for (let col = 0; col < MAP_COLS; col++) {
+      const tileValue = tileMapVillage[row][col];
+      const tileSrc = tileImagesVillage[tileValue];
+
+      if (!tileSrc) continue;
+
+      const tileElement = document.createElement("img");
+      tileElement.src = tileSrc;
+      tileElement.style.position = "absolute";
+      tileElement.style.width = `${TILE_SIZE}px`;
+      tileElement.style.height = `${TILE_SIZE}px`;
+      tileElement.style.left = `${col * TILE_SIZE}px`;
+      tileElement.style.top = `${row * TILE_SIZE}px`;
+
+      gameArea.appendChild(tileElement);
     }
   }
 }
-*/
+document.addEventListener("DOMContentLoaded", drawvillageMap);
+
+function drawFieldMap() {
+  const gameArea = document.getElementById("gameArea");
+  gameArea.innerHTML = "";
+
+  for (let row = 0; row < MAP_ROWS; row++) {
+    for (let col = 0; col < MAP_COLS; col++) {
+      const tileValue = fieldTileMap[row][col];
+      const tileSrc = fieldTileImages[tileValue];
+
+      if (!tileSrc) continue;
+
+      const tileElement = document.createElement("img");
+      tileElement.src = tileSrc;
+      tileElement.style.position = "absolute";
+      tileElement.style.width = `${TILE_SIZE}px`;
+      tileElement.style.height = `${TILE_SIZE}px`;
+      tileElement.style.left = `${col * TILE_SIZE}px`;
+      tileElement.style.top = `${row * TILE_SIZE}px`;
+
+      gameArea.appendChild(tileElement);
+    }
+  }
+}
+document.addEventListener("DOMContentLoaded", drawFieldMap);
+------------------------------------------------------*/
 
 /*******************************************************
  * 11) 戦闘（クイズ）処理
