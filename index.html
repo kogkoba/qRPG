@@ -12,21 +12,27 @@
 <!-- ローディングオーバーレイ -->
 <div id="loadingOverlay" style="display: none;">Loading…</div>
 
-<!-- ログイン画面 -->
+<!-- ログイン画面：最初に表示される -->
 <div id="loginScreen">
-  <h2>プレイヤー名を入力</h2>
+  <!-- 変更前のタイトルやボタンをコメントアウト
+  <h2>プレイヤー名を入力してください</h2>
+  -->
+  <h2>ドラクエ風クイズRPG</h2> <!-- 変更: タイトルを表示 -->
+  
+  <!-- 名前入力欄 & ログインボタン -->
   <input type="text" id="playerNameInput" placeholder="名前を入力">
-  <button id="loginButton">ログイン</button>
+  <button id="loginButton">ゲームスタート</button>
 </div>
 
-<!-- タイトル画面 -->
-<div id="titleScreen">
+<!-- タイトル画面：ログイン後に表示する -->
+<div id="titleScreen" style="display: none;">
   <h1>ドラクエ風クイズRPG</h1>
+  <input type="text" style="display: none;" placeholder="ダミー非表示"> <!-- 例: debug用 -->
   <button id="startButton">ゲームスタート</button>
 </div>
 
-<!-- ゲーム画面 -->
-<div id="gameContainer">
+<!-- ゲーム画面：タイトル画面の「ゲームスタート」後に表示する -->
+<div id="gameContainer" style="display: none;">
   <!-- ステータスバー -->
   <div id="status">
     HP: <span id="field-hp">50</span> /
@@ -35,7 +41,7 @@
     <button id="bgmToggleButton">🔇 BGM OFF</button>
   </div>
 
-  <!-- 実際のマップエリア -->
+  <!-- マップ & プレイヤー -->
   <div id="gameArea">
     <img id="player"
       src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh"
@@ -44,11 +50,18 @@
   </div>
 </div>
 
-<!-- 仮想十字キー D-Pad -->
+<!-- D-Pad（十字キー） -->
 <div id="dpad">
+  <!-- 変更前の code
   <button id="dpad-up" class="dpad-button up">▲</button>
   <button id="dpad-left" class="dpad-button left">◀</button>
   <button id="dpad-center" class="dpad-button center"></button>
+  <button id="dpad-right" class="dpad-button right">▶</button>
+  <button id="dpad-down" class="dpad-button down">▼</button>
+  -->
+  <!-- 変更後: 四角いボタンを5つ並べる -->
+  <button id="dpad-up" class="dpad-button up">▲</button>
+  <button id="dpad-left" class="dpad-button left">◀</button>
   <button id="dpad-right" class="dpad-button right">▶</button>
   <button id="dpad-down" class="dpad-button down">▼</button>
 </div>
