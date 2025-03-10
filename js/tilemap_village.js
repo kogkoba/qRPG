@@ -41,6 +41,8 @@ const tileImagesVillage = {
   18: "assets/images/tiles/village/18kusuri.png", // 薬屋
 };
 
+
+
 /** 村を描画 */
 function drawvillageMap() {
   const gameArea = document.getElementById("gameArea");
@@ -68,3 +70,8 @@ function drawvillageMap() {
 
 // ※ イベントリスナーで正しい関数名を指定する
 document.addEventListener("DOMContentLoaded", drawvillageMap);
+
+    // グローバルに村マップデータとして利用するため、必要なら以下でエクスポート（例：window.tileMapVillage = tileMapVillage;）
+  window.tileMapVillage = tileMapVillage;
+  window.tileImagesVillage = tileImagesVillage;
+})();
