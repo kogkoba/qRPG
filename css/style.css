@@ -70,17 +70,46 @@ html, body {
   height: auto;
 }
 
-/* 仮想十字キー */
+/* 十字キー (D-Pad) の復元例 */
 #dpad {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 70px; /* 元に戻す */
+  right: 50px;
   width: 150px;
   height: 150px;
   display: grid;
-  /* 省略 */
-  z-index: 150;
+  grid-template-areas:
+    ".    up    ."
+    "left center right"
+    ".    down  .";
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  z-index: 100; /* 上に重なるように */
 }
+
+.dpad-button {
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  background: #222;
+  color: white;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 例: クリック時など */
+.dpad-button:active {
+  background-color: #444;
+}
+
 
 /* 戦闘画面 */
 #battle-screen {
@@ -92,21 +121,7 @@ html, body {
   text-align: center;
 }
 
-/* ほかの要素は既存コードでOK */
-/* ========== 戦闘画面 ========== */
-/* 最初は表示しない */
-#battle-screen {
-  display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: black;
-  padding: 10px;
-  text-align: center;
-  z-index: 100;
-}
+
 #top-text-box {
   border: 2px solid white;
   padding: 5px;
