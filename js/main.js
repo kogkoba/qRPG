@@ -667,7 +667,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (rightBtn) rightBtn.addEventListener("click", () => movePlayer(STEP, 0));
 
   // キーボード操作（WASDまたは矢印キー）
-  document.addEventListener("keydown", (event) => {
+  document.addEventListener("keydown", (e) => {
+  // もし全キーで e.preventDefault() していたらNG
+  // 必要なキーだけ阻止するよう修正
+});
+
     if (event.key && typeof event.key === "string") {
       const key = event.key.toLowerCase();
       if (key === "w") movePlayer(0, -STEP);
