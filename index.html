@@ -9,68 +9,48 @@
 </head>
 <body>
 
+<!-- ローディングオーバーレイ -->
+<div id="loadingOverlay" style="display: none;">Loading…</div>
 
-
+<!-- ログイン画面 -->
 <div id="loginScreen">
   <h2>プレイヤー名を入力してください</h2>
-  <!-- ロード中メッセージ表示用 -->
-  <div id="loadingMessage" style="display: none;"></div>
   <input type="text" id="playerNameInput" placeholder="名前を入力">
   <button id="loginButton">ログイン</button>
 </div>
 
-
-<div id="mapContainer"></div>
-
-
   <!-- BGM -->
-<audio id="villageBGM"  style="display: none;" controls loop>
-  <source src="https://kogkoba.github.io/qRPG/assets/audio/villagebgm.mp3" type="audio/mpeg">
+<audio id="villageBGM" controls loop>
+  <source src="https://docs.google.com/uc?export=open&id=1ot1Sb6dirOK6r_JxymxZ813pq3jJ3uxU" type="audio/mpeg">
 </audio>
 
-<audio id="battleBGM" style="display: none;" controls loop>
-  <source src="https://kogkoba.github.io/qRPG/assets/audio/jypdance.mp3" type="audio/mpeg">
+<audio id="fieldBGM" controls loop>
+  <source src="https://docs.google.com/uc?export=open&id=1TlM8Ku0BsSw2e08RTb21qFxozwY7cyhh" type="audio/mpeg">
 </audio>
 
-<audio id="winBGM" style="display: none;" controls loop>
-  <source src="https://kogkoba.github.io/qRPG/assets/audio/DQwin.mp3" type="audio/mpeg">
+<audio id="battleBGM" controls loop>
+  <source src="https://docs.google.com/uc?export=open&id=1jaHolqQ_Ui7Vublx5gtLgam9-6kvMvqb" type="audio/mpeg">
 </audio>
 
-<audio id="downBGM" style="display: none;" controls loop>
-  <source src="https://kogkoba.github.io/qRPG/assets/audio/down.mp3" type="audio/mpeg">
+<audio id="winBGM" controls loop>
+  <source src="https://docs.google.com/uc?export=open&id=17wvZ0ifu6kytgZOLEaOIHPtZf5ZV4DgL" type="audio/mpeg">
 </audio>
 
-<audio id="fieldBGM" style="display: none;" controls loop>
-  <source src="https://kogkoba.github.io/qRPG/assets/audio/kouyawoiku.mp3" type="audio/mpeg">
-</audio>  
-
-
-<button id="bgmToggleButton">BGM OFF</button>
-
+<audio id="dqDownAudio" controls loop>
+  <source src="https://docs.google.com/uc?export=open&id=1Vy8zrbIlBYlqwm8JtknzQ7Lx3BeBnUrx" type="audio/mpeg">
+</audio>
 
   
 <!-- マップデータを読み込む -->
-<script src="js/tilemap_village.js"></script>  <!-- ✅ 先に読み込む -->
-<script src="js/tilemap_field.js"></script>    <!-- ✅ 次にフィールド -->
-<script src="js/main.js"></script>  
+<script src="js/tilemap_village.js"></script>
+<script src="js/tilemap_field.js"></script>
 
-  <!-- ロード画面 -->
-<div id="loadingScreen" class="loading-screen">
-  <p id="loadingText">Now Loading...</p>
-</div>
 
 <!-- タイトル画面 -->
-<div id="titleScreen" class="title-screen" style="display: none;">
+<div id="titleScreen" style="display: none;">
+  <h1>ドラクエ風クイズRPG</h1>
   <button id="startButton">ゲームスタート</button>
 </div>
-
-<!-- ログイン画面 -->
-<div id="loginScreen">
-  <input type="text" id="playerNameInput" placeholder="プレイヤー名を入力">
-  <button id="loginButton">ログイン</button>
-</div>
-
-
 
 <!-- ゲーム画面 -->
 <div id="gameContainer" style="display: none;">
@@ -119,5 +99,9 @@
   <button onclick="restartFromChurch()">教会へ行く</button>
 </div>
 
+
+
+<!-- メインスクリプトを最後に読み込む -->
+<script src="js/main.js"></script>
 </body>
 </html>
