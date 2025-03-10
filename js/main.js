@@ -40,14 +40,16 @@ async function loadQuizData() {
     const loadingMessage = document.getElementById("loadingMessage");
     if (loadingMessage) loadingMessage.textContent = "クイズデータを取得中…";
 
-    const params = new URLSearchParams();
-    params.append("mode", "quiz");
+   const params = new URLSearchParams();
+params.append("mode", "player");
+params.append("name", enteredName);
 
-    const resp = await fetch(GAS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params
-    });
+const resp = await fetch(GAS_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: params
+});
+
     if (!resp.ok) throw new Error("ネットワークエラー");
 
     const json = await resp.json();
