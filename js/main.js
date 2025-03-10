@@ -170,10 +170,6 @@ function stopBattleBgm() {
   if (battleBgm) { battleBgm.pause(); battleBgm.currentTime = 0; }
 }
 
-function stopQuizBgm() {
-  const quizBgm = document.getElementById("quizBGM");
-  if (quizBgm) { quizBgm.pause(); quizBgm.currentTime = 0; }
-}
 
 function toggleBgm() {
   isBgmPlaying = !isBgmPlaying;
@@ -427,7 +423,7 @@ function startEncounter() {
   console.log("📖 クイズバトル開始！");
   inBattle = true;
   stopFieldBgm();
-  playQuizBgm();
+  playbattleBgm();
   battleStartHp = playerData.hp;
   if (battleStartG === null) {
     battleStartG = playerData.g;
@@ -514,7 +510,7 @@ function recordMistake(playerName, questionId) {
 function endBattle() {
   console.log("✅ クイズバトル終了");
   inBattle = false;
-  stopQuizBgm();
+  stopbattleBgm();
   playFieldBgm();
   updatePlayerStatusUI();
   document.getElementById("battle-screen").style.display = "none";
@@ -527,7 +523,7 @@ function endBattle() {
 function showGameOverOptions() {
   console.log("💀 ゲームオーバー！選択肢を表示");
   inBattle = false;
-  stopQuizBgm();
+  stopbattleBgm();
   const topText = document.getElementById("top-text-box");
   topText.textContent = "💀 ゲームオーバー！";
   const choiceArea = document.getElementById("choice-area");
@@ -554,7 +550,7 @@ function restartFromChurch() {
   updatePlayerPosition();
   document.getElementById("battle-screen").style.display = "none";
   document.getElementById("gameContainer").style.display = "block";
-  stopQuizBgm();
+  stopbattleBgm();
   playFieldBgm();
 }
 
@@ -576,14 +572,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // BGM初期化
   stopFieldBgm();
   stopBattleBgm();
-  stopQuizBgm();
   stopVillageBgm();
   isBgmPlaying = false;
   const bgmButton = document.getElementById("bgmToggleButton");
   if (bgmButton) bgmButton.textContent = "🔇 BGM OFF";
-  // クイズBGMのループ設定（HTMLに quizBGM 要素がある場合）
-  const quizBgmElem = document.getElementById("quizBGM");
-  if (quizBgmElem) quizBgmElem.loop = true;
+  // クイズBGMのループ設定（HTMLに battleBgm 要素がある場合）
+  const battleBgmElem = document.getElementById("battleBgm");
+  if (battleBgmElem) battleBgmElem.loop = true;
   updateBgmButton();
 
   // スタートボタン登録
