@@ -576,29 +576,35 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("loginButton").addEventListener("click", async () => {
   console.log("🎮 ログインボタンがクリックされました");
 
-  const nameInput = document.getElementById("playerNameInput");
+ const nameInput = document.getElementById("playerNameInput");
   const enteredName = nameInput.value.trim();
   if (!enteredName) {
     alert("名前を入力してください！");
     return;
   }
 
+    console.log("📡 データ取得開始: " + enteredName);
+
   // ロード画面を表示
   document.getElementById("loadingScreen").style.display = "flex";
   document.getElementById("loginScreen").style.display = "none";
 
-  try {
-    // データ取得
+    try {
     const params = new URLSearchParams();
-    params.append("mode", "player");
+    params.append("mode", "player");  // modeを明示的に設定
     params.append("name", enteredName);
+
+       console.log("📡 送信パラメータ: ", params.toString());
+    console.log("📡 GAS_URL:", GAS_URL);
 
     const resp = await fetch(GAS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: params
     });
-    if (!resp.ok) throw new Error("ネットワークエラー");
+        console.log("📡 レスポンス受信");
+      
+   if (!data.success) throw new Error("GASエラー: " + data.error);
 
     const data = await resp.json();
     if (!data.success) throw new Error(data.error || "不明なエラー");
@@ -623,10 +629,8 @@ document.getElementById("loginButton").addEventListener("click", async () => {
     }, 1500);
 
   } catch (err) {
-    console.error("⛔ ログインエラー:", err);
-    alert("ログインエラーが発生しました。再度お試しください。\n" + err.message);
-    document.getElementById("loginScreen").style.display = "block";
-    document.getElementById("loadingScreen").style.display = "none";
+    console.error("⛔ エラー:", err);
+    alert("ログインエラー: " + err.message);
   }
 });
 
