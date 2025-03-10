@@ -31,7 +31,7 @@ const MAX_MISS = 4;
 let lastEncounterSteps = 0;
 let encounterThreshold = 5;
 let battleStartHp = 50;
-let battleStartG = 0; // 戦闘開始時のゴールド
+let battleStartG = null; // 戦闘開始時のゴールド（初期値はnullに変更）
 
 /*******************************************************
  *  2) データ取得（クイズ & モンスター）
@@ -116,11 +116,11 @@ function playCurrentBgm() {
   if (!isBgmPlaying) return;
   stopAllBgm();
   if (currentMap === "village") {
-    playvillagebgm();
+    playVillageBgm();
   } else if (currentMap === "field") {
-    playfieldBGM();
+    playFieldBgm();
   } else if (currentMap === "battle") {
-    playbattleBGM();
+    playBattleBgm();
   }
 }
 
@@ -131,22 +131,30 @@ function stopAllBgm() {
   });
 }
 
-function playvillagebgm() {
-  const villageBgm = document.getElementById("villageBGM");
-  if (villageBgm) villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
+function playVillageBgm() {
+  // ※HTML側のIDは "villagebgm"（小文字）に合わせる
+  const villageBgm = document.getElementById("villagebgm");
+  if (villageBgm) {
+    villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
+  }
 }
 
 function playFieldBgm() {
   const fieldBgm = document.getElementById("fieldBGM");
-  if (fieldBgm) fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
+  if (fieldBgm) {
+    fieldBgm.play().catch(err => console.warn("フィールドBGM再生エラー:", err));
+  }
 }
 
 function playBattleBgm() {
   const battleBgm = document.getElementById("battleBGM");
-  if (battleBgm) battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
+  if (battleBgm) {
+    battleBgm.play().catch(err => console.warn("戦闘BGM再生エラー:", err));
+  }
 }
 
 function playQuizBgm() {
+  // クイズバトル用BGM（HTMLに quizBGM 要素がない場合は、後述のように追加してください）
   const quizBgm = document.getElementById("quizBGM");
   if (!isBgmPlaying || !quizBgm) return;
   quizBgm.currentTime = 0;
@@ -154,7 +162,7 @@ function playQuizBgm() {
 }
 
 function stopVillageBgm() {
-  const villageBgm = document.getElementById("villageBGM");
+  const villageBgm = document.getElementById("villagebgm");
   if (villageBgm) { villageBgm.pause(); villageBgm.currentTime = 0; }
 }
 
@@ -396,6 +404,27 @@ function drawMap() {
   }
 }
 
+/* ※ 以下、重複していた drawMap() の定義をコメントアウト
+function drawMap() {
+  console.log("🗺 マップを描画 (デバッグ)");
+  const mapContainer = document.getElementById("mapContainer");
+  if (!mapContainer) {
+    console.error("❌ mapContainer の要素が見つかりません！");
+    return;
+  }
+  mapContainer.innerHTML = "";
+  for (let y = 0; y < tileMap.length; y++) {
+    for (let x = 0; x < tileMap[y].length; x++) {
+      const tile = document.createElement("div");
+      tile.className = `tile tile-${tileMap[y][x]}`;
+      tile.style.left = `${x * 32}px`;
+      tile.style.top = `${y * 32}px`;
+      mapContainer.appendChild(tile);
+    }
+  }
+}
+*/
+
 /*******************************************************
  * 11) 戦闘（クイズ）処理
  *******************************************************/
@@ -523,6 +552,7 @@ function restartFromChurch() {
   console.log("⛪ 教会へ戻る (Gが半分になり、村の教会からスタート)");
   playerData.g = Math.floor(playerData.g / 2);
   playerData.hp = 50;
+  // ※ 教会の開始位置（仮の座標：必要に応じて修正）
   player.x = 100;
   player.y = 150;
   savePlayerData();
@@ -557,6 +587,7 @@ document.addEventListener("DOMContentLoaded", () => {
   isBgmPlaying = false;
   const bgmButton = document.getElementById("bgmToggleButton");
   if (bgmButton) bgmButton.textContent = "🔇 BGM OFF";
+  // クイズBGMのループ設定（HTMLに quizBGM 要素がある場合）
   const quizBgmElem = document.getElementById("quizBGM");
   if (quizBgmElem) quizBgmElem.loop = true;
   updateBgmButton();
@@ -630,25 +661,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-/*******************************************************
- *  14) タイルマップ描画
- *******************************************************/
-function drawMap() {
-  console.log("🗺 マップを描画 (デバッグ)");
-  const mapContainer = document.getElementById("mapContainer");
-  if (!mapContainer) {
-    console.error("❌ mapContainer の要素が見つかりません！");
-    return;
-  }
-  mapContainer.innerHTML = "";
-  for (let y = 0; y < tileMap.length; y++) {
-    for (let x = 0; x < tileMap[y].length; x++) {
-      const tile = document.createElement("div");
-      tile.className = `tile tile-${tileMap[y][x]}`;
-      tile.style.left = `${x * 32}px`;
-      tile.style.top = `${y * 32}px`;
-      mapContainer.appendChild(tile);
-    }
-  }
-}
