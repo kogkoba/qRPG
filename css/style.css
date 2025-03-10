@@ -10,8 +10,11 @@ html, body {
 }
 
 /* ========== ログイン画面 ========== */
+
 /* 最初に表示されるように display: flex; にする */
 #loginScreen {
+   position: relative; /* あるいは absolute/fixed */
+  z-index: 10;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -48,6 +51,7 @@ html, body {
   border-radius: 5px;
 }
 
+
 /* ========== ゲーム画面全体 ========== */
 /* ゲーム開始後に表示するので最初は display: none; */
 #gameContainer {
@@ -77,8 +81,12 @@ html, body {
 }
 
 /* タイルマップ描画用コンテナ */
+
+
+
 #mapContainer {
-  position: absolute;
+position: relative;
+    z-index: 0;
   top: 0;
   left: 0;
   width: 100%;
