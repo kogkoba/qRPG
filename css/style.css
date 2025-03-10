@@ -7,90 +7,70 @@ html, body {
   font-family: sans-serif;
   background-color: #222;
   color: #fff;
+  /* スクロールをなくす */
+  overflow: hidden;
 }
 
-/* ========== ログイン画面 ========== */
-
-/* 最初に表示されるように display: flex; にする */
+/* ログイン画面 */
 #loginScreen {
-   position: relative; /* あるいは absolute/fixed */
+  position: absolute; /* 親要素に依存して全画面を覆う */
+  top: 0; left: 0; right: 0; bottom: 0;
   z-index: 10;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
   background: black;
 }
-#loginScreen input,
-#loginScreen button {
-  font-size: 18px;
-  padding: 5px;
-  margin: 10px;
-}
 
-/* ========== タイトル画面 ========== */
-/* ログイン後に表示するので最初は display: none; */
+/* タイトル画面 */
 #titleScreen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
   background: black;
 }
-#startButton {
-  font-size: 24px;
-  padding: 10px 20px;
-  cursor: pointer;
-  border: 2px solid #fff;
-  background: #444;
-  color: #fff;
-  border-radius: 5px;
-}
 
-
-/* ========== ゲーム画面全体 ========== */
-/* ゲーム開始後に表示するので最初は display: none; */
+/* ゲーム全体のコンテナ */
 #gameContainer {
-  display: none;
-  width: 100%;
-  height: 100%;
+  /* ログイン後に表示される */
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: none; /* 初期は非表示 */
+  /* 背景など必要なら指定 */
 }
 
-/* ---------- ステータス表示 ---------- */
+/* ステータスバー */
 #status {
-  padding: 10px;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50px;
+  line-height: 50px;
+  background-color: #111;
   text-align: center;
   font-size: 18px;
-  background-color: #111;
+  z-index: 100;
 }
 
-
-/* ========== フィールド画面 ========== */
-/* ゲーム開始後、スタートボタン押下で表示するので最初は none */
+/* フィールド画面 */
 #gameArea {
+  /* ステータスの下に配置 */
+  position: absolute;
+  top: 50px; /* #status の高さ分ずらす */
+  left: 0; right: 0; bottom: 0;
+  overflow: hidden; /* はみ出しを隠す */
+  display: none; /* 初期は非表示 → JSで "block" に */
+}
+
+/* mapContainer：タイルマップ描画領域 */
+#mapContainer {
   position: relative;
   width: 100%;
-  height: calc(100% - 50px);
-  /* 背景画像は削除し、タイルマップJSで描画するための領域に変更 */
-  overflow: hidden;
-  display: none; /* 必要に応じてJSから "block" 等に切り替え */
-}
-
-/* タイルマップ描画用コンテナ */
-
-
-
-#mapContainer {
-position: relative;
-    z-index: 0;
-  top: 0;
-  left: 0;
-  width: 100%;
   height: 100%;
+  z-index: 0; 
 }
 
 /* プレイヤーキャラ */
@@ -100,11 +80,12 @@ position: relative;
   height: auto;
 }
 
-/* ---------- D-Pad (十字キー) ---------- */
+/* D-Pad */
 #dpad {
-  position: fixed; /* 絶対位置ではなく固定 */
-  bottom: 70px;    /* 画面下からの距離 */
-  right: 50px;     /* 画面右からの距離 */
+  position: absolute;
+  /* 下部・右側に固定したい場合 */
+  bottom: 10px;
+  right: 10px;
   width: 150px;
   height: 150px;
   display: grid;
@@ -112,48 +93,24 @@ position: relative;
     ".    up    ."
     "left center right"
     ".    down  .";
-  gap: 8px; /* ボタンの間隔 */
+  gap: 8px;
   justify-content: center;
   align-items: center;
+  z-index: 150; /* マップより前面に表示 */
 }
 
-.dpad-button {
-  width: 50px;
-  height: 50px;
-  font-size: 20px;
-  font-weight: bold;
+/* 戦闘画面 */
+#battle-screen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: black;
+  display: none;
+  z-index: 200;
+  padding: 10px;
   text-align: center;
-  background: #222; /* 変更: 黒に近い色 */
-  color: white;
-  border: 2px solid #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  touch-action: none;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.dpad-button:hover {
-  background-color: #444; /* 変更: マウスホバーで明るく */
-}
-
-.dpad-button:active {
-  background-color: #666; /* 変更: クリック時に色を暗く */
-}
-
-.up    { grid-area: up; }
-.down  { grid-area: down; }
-.left  { grid-area: left; }
-.right { grid-area: right; }
-.center {
-  grid-area: center;
-  background: transparent;
-  border: none;
-  pointer-events: none;
-}
-
+/* 以下は残りのクラスはほぼ同じでOK */
 /* ========== 戦闘画面 ========== */
 /* 最初は表示しない */
 #battle-screen {
