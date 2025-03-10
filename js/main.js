@@ -116,11 +116,20 @@ function getRandomMonsters() {
  *******************************************************/
 function showLoadingOverlay() {
   const overlay = document.getElementById("loadingOverlay");
-  if (overlay) overlay.style.display = "flex";
+  const message = document.getElementById("loadingMessage");
+  if (overlay && message) {
+    message.textContent = "ロード中…";
+    overlay.style.display = "flex"; // しっかり表示する
+  } else {
+    console.error("❌ ローディング要素が見つかりません");
+  }
 }
+
 function hideLoadingOverlay() {
   const overlay = document.getElementById("loadingOverlay");
-  if (overlay) overlay.style.display = "none";
+  if (overlay) {
+    overlay.style.display = "none"; // しっかり隠す
+  }
 }
 
 /*******************************************************
