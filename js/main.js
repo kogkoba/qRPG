@@ -599,18 +599,9 @@ function retryBattle() {
  * 13) DOMContentLoaded：ログイン時に一度だけデータ取得
  *******************************************************/
 document.addEventListener("DOMContentLoaded", () => {
-  // BGM 初期 OFF
-  stopAllBgm();
-  isBgmPlaying = false;
-  const bgmBtn = document.getElementById("bgmToggleButton");
-  if (bgmBtn) bgmBtn.textContent = "🔇 BGM OFF";
-  updateBgmButton();
-
   // スタートボタン
   const startBtn = document.getElementById("startButton");
-  if (startBtn) {
-    startBtn.addEventListener("click", startGame);
-  }
+  if (startBtn) startBtn.addEventListener("click", startGame);
 
   // ログインボタン
   const loginBtn = document.getElementById("loginButton");
@@ -623,7 +614,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       try {
-        showLoadingOverlay();
+        // ロード中メッセージを表示
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        const loadingMessage = document.getElementById("loadingMessage");
+        loadingMessage.textContent = "ロード中…";  // 初期メッセージ
+        loadingOverlay.style.display = "flex";
 
         // プレイヤーデータ読み込み
         const params = new URLSearchParams();
@@ -635,11 +630,11 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: params
         });
-        if (!resp.ok) throw new Error("ネットワークエラーです");
+        if (!resp.ok) throw new Error("ネットワークエラー");
         const data = await resp.json();
         if (!data.success) throw new Error(data.error || "不明なエラー");
 
-        // 取得したデータを playerData に反映
+        // 取得データをセット
         playerData.name  = data.name;
         playerData.level = parseInt(data.level, 10);
         playerData.exp   = parseInt(data.exp, 10);
@@ -647,23 +642,29 @@ document.addEventListener("DOMContentLoaded", () => {
         playerData.hp    = parseInt(data.hp, 10) || 50;
         updatePlayerStatusUI();
 
-        // クイズ & モンスターデータを1度だけ取得
+        // クイズデータ取得
+        loadingMessage.textContent = "クイズデータを取得中…";
         await loadQuizData();
+
+        // モンスターデータ取得
+        loadingMessage.textContent = "モンスターデータを取得中…";
         await loadMonsterData();
 
         setTimeout(() => {
-          hideLoadingOverlay();
-          // ログイン画面を閉じてタイトル画面へ
+          // ロード完了後、ログイン画面を非表示にしてタイトル画面を表示
+          loadingOverlay.style.display = "none";
           document.getElementById("loginScreen").style.display = "none";
           document.getElementById("titleScreen").style.display = "flex";
         }, 500);
       } catch (err) {
         console.error("ログインエラー:", err);
-        hideLoadingOverlay();
+        document.getElementById("loadingOverlay").style.display = "none";
         alert("ログインエラーが発生しました。再度お試しください。");
       }
     });
   }
+});
+
 
   // D-Pad イベント
   const upBtn    = document.getElementById("dpad-up");
