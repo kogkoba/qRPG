@@ -586,18 +586,43 @@ document.getElementById("loginButton").addEventListener("click", async () => {
   console.log("📡 データ取得開始: " + enteredName);
 
   try {
-    const params = new URLSearchParams();
-    params.append("mode", "player");  // modeを明示的に設定
-    params.append("name", enteredName);
+    const requestData = {
+      mode: "player",
+      name: enteredName
+    };
 
-    console.log("📡 送信パラメータ: ", params.toString());
+    console.log("📡 送信データ: ", JSON.stringify(requestData));
     console.log("📡 GAS_URL:", GAS_URL);
 
     const resp = await fetch(GAS_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestData)
     });
+
+    console.log("📡 レスポンス受信");
+
+    if (!resp.ok) throw new Error("ネットワークエラー: " + resp.status);
+
+    const data = await resp.json();
+    console.log("✅ 受信データ:", data);
+
+    if (!data.success) throw new Error("GASエラー: " + data.error);
+
+    playerData.name  = data.name;
+    playerData.level = parseInt(data.level, 10);
+    playerData.exp   = parseInt(data.exp, 10);
+    playerData.g     = parseInt(data.g, 10);
+    playerData.hp    = parseInt(data.hp, 10) || 50;
+    updatePlayerStatusUI();
+
+    console.log("✅ プレイヤーデータ取得成功");
+
+  } catch (err) {
+    console.error("⛔ エラー:", err);
+    alert("ログインエラー: " + err.message);
+  }
+});
 
     console.log("📡 レスポンス受信");
 
