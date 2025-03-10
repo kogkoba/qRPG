@@ -2,7 +2,8 @@
  *  1) 定数・グローバル変数
  *******************************************************/
 // 例：GAS の公開URL
-const GAS_URL = "https://script.google.com/macros/s/---YOUR_SCRIPT_ID---/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzqM5gZr3HBY5LMo7U7uB0_dvEl29BW_2TpdBZjSH23OjiNfk0A6SsWXx6KRXF9x97T/exec";
+
 
 // 移動距離
 const STEP = 20;
