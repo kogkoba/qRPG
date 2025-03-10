@@ -3,6 +3,25 @@ const TILE_SIZE = 32; // 1タイルのサイズ
 const MAP_ROWS = 15;
 const MAP_COLS = 15;
 
+/** 村のタイルマップデータ */
+const tileMapVillage = [
+  [4, 4, 4, 4, 4, 4, 9, 9, 14, 9, 4, 4, 9, 9, 4],
+  [4, 1, 1, 1, 1, 1, 9, 15, 16, 9, 4, 9, 12, 12, 9],
+  [4, 10, 10, 10, 10, 10, 9, 11, 11, 9, 4, 9, 11, 11, 9],
+  [4, 10, 4, 4, 4, 10, 9, 11, 11, 9, 4, 9, 11, 11, 9],
+  [4, 10, 4, 4, 4, 10, 4, 10, 10, 4, 4, 4, 10, 10, 4],
+  [4, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4],
+  [4, 1, 1, 10, 1, 1, 10, 1, 1, 1, 10, 1, 1, 1, 4],
+  [4, 1, 1, 10, 10, 10, 10, 1, 1, 1, 10, 1, 1, 1, 4],
+  [4, 1, 1, 1, 1, 1, 10, 1, 1, 1, 10, 1, 1, 1, 4],
+  [4, 1, 1, 1, 1, 1, 10, 10, 10, 10, 10, 10, 10, 10, 4],
+  [4, 1, 1, 1, 1, 1, 10, 10, 4, 7, 7, 4, 7, 7, 4],
+  [9, 11, 11, 9, 10, 10, 10, 10, 9, 11, 11, 9, 11, 11, 9],
+  [9, 11, 11, 9, 1, 1, 10, 10, 9, 11, 11, 9, 11, 11, 9],
+  [9, 11, 11, 9, 1, 1, 10, 10, 9, 11, 11, 9, 11, 11, 9],
+  [9, 9, 18, 9, 4, 4, 10, 10, 9, 9, 17, 9, 9, 13, 4],
+];
+
 /** タイル番号と画像パスの対応 */
 const tileImagesVillage = {
   1: "assets/images/tiles/village/1grass.png",  // 草地
@@ -20,17 +39,15 @@ const tileImagesVillage = {
   18: "assets/images/tiles/village/18kusuri.png", // 薬屋
 };
 
-
-
-/** フィールドを描画 */
+/** 村を描画 */
 function drawvillageMap() {
   const gameArea = document.getElementById("gameArea");
   gameArea.innerHTML = "";
 
   for (let row = 0; row < MAP_ROWS; row++) {
     for (let col = 0; col < MAP_COLS; col++) {
-      const tileValue = fieldTileMap[row][col];
-      const tileSrc = fieldTileImages[tileValue];
+      const tileValue = tileMapVillage[row][col];
+      const tileSrc = tileImagesVillage[tileValue];
 
       if (!tileSrc) continue;
 
@@ -47,7 +64,5 @@ function drawvillageMap() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", drawvillagedMap);
-
-
-};
+// ※ イベントリスナーで正しい関数名を指定する
+document.addEventListener("DOMContentLoaded", drawvillageMap);
