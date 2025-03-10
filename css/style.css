@@ -45,6 +45,8 @@ html, body {
  * タイトル画面
  *******************************************************/
 #titleScreen {
+  position: relative;
+  z-index: 9999; /* 大きめの値 */
   display: none;  /* ログイン後に表示 */
   flex-direction: column;
   justify-content: center;
@@ -118,6 +120,8 @@ html, body {
  * D-Pad（スマホ操作用）
  *******************************************************/
 #dpad {
+  position: fixed;
+  z-index: 10; /* ある程度低め */
   position: fixed;
   bottom: 70px;
   right: 50px;
