@@ -1,130 +1,133 @@
-/* すべて画面に収まるように */
+/* ========== 共通設定 ========== */
 html, body {
-  margin: 0; padding: 0;
-  width: 100%; height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
   font-family: sans-serif;
-  background-color: #222;
+  background-color: #333; /* 背景色をやや明るめの黒 */
   color: #fff;
-  overflow: hidden; /* スクロールさせない */
+  /*overflow: hidden;  ← 必要ならスクロール禁止に */
 }
 
-/* それぞれの画面を絶対配置 + 100%サイズ */
-#loginScreen,
-#titleScreen,
-#gameContainer {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  display: none; /* 後からJSで表示切替 */
+/* ---------- ログイン画面・タイトル画面を中央揃え ---------- */
+#loginScreen, #titleScreen {
+  /* 旧: position: relative; など → コメントアウト
+     position: relative;
+     z-index: 10; 
+  */
+  display: flex; /* flex で中央揃え */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-/* ログイン画面・タイトル画面を中央揃え */
-#loginScreen {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* 垂直方向の中央 */
-  align-items: center;     /* 水平方向の中央 */
-  text-align: center;      /* テキストを中央寄せ */
-  /* すでに position: absolute 等で全画面を覆っている場合は
-     top: 0; left: 0; right: 0; bottom: 0; を指定しているか確認 */
-}
-#titleScreen{
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* 垂直方向の中央 */
-  align-items: center;     /* 水平方向の中央 */
-  text-align: center;      /* テキストを中央寄せ */
-  /* すでに position: absolute 等で全画面を覆っている場合は
-     top: 0; left: 0; right: 0; bottom: 0; を指定しているか確認 */
+  text-align: center; /* テキスト中央 */
+  width: 100%;
+  height: 100%;
+  background: #222; /* 背景黒 */
 }
 
-/* ゲーム画面 */
+/* インプットやボタンのスタイル */
+#loginScreen input, #loginScreen button,
+#titleScreen button {
+  font-size: 18px;
+  padding: 8px 12px;
+  margin: 10px;
+}
+
+/* ========== ゲーム画面全体 ========== */
 #gameContainer {
-  /* 背景などあれば指定 */
+  /* 旧: display block など → 今は index.html で display:none */
+  width: 100%;
+  height: 100%;
+  background: #111; 
+  position: relative; /* ステータス固定などに */
 }
 
 /* ステータスバー */
 #status {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 50px;
-  line-height: 50px;
-  background-color: #111;
+  padding: 10px;
   text-align: center;
-  z-index: 100;
+  font-size: 18px;
+  background-color: #111;
 }
 
-/* gameArea を固定サイズにする例 */
+/* ========== フィールド画面 ========== */
 #gameArea {
   position: relative;
-  width: 480px;  /* 15マス × 32px = 480 */
-  height: 480px; /* 同じく 15マス分確保 */
-  background-color: #000;
-  overflow: hidden; /* はみ出す部分は見切れる */
-  margin: 0 auto;   /* 中央寄せ */
-  display: none;    /* ゲーム開始時に表示 */
-}
-/* タイルマップコンテナ */
-#mapContainer {
-  position: relative;
   width: 100%;
-  height: 100%;
-  z-index: 0;
+  height: calc(100% - 60px); /* ステータスバーの高さを差し引き */
+  overflow: hidden;
+  /* 旧: display: none; → コメントアウト 
+     display: none; 
+  */
+  background: #000;
 }
 
-/* プレイヤー */
+/* タイルマップ描画用コンテナ */
+#mapContainer {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* プレイヤーキャラ */
 #player {
   position: absolute;
-  width: 30px; /* 適宜調整 */
+  width: 30px;
   height: auto;
 }
 
-
-/* 以前の十字キーCSSをコメントアウトで残す
+/* ========== 仮想十字キー ========== */
+/* 旧のグリッドボタンをコメントアウト
 #dpad {
   position: fixed;
   bottom: 70px;
   right: 50px;
-  width: 150px;
-  height: 150px;
+  width: 150px; height: 150px;
   display: grid;
-  ...
+  grid-template-areas:
+    ".    up    ."
+    "left center right"
+    ".    down  .";
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
 }
 */
 
-/* 新しい十字キーCSS */
+/* 新しいドット絵風の十字キー */
 #dpad {
-  position: absolute;
+  position: fixed;
   bottom: 70px;
   right: 50px;
-  width: 128px;   /* 画像のサイズに合わせる */
+  width: 128px;  /* 画像サイズに合わせる */
   height: 128px;
-  background: url("./assets/images/dpad-cross.png") no-repeat center center;
-  background-size: contain; /* or 100% 100%; */
-  /* z-indexが必要なら指定 */
+  background: url("../images/dpad-cross.png") no-repeat center center; 
+  background-size: contain;
   z-index: 200;
 }
 
-/* ボタンを透明にして、位置だけ合わせる例 */
+/* ボタン領域は透明 & 絶対位置でヒットエリアを作る */
 .dpad-button {
   position: absolute;
-  background: rgba(255,255,255,0); /* 透明 */
+  background: rgba(255,255,255,0);
   border: none;
   width: 40px;
   height: 40px;
   cursor: pointer;
 }
 
-/* それぞれのボタン位置を微調整 */
+/* 位置調整(例) */
 #dpad-up {
-  top: 0; left: 44px;  /* 十字上部 */
+  top: 0; left: 44px;
 }
 #dpad-left {
-  top: 44px; left: 0;  /* 十字左 */
+  top: 44px; left: 0;
 }
 #dpad-center {
   top: 44px; left: 44px;
-  pointer-events: none; /* 中心は使わないなら無効化 */
+  pointer-events: none;
 }
 #dpad-right {
   top: 44px; left: 88px;
@@ -133,185 +136,15 @@ html, body {
   top: 88px; left: 44px;
 }
 
-
-
-
-/* 戦闘画面 */
+/* ---------- 戦闘画面 ---------- */
 #battle-screen {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
   display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: black;
-  z-index: 200;
+  padding: 10px;
   text-align: center;
-}
-
-
-#top-text-box {
-  border: 2px solid white;
-  padding: 5px;
-  margin-bottom: 5px;
-  min-height: 40px;
-  font-size: 16px;
-}
-#enemy-container {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-bottom: 5px;
-}
-.monster {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-}
-#quiz-image {
-  display: none;
-  width: 300px;
-  height: 300px;
-  margin: 5px auto;
-}
-/* 戦闘画面のHP表示 */
-#hp-container {
-  display: flex;
-  justify-content: center;
-  font-size: 18px;
-  margin-top: 20px;
-}
-.choice-button {
-  display: block;
-  margin: 5px auto;
-  padding: 5px;
-  width: 150px;
-  font-size: 16px;
-  cursor: pointer;
-}
-.choice-button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-/* クイズエリア調整 */
-#quiz-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-#explanation { 
-  display: none; 
-}
-#zaorikuButton {
-  display: none;
-  font-size: 18px;
-  padding: 5px 10px;
-  margin-top: 10px;
-  cursor: pointer;
-}
-
-/* ========== 円拡大演出用オーバーレイ ========== */
-#transition-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 200;
-  display: none;
-  pointer-events: none;
-}
-#transition-circle {
-  position: absolute;
-  width: 200vmax;
-  height: 200vmax;
-  background: black;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.8s ease-out;
-}
-#transition-circle.active {
-  transform: translate(-50%, -50%) scale(1);
-}
-
-/* ========== シェイクアニメーション ========== */
-@keyframes shake {
-  0%   { transform: translate(0, 0); }
-  20%  { transform: translate(-10px, 0); }
-  40%  { transform: translate(10px, 0); }
-  60%  { transform: translate(-10px, 0); }
-  80%  { transform: translate(10px, 0); }
-  100% { transform: translate(0, 0); }
-}
-.shake {
-  animation: shake 0.5s;
-}
-
-/* ========== ローディングオーバーレイ ========== */
-#loadingOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: #fff;
   z-index: 300;
-  /* すでにHTML内で display: none; が指定されているなら不要 */
 }
-
-/* ========== レスポンシブ調整 ========== */
-@media (max-width: 600px) {
-  #status {
-    font-size: 16px;
-    padding: 10px;
-  }
-  #top-text-box {
-    font-size: 14px;
-    padding: 5px;
-  }
-  .choice-button {
-    width: 120px;
-    font-size: 14px;
-  }
-  #player {
-    width: 25px;
-  }
-  #dpad {
-    width: 120px;
-    height: 120px;
-    grid-gap: 5px;
-  }
-  .dpad-button {
-    width: 40px;
-    height: 40px;
-  }
-  .heart {
-    font-size: 20px;
-  }
-}
-
-@media (min-width: 768px) {
-  #battle-screen {
-    font-size: 20px;
-  }
-  #top-text-box {
-    font-size: 18px;
-  }
-  .choice-button {
-    width: 200px;
-    font-size: 18px;
-  }
-  .monster {
-    width: 80px;
-    height: 80px;
-  }
-  #hp-container {
-    font-size: 22px;
-  }
-}
+/* ...（以下略。既存のままでOK） */
