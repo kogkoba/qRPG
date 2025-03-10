@@ -269,16 +269,16 @@ function startGame() {
   console.log("🎮 ゲーム開始！");
   document.getElementById("titleScreen").style.display = "none";
   document.getElementById("gameContainer").style.display = "block";
-  document.getElementById("gameArea").style.display = "block"; // これでマップ領域が表示される
+  document.getElementById("gameArea").style.display = "block";
   initGame();
+  // 必ずここで村マップを指定
   currentMap = null;
-  switchMap("village");
+  switchMap("village"); // ← フィールドではなく、こちらを呼ぶ
   player.x = 7;
   player.y = 7;
   updatePlayerPosition();
   updatePlayerStatusUI();
 }
-
 /*******************************************************
  *  7) マップ切り替え処理
  *******************************************************/
