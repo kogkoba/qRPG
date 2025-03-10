@@ -1,4 +1,193 @@
 /*******************************************************
+ *  1) 定数・グローバル変数
+ *******************************************************/
+// 例：最新のGAS URL。適切なものに置き換えてください
+const GAS_URL = "https://script.google.com/macros/s/---YOUR_SCRIPT_ID---/exec";
+
+// 移動距離
+const STEP = 20;
+
+// プレイヤーデータ
+let playerData = { name: "", level: 1, exp: 0, g: 0, hp: 50 };
+let quizData = [];
+let monsterData = [];
+
+// マップ (village / field) が読み込まれている想定
+// もし tileMap が undefined ならエラーを出す
+if (typeof tileMap !== "undefined" && tileMap.length > 0) {
+  const mapWidth = tileMap[0].length;
+  const mapHeight = tileMap.length;
+} else {
+  console.error("❌ tileMap が未定義または空です！");
+}
+
+// フィールド上のプレイヤー情報
+let player = { x: 0, y: 0, steps: 0 };
+let facingRight = true;
+let currentImageIndex = 0;
+const playerImages = [
+  "https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh",
+  "https://lh3.googleusercontent.com/d/1iuVZiT6Eh9mp2Ta__Cpm5z28HZ2k0YA0",
+  "https://lh3.googleusercontent.com/d/1fCmul9iotoUh4MLa_qzHvaOUDYMvng8C"
+];
+
+// 戦闘状態管理
+let inBattle = false;
+let correctCount = 0;
+let missCount = 0;
+const MAX_CORRECT = 4;
+const MAX_MISS = 4;
+let lastEncounterSteps = 0;
+let encounterThreshold = 5; // 何歩ごとにエンカウントするか
+
+// バトル開始時に保存するHPとG
+let battleStartHp = 50; // HPの初期値
+let battleStartG  = null; // Gの初期値は null で管理
+
+// 現在のマップ (village / field)
+let currentMap = null;
+
+/*******************************************************
+ *  2) データ取得（クイズ & モンスター）
+ *******************************************************/
+/** クイズデータをGASから取得 */
+async function loadQuizData() {
+  try {
+    const params = new URLSearchParams();
+    params.append("mode", "quiz");
+
+    const resp = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params
+    });
+    if (!resp.ok) throw new Error("ネットワークエラー");
+    const json = await resp.json();
+    if (!json.success) {
+      console.warn("クイズデータ取得失敗:", json.error);
+      return;
+    }
+    quizData = json.quizzes || [];
+    console.log("✅ Quiz Data:", quizData);
+
+  } catch (err) {
+    console.error("⛔ loadQuizData Error:", err);
+  }
+}
+
+/** モンスターデータをGASから取得 */
+async function loadMonsterData() {
+  try {
+    const params = new URLSearchParams();
+    params.append("mode", "monster");
+
+    const resp = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params
+    });
+    if (!resp.ok) throw new Error("ネットワークエラー");
+    const json = await resp.json();
+    if (!json.success) {
+      console.warn("モンスターデータ取得失敗:", json.error);
+      return;
+    }
+    monsterData = json.monsters || [];
+    console.log("✅ Monster Data:", monsterData);
+
+  } catch (err) {
+    console.error("⛔ loadMonsterData Error:", err);
+  }
+}
+
+/** クイズをランダムで1問取得 */
+function getRandomQuiz() {
+  if (!quizData || quizData.length === 0) return null;
+  const idx = Math.floor(Math.random() * quizData.length);
+  return quizData[idx];
+}
+
+/** モンスターをランダムに4体取得 */
+function getRandomMonsters() {
+  if (!monsterData || monsterData.length < 4) {
+    console.warn("Not enough monsters");
+    return [];
+  }
+  const shuffled = [...monsterData].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 4);
+}
+
+/*******************************************************
+ *  3) ローディングオーバーレイ
+ *******************************************************/
+function showLoadingOverlay() {
+  const overlay = document.getElementById("loadingOverlay");
+  if (overlay) overlay.style.display = "flex";
+}
+function hideLoadingOverlay() {
+  const overlay = document.getElementById("loadingOverlay");
+  if (overlay) overlay.style.display = "none";
+}
+
+/*******************************************************
+ *  4) BGM関連
+ *******************************************************/
+let isBgmPlaying = false; // BGMの状態を管理するフラグ
+
+// 現在のマップに応じたBGMを再生する関数
+function playCurrentBgm() {
+  if (!isBgmPlaying) return;
+  stopAllBgm(); // すべてのBGMを停止
+
+  if (currentMap === "village") {
+    playVillageBgm();
+  } else if (currentMap === "field") {
+    playFieldBgm();
+  } else if (inBattle) {
+    playBattleBgm();
+  }
+}
+
+// すべてのBGMを停止する関数
+function stopAllBgm() {
+  document.querySelectorAll("audio").forEach(audio => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+}
+function playVillageBgm() { /* ...村BGM再生... */ }
+function playFieldBgm()   { /* ...フィールドBGM再生... */ }
+function playwinBGM()     { /* ...勝利BGM再生... */ }
+function playBattleBgm()  { /* ...戦闘BGM再生... */ }
+function playdownBGM()    { /* ...ダウンBGM再生... */ }
+
+// BGMスイッチをセットアップ (DOMContentLoaded内でもOKだが、分けていても可)
+document.addEventListener("DOMContentLoaded", () => {
+  const bgmButton = document.getElementById("bgmToggleButton");
+  if (bgmButton) {
+    bgmButton.addEventListener("click", toggleBgm);
+  }
+});
+
+/** BGMボタンの表示を更新 */
+function updateBgmButton() {
+  const button = document.getElementById("bgmToggleButton");
+  if (!button) return;
+  butto
+
+
+
+
+
+
+
+
+
+
+
+/**
+
+/*******************************************************
  * 1) 定数・グローバル変数
  *******************************************************/
 
@@ -703,3 +892,5 @@ function drawMap() {
     }
   }
 }
+
+*/
