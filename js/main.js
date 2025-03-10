@@ -117,20 +117,19 @@ function getRandomMonsters() {
 function showLoadingOverlay() {
   const overlay = document.getElementById("loadingOverlay");
   const message = document.getElementById("loadingMessage");
+
+  console.log("🔎 showLoadingOverlay() が呼ばれました");
+  console.log("🔎 overlay:", overlay);
+  console.log("🔎 message:", message);
+
   if (overlay && message) {
     message.textContent = "ロード中…";
-    overlay.style.display = "flex"; // しっかり表示する
+    overlay.style.display = "flex"; // ✅ これでしっかり表示
   } else {
-    console.error("❌ ローディング要素が見つかりません");
+    console.error("❌ ローディングオーバーレイが見つかりません！");
   }
 }
 
-function hideLoadingOverlay() {
-  const overlay = document.getElementById("loadingOverlay");
-  if (overlay) {
-    overlay.style.display = "none"; // しっかり隠す
-  }
-}
 
 /*******************************************************
  *  4) BGM関連
