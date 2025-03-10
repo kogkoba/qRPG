@@ -111,7 +111,9 @@ function getRandomMonsters() {
 /*******************************************************
  *  3) ローディングオーバーレイ
  *******************************************************/
-function showLoadingOverlay() {
+showLoadingOverlay();
+await new Promise(r => setTimeout(r, 0)); // ここで再描画の猶予を与える
+// ここからfetchを開始
   const overlay = document.getElementById("loadingOverlay");
   const message = document.getElementById("loadingMessage");
   if (overlay && message) {
@@ -583,60 +585,52 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
   loginBtn.disabled = false;  
-  loginBtn.addEventListener("click", async () => {
-    console.log("🎮 ログインボタンがクリックされました");
+loginBtn.addEventListener("click", async () => {
+  const enteredName = nameInput.value.trim();
+  if (!enteredName) {
+    alert("名前を入力してください！");
+    return;
+  }
+  try {
+    // (1) まずロード中…を表示
+    showLoadingOverlay();
 
-    const nameInput = document.getElementById("playerNameInput");
-    const enteredName = nameInput.value.trim();
-    if (!enteredName) {
-      alert("名前を入力してください！");
-      return;
-    }
-    try {
-      showLoadingOverlay(); // 「ロード中…」を表示
+    // (2) いったんイベントループに戻して再描画の機会を与える
+    await new Promise(r => setTimeout(r, 0));
 
-      // データ取得
-      const params = new URLSearchParams();
-      params.append("mode", "player");
-      params.append("name", enteredName);
+    // (3) GASからプレイヤーデータ取得
+    const params = new URLSearchParams();
+    params.append("mode", "player");
+    params.append("name", enteredName);
 
-      const resp = await fetch(GAS_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: params
-      });
-      if (!resp.ok) throw new Error("ネットワークエラー");
+    const resp = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params
+    });
+    if (!resp.ok) throw new Error("ネットワークエラー");
 
-      const data = await resp.json();
-      if (!data.success) throw new Error(data.error || "不明なエラー");
+    const data = await resp.json();
+    if (!data.success) throw new Error(data.error || "不明なエラー");
 
-      // 取得したプレイヤーデータをセット
-      playerData.name  = data.name;
-      playerData.level = parseInt(data.level, 10);
-      playerData.exp   = parseInt(data.exp, 10);
-      playerData.g     = parseInt(data.g, 10);
-      playerData.hp    = parseInt(data.hp, 10) || 50;
-      updatePlayerStatusUI();
-      console.log("✅ プレイヤーデータ取得成功:", playerData);
+    // (4) プレイヤーデータをセット
+    ...
 
-      // クイズ & モンスターデータを取得
-      await loadQuizData();
-      await loadMonsterData();
+    // (5) クイズデータ、モンスターデータを取得
+    await loadQuizData();
+    await loadMonsterData();
 
-      // 少し待ってからログイン画面を消して、タイトル画面を表示
-      setTimeout(() => {
-        hideLoadingOverlay(); 
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("titleScreen").style.display = "flex";
-      }, 500);
+    // (6) UIを切り替え
+    hideLoadingOverlay();
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("titleScreen").style.display = "flex";
 
-    } catch (err) {
-      console.error("⛔ ログインエラー:", err);
-      hideLoadingOverlay();
-      alert("ログインエラーが発生しました。再度お試しください。\n" + err.message);
-    }
-  });
-
+  } catch (err) {
+    console.error("ログインエラー:", err);
+    hideLoadingOverlay();
+    alert("ログインエラーが発生しました。");
+  }
+});
   // D-Pad イベント
   const upBtn    = document.getElementById("dpad-up");
   const downBtn  = document.getElementById("dpad-down");
