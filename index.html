@@ -19,8 +19,20 @@
   <button id="loginButton">ログイン</button>
 </div>
 
-<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); color: white; display: flex; justify-content: center; align-items: center; font-size: 24px; z-index: 1000;">
-  <span id="loadingMessage">ロード中…</span>
+<div id="loadingOverlay" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: none;">
+    <p id="loadingMessage">ロード中…</p>
 </div>
 
 <div id="mapContainer"></div>
