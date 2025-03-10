@@ -269,7 +269,7 @@ function startGame() {
   console.log("🎮 ゲーム開始！");
   document.getElementById("titleScreen").style.display = "none";
   document.getElementById("gameContainer").style.display = "block";
-  document.getElementById("gameArea").style.display = "block";
+  document.getElementById("gameArea").style.display = "block"; // これでマップ領域が表示される
   initGame();
   currentMap = null;
   switchMap("village");
