@@ -64,16 +64,25 @@ html, body {
   background-color: #111;
 }
 
+
 /* ========== フィールド画面 ========== */
-/* ゲーム開始後、スタートボタン押下でようやく表示するので最初は none */
+/* ゲーム開始後、スタートボタン押下で表示するので最初は none */
 #gameArea {
   position: relative;
   width: 100%;
   height: calc(100% - 50px);
-  background: url("https://lh3.googleusercontent.com/d/1jDckidA8IqAdhUncYX09kzOQd2IqanYQ") no-repeat center center;
-  background-size: cover;
+  /* 背景画像は削除し、タイルマップJSで描画するための領域に変更 */
   overflow: hidden;
-  display: none; /* 必要に応じてJSから"block"等に切り替え */
+  display: none; /* 必要に応じてJSから "block" 等に切り替え */
+}
+
+/* タイルマップ描画用コンテナ */
+#mapContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 /* プレイヤーキャラ */
