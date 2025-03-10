@@ -19,7 +19,7 @@ html, body {
   align-items: center;
 }
 /* ログイン画面・タイトル画面を中央揃え */
-#loginScreen, #titleScreen {
+#loginScreen {
   display: flex;
   flex-direction: column;
   justify-content: center; /* 垂直方向の中央 */
@@ -28,7 +28,15 @@ html, body {
   /* すでに position: absolute 等で全画面を覆っている場合は
      top: 0; left: 0; right: 0; bottom: 0; を指定しているか確認 */
 }
-
+#titleScreen{
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 垂直方向の中央 */
+  align-items: center;     /* 水平方向の中央 */
+  text-align: center;      /* テキストを中央寄せ */
+  /* すでに position: absolute 等で全画面を覆っている場合は
+     top: 0; left: 0; right: 0; bottom: 0; を指定しているか確認 */
+}
 
 /* ゲーム画面 */
 #gameContainer {
