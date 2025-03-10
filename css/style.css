@@ -15,14 +15,18 @@ html, body {
  * ログイン画面
  *******************************************************/
 #loginScreen {
+  position: absolute;
+  z-index: 9999;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
-  background-color: #000;
 }
+
 #loginScreen input {
   color: #fff;            /* 白文字 */
   background-color: #333; /* ほどよく暗い背景 */
