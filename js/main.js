@@ -571,7 +571,6 @@ document.addEventListener("DOMContentLoaded", () => {
     startBtn.addEventListener("click", startGame);
   }
 
-  // ログインボタン
 document.getElementById("loginButton").addEventListener("click", async () => {
   console.log("🎮 ログインボタンがクリックされました");
 
@@ -582,9 +581,11 @@ document.getElementById("loginButton").addEventListener("click", async () => {
     return;
   }
 
-  try {
-    showLoadingOverlay(); // 「ロード中…」を表示
+  // ロード画面を表示
+  document.getElementById("loadingScreen").style.display = "flex";
+  document.getElementById("loginScreen").style.display = "none";
 
+  try {
     // データ取得
     const params = new URLSearchParams();
     params.append("mode", "player");
@@ -613,17 +614,17 @@ document.getElementById("loginButton").addEventListener("click", async () => {
     await loadQuizData();
     await loadMonsterData();
 
-    // 少し待ってから「ロード中」を非表示にし、スタートボタンを表示
+    // 1.5秒の遅延を入れて演出
     setTimeout(() => {
-      hideLoadingOverlay(); 
+      document.getElementById("loadingScreen").style.display = "none";
       document.getElementById("titleScreen").style.display = "flex";
-      document.getElementById("startButton").style.display = "block"; // スタートボタン表示
-    }, 500);
+    }, 1500);
 
   } catch (err) {
     console.error("⛔ ログインエラー:", err);
-    hideLoadingOverlay();
     alert("ログインエラーが発生しました。再度お試しください。\n" + err.message);
+    document.getElementById("loginScreen").style.display = "block";
+    document.getElementById("loadingScreen").style.display = "none";
   }
 });
 
