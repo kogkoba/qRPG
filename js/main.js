@@ -39,7 +39,12 @@ let battleStartG = null; // 戦闘開始時のGを保存する
  *******************************************************/
 /** クイズデータをGASから一度だけ取得 */
 async function loadQuizData() {
+  if (quizData.length > 0) {
+    console.log("⚠️ クイズデータは既に取得済みです。再取得しません。");
+    return;
+  }
   try {
+    console.log("🔄 クイズデータを取得中...");
     const params = new URLSearchParams();
     params.append("mode", "quiz");
 
@@ -55,15 +60,19 @@ async function loadQuizData() {
       return;
     }
     quizData = json.quizzes || [];
-    console.log("✅ Quiz Data:", quizData.length, "件");
+    console.log("✅ クイズデータ取得成功:", quizData.length, "件");
   } catch (err) {
     console.error("⛔ loadQuizData Error:", err);
   }
 }
 
-/** モンスターデータをGASから一度だけ取得 */
 async function loadMonsterData() {
+  if (monsterData.length > 0) {
+    console.log("⚠️ モンスターデータは既に取得済みです。再取得しません。");
+    return;
+  }
   try {
+    console.log("🔄 モンスターデータを取得中...");
     const params = new URLSearchParams();
     params.append("mode", "monster");
 
@@ -79,12 +88,11 @@ async function loadMonsterData() {
       return;
     }
     monsterData = json.monsters || [];
-    console.log("✅ Monster Data:", monsterData.length, "件");
+    console.log("✅ モンスターデータ取得成功:", monsterData.length, "件");
   } catch (err) {
     console.error("⛔ loadMonsterData Error:", err);
   }
 }
-
 /** ランダムにクイズ1問を取得 */
 function getRandomQuiz() {
   if (!quizData || quizData.length === 0) return null;
