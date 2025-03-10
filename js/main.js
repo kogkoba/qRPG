@@ -153,13 +153,7 @@ function playBattleBgm() {
   }
 }
 
-function playQuizBgm() {
-  // クイズバトル用BGM（HTMLに quizBGM 要素がない場合は、後述のように追加してください）
-  const quizBgm = document.getElementById("quizBGM");
-  if (!isBgmPlaying || !quizBgm) return;
-  quizBgm.currentTime = 0;
-  quizBgm.play().catch(err => console.warn("クイズBGM再生エラー:", err));
-}
+
 
 function stopVillageBgm() {
   const villageBgm = document.getElementById("villagebgm");
