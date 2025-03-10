@@ -62,3 +62,7 @@ function drawFieldMap() {
 }
 
 document.addEventListener("DOMContentLoaded", drawFieldMap);
+
+    window.fieldTileMap = fieldTileMap;
+  window.fieldTileImages = fieldTileImages;
+})();
