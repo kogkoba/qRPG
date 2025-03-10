@@ -1,7 +1,9 @@
-/** フィールド用タイルマップ */
-const TILE_SIZE = 32; // 1タイルのサイズ
-const MAP_ROWS = 15;
-const MAP_COLS = 15;
+// tilemap_village.js
+(function(){
+  const TILE_SIZE = 32; // ここで定義した TILE_SIZE はこの関数内だけの変数
+  const MAP_ROWS = 15;
+  const MAP_COLS = 15;
+  
 
 /** フィールドのタイル画像対応 */
 const fieldTileImages = {
