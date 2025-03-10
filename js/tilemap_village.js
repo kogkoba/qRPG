@@ -32,7 +32,7 @@ const tileImagesVillage = {
   9: "./assets/images/tiles/village/9matinohei.png",  // 道のへい
   10: "./assets/images/tiles/village/10matinomiti.png", // 道
   11: "./assets/images/tiles/village/11muranoka-petto.png", // カーペット
-  12: "./assets/images/tiles/village/12kyoukai.pngg", // 教会
+  12: "./assets/images/tiles/village/12kyoukai.png", // 教会
   13: "./assets/images/tiles/village/13buki.png", // 鍛冶屋
   14: "./assets/images/tiles/village/14yado.png", // 宿屋
   15: "./assets/images/tiles/village/15bed1.png", // ベッド1
