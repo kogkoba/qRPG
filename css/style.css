@@ -46,7 +46,6 @@ html, body {
   z-index: 100;
 }
 
-/* マップ表示領域 */
 /* gameArea を固定サイズにする例 */
 #gameArea {
   position: relative;
@@ -57,7 +56,6 @@ html, body {
   margin: 0 auto;   /* 中央寄せ */
   display: none;    /* ゲーム開始時に表示 */
 }
-
 /* タイルマップコンテナ */
 #mapContainer {
   position: relative;
