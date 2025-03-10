@@ -716,4 +716,3 @@ document.addEventListener("DOMContentLoaded", () => {
       if (k === "d" ) movePlayer(STEP,  0);
     }
   });
-});
