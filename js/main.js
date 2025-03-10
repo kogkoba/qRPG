@@ -116,11 +116,11 @@ function playCurrentBgm() {
   if (!isBgmPlaying) return;
   stopAllBgm();
   if (currentMap === "village") {
-    playVillageBgm();
+    playvillagebgm();
   } else if (currentMap === "field") {
-    playFieldBgm();
+    playfieldBGM();
   } else if (currentMap === "battle") {
-    playBattleBgm();
+    playbattleBGM();
   }
 }
 
@@ -131,7 +131,7 @@ function stopAllBgm() {
   });
 }
 
-function playVillageBgm() {
+function playvillagebgm() {
   const villageBgm = document.getElementById("villageBGM");
   if (villageBgm) villageBgm.play().catch(err => console.warn("村BGM再生エラー:", err));
 }
