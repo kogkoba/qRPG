@@ -20,26 +20,27 @@
 </div>
 
   <!-- BGM -->
-<audio id="villageBGM" controls loop>
-  <source src="https://docs.google.com/uc?export=open&id=1ot1Sb6dirOK6r_JxymxZ813pq3jJ3uxU" type="audio/mpeg">
+
+<audio id="winbgm" style="display: none;" controls loop>
+  <source src="./assets/audio/DQwin.mp3" type="audio/mpeg">
 </audio>
 
-<audio id="fieldBGM" controls loop>
-  <source src="https://docs.google.com/uc?export=open&id=1TlM8Ku0BsSw2e08RTb21qFxozwY7cyhh" type="audio/mpeg">
+<audio id="downAbgm" style="display: none;" controls loop>
+  <source src="./assets/audio/down.mp3" type="audio/mpeg">
 </audio>
 
-<audio id="battleBGM" controls loop>
-  <source src="https://docs.google.com/uc?export=open&id=1jaHolqQ_Ui7Vublx5gtLgam9-6kvMvqb" type="audio/mpeg">
+<!-- 村BGM：IDを "villagebgm" として統一 -->
+<audio id="villagebgm" style="display: none;" controls loop>
+  <source src="./assets/audio/villagebgm.mp3" type="audio/mpeg">
 </audio>
 
-<audio id="winBGM" controls loop>
-  <source src="https://docs.google.com/uc?export=open&id=17wvZ0ifu6kytgZOLEaOIHPtZf5ZV4DgL" type="audio/mpeg">
+<audio id="fieldBGM" style="display: none;" controls loop>
+  <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
 </audio>
 
-<audio id="dqDownAudio" controls loop>
-  <source src="https://docs.google.com/uc?export=open&id=1Vy8zrbIlBYlqwm8JtknzQ7Lx3BeBnUrx" type="audio/mpeg">
+<audio id="battleBGM" style="display: none;" controls loop>
+  <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
 </audio>
-
   
 <!-- マップデータを読み込む -->
 <script src="js/tilemap_village.js"></script>
