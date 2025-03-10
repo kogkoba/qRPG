@@ -292,6 +292,7 @@ function switchMap(newMap) {
       console.error("❌ tileMapVillage が定義されていません！");
       return;
     }
+    // 村マップでの初期スポーン位置（例: 7,13）
     player.x = 7;
     player.y = 13;
     stopFieldBgm();
@@ -305,8 +306,9 @@ function switchMap(newMap) {
       console.error("❌ tileMapField が定義されていません！");
       return;
     }
+    // フィールドでの初期スポーン位置（例: 7,14）
     player.x = 7;
-    player.y = 0;
+    player.y = 14;
     stopVillageBgm();
     playFieldBgm();
   }
@@ -318,10 +320,14 @@ function switchMap(newMap) {
  *  8) マップ遷移のチェック
  *******************************************************/
 function checkMapTransition() {
-  if (currentMap === "village" && player.x === 7 && player.y === 0) {
+  // 村からフィールドへの移動条件：
+  // 村マップの場合、プレイヤーが (6,15) または (7,15) に到達したときにフィールドへ切り替え
+  if (currentMap === "village" && ((player.x === 6 || player.x === 7) && player.y === 15)) {
     console.log("🚪 村からフィールドへ移動");
     switchMap("field");
-  } else if (currentMap === "field" && player.x === 7 && player.y === 14) {
+  }
+  // フィールドから村への移動条件（例としてフィールドの戻り口を 7,14 とする）
+  else if (currentMap === "field" && player.x === 7 && player.y === 14) {
     console.log("🏠 フィールドから村へ移動");
     switchMap("village");
   }
