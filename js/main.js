@@ -622,6 +622,7 @@ document.getElementById("loginButton").addEventListener("click", async () => {
     alert("ログインエラー: " + err.message);
   }
 });
+
         console.log("📡 レスポンス受信");
       
    if (!data.success) throw new Error("GASエラー: " + data.error);
