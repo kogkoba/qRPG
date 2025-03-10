@@ -596,9 +596,35 @@ document.getElementById("loginButton").addEventListener("click", async () => {
 
     const resp = await fetch(GAS_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(requestData)
     });
+
+    console.log("📡 レスポンス受信");
+
+    if (!resp.ok) throw new Error("ネットワークエラー: " + resp.status);
+
+    const data = await resp.json();
+    console.log("✅ 受信データ:", data);
+
+    if (!data.success) throw new Error("GASエラー: " + data.error);
+
+    playerData.name  = data.name;
+    playerData.level = parseInt(data.level, 10);
+    playerData.exp   = parseInt(data.exp, 10);
+    playerData.g     = parseInt(data.g, 10);
+    playerData.hp    = parseInt(data.hp, 10) || 50;
+    updatePlayerStatusUI();
+
+    console.log("✅ プレイヤーデータ取得成功");
+
+  } catch (err) {
+    console.error("⛔ エラー:", err);
+    alert("ログインエラー: " + err.message);
+  }
+});
 
     console.log("📡 レスポンス受信");
 
