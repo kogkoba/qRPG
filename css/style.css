@@ -1,46 +1,38 @@
-/* ========== 共通設定 ========== */
+/* すべて画面に収まるように */
 html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
   font-family: sans-serif;
   background-color: #222;
   color: #fff;
-  /* スクロールをなくす */
-  overflow: hidden;
+  overflow: hidden; /* スクロールさせない */
 }
 
-/* ログイン画面 */
-#loginScreen {
-  position: absolute; /* 親要素に依存して全画面を覆う */
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: black;
-}
-
-/* タイトル画面 */
-#titleScreen {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: black;
-}
-
-/* ゲーム全体のコンテナ */
+/* それぞれの画面を絶対配置 + 100%サイズ */
+#loginScreen,
+#titleScreen,
 #gameContainer {
-  /* ログイン後に表示される */
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  display: none; /* 初期は非表示 */
-  /* 背景など必要なら指定 */
+  display: none; /* 後からJSで表示切替 */
+  justify-content: center;
+  align-items: center;
+}
+
+/* ログイン画面は初期表示 */
+#loginScreen {
+  display: flex;
+  background: black;
+}
+
+/* タイトル画面も同様に */
+#titleScreen {
+  background: black;
+}
+
+/* ゲーム画面 */
+#gameContainer {
+  /* 背景などあれば指定 */
 }
 
 /* ステータスバー */
@@ -51,66 +43,56 @@ html, body {
   line-height: 50px;
   background-color: #111;
   text-align: center;
-  font-size: 18px;
   z-index: 100;
 }
 
-/* フィールド画面 */
+/* マップ表示領域 */
 #gameArea {
-  /* ステータスの下に配置 */
   position: absolute;
-  top: 50px; /* #status の高さ分ずらす */
+  top: 50px; /* #status の下に配置 */
   left: 0; right: 0; bottom: 0;
-  overflow: hidden; /* はみ出しを隠す */
-  display: none; /* 初期は非表示 → JSで "block" に */
+  overflow: hidden;
+  display: block; /* ゲーム開始時に "block" に変更 */
 }
 
-/* mapContainer：タイルマップ描画領域 */
+/* タイルマップコンテナ */
 #mapContainer {
   position: relative;
   width: 100%;
   height: 100%;
-  z-index: 0; 
+  z-index: 0;
 }
 
-/* プレイヤーキャラ */
+/* プレイヤー */
 #player {
   position: absolute;
-  width: 30px;
+  width: 30px; /* 適宜調整 */
   height: auto;
 }
 
-/* D-Pad */
+/* 仮想十字キー */
 #dpad {
   position: absolute;
-  /* 下部・右側に固定したい場合 */
   bottom: 10px;
   right: 10px;
   width: 150px;
   height: 150px;
   display: grid;
-  grid-template-areas:
-    ".    up    ."
-    "left center right"
-    ".    down  .";
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
-  z-index: 150; /* マップより前面に表示 */
+  /* 省略 */
+  z-index: 150;
 }
 
 /* 戦闘画面 */
 #battle-screen {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: black;
   display: none;
+  background: black;
   z-index: 200;
-  padding: 10px;
   text-align: center;
 }
 
-/* 以下は残りのクラスはほぼ同じでOK */
+/* ほかの要素は既存コードでOK */
 /* ========== 戦闘画面 ========== */
 /* 最初は表示しない */
 #battle-screen {
