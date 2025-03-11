@@ -62,20 +62,15 @@ html, body {
 
 }
 
-/* 変更前: display: none; 幅・高さ設定のみ */
-/* 変更後: フレックスで中央寄せし、マップが中央に来るようにする */
+/* 新: ひとまずブロック表示 & overflowもやめる */
 #gameContainer {
-  /* display: none; ← JS側で切り替えるため HTML内の style に残す */
   position: relative;
   width: 100%;
   height: 100%;
-  display: flex;              /* 中央配置 */
-  justify-content: center;    /* 横中央 */
-  align-items: center;        /* 縦中央 */
-  overflow: hidden;           /* はみ出しを隠す */
-  flex-direction: column;     /* ステータスやマップを縦に並べる */
+  display: block;              /* flex -> block */
+  /* overflow: hidden; は消去 */
+  /* 他の指定( flex-direction ) も不要なので消去 */
 }
-
 /* ---------- ステータス表示 ---------- */
 #status {
   padding: 10px;
