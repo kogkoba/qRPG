@@ -1,81 +1,119 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>ドラクエ風クイズRPG</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="icon" type="image/png" href="./favicon.png">
-</head>
-<body>
+/* ========== 共通設定 ========== */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: sans-serif;
+  background-color: #222;
+  color: #fff;
+  /* スクロールをなくす */
+  overflow: hidden;
+}
 
-<!-- ローディングオーバーレイ -->
-<div id="loadingOverlay" style="display: none;">Loading…</div>
+/* ログイン画面 */
+#loginScreen {
+  position: absolute; /* 親要素に依存して全画面を覆う */
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: black;
+}
 
-<!-- ログイン画面：最初に表示される -->
-<div id="loginScreen">
-  <!-- 変更前のタイトルやボタンをコメントアウト
-  <h2>プレイヤー名を入力してください</h2>
-  -->
-  <h2>ドラクエ風クイズRPG</h2> <!-- 変更: タイトルを表示 -->
-  
-  <!-- 名前入力欄 & ログインボタン -->
-  <input type="text" id="playerNameInput" placeholder="名前を入力">
-  <button id="loginButton">ゲームスタート</button>
-</div>
+/* タイトル画面 */
+#titleScreen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: black;
+}
 
-<!-- タイトル画面：ログイン後に表示する -->
-<div id="titleScreen" style="display: none;">
-  <h1>ドラクエ風クイズRPG</h1>
-  <input type="text" style="display: none;" placeholder="ダミー非表示"> <!-- 例: debug用 -->
-  <button id="startButton">ゲームスタート</button>
-</div>
+/* ゲーム全体のコンテナ */
+#gameContainer {
+  /* ログイン後に表示される */
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: none; /* 初期は非表示 */
+  /* 背景など必要なら指定 */
+}
 
-<!-- ゲーム画面：タイトル画面の「ゲームスタート」後に表示する -->
-<div id="gameContainer" style="display: none;">
-  <!-- ステータスバー -->
-  <div id="status">
-    HP: <span id="field-hp">50</span> /
-    レベル: <span id="level">1</span> /
-    G: <span id="field-g">0</span>
-    <button id="bgmToggleButton">🔇 BGM OFF</button>
-  </div>
+/* ステータスバー */
+#status {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50px;
+  line-height: 50px;
+  background-color: #111;
+  text-align: center;
+  font-size: 18px;
+  z-index: 100;
+}
 
-  <!-- マップ & プレイヤー -->
-  <div id="gameArea">
-    <img id="player"
-      src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh"
-      alt="player">
-    <div id="mapContainer"></div>
-  </div>
-</div>
+/* フィールド画面 */
+#gameArea {
+  /* ステータスの下に配置 */
+  position: absolute;
+  top: 50px; /* #status の高さ分ずらす */
+  left: 0; right: 0; bottom: 0;
+  overflow: hidden; /* はみ出しを隠す */
+  display: none; /* 初期は非表示 → JSで "block" に */
+}
 
-<!-- D-Pad（十字キー） -->
-<div id="dpad">
-  <!-- 変更前の code
-  <button id="dpad-up" class="dpad-button up">▲</button>
-  <button id="dpad-left" class="dpad-button left">◀</button>
-  <button id="dpad-center" class="dpad-button center"></button>
-  <button id="dpad-right" class="dpad-button right">▶</button>
-  <button id="dpad-down" class="dpad-button down">▼</button>
-  -->
-  <!-- 変更後: 四角いボタンを5つ並べる -->
-  <button id="dpad-up" class="dpad-button up">▲</button>
-  <button id="dpad-left" class="dpad-button left">◀</button>
-  <button id="dpad-right" class="dpad-button right">▶</button>
-  <button id="dpad-down" class="dpad-button down">▼</button>
-</div>
+/* mapContainer：タイルマップ描画領域 */
+#mapContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 0; 
+}
 
-<!-- 戦闘画面 -->
-<div id="battle-screen" style="display: none;">
-  <div id="top-text-box">敵があらわれた！</div>
-  <div id="enemy-container"></div>
-  <img id="quiz-image" src="">
-  <div id="hp-container">HP: <span id="battle-hp">50</span></div>
-  <div id="quiz-area">
-    <div id="choice-area"></div>
-  </div>
-</div>
+/* プレイヤーキャラ */
+#player {
+  position: absolute;
+  width: 30px;
+  height: auto;
+}
+
+/* D-Pad */
+#dpad {
+  position: absolute;
+  /* 下部・右側に固定したい場合 */
+  bottom: 10px;
+  right: 10px;
+  width: 150px;
+  height: 150px;
+  display: grid;
+  grid-template-areas:
+    ".    up    ."
+    "left center right"
+    ".    down  .";
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  z-index: 150; /* マップより前面に表示 */
+}
+
+/* 戦闘画面 */
+#battle-screen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: black;
+  display: none;
+  z-index: 200;
+  padding: 10px;
+  text-align: center;
+}
+
+/* 以下は残りのクラスはほぼ同じでOK */
+
 
 <!-- BGM -->
 <audio id="villagebgm" style="display: none;" controls loop>
