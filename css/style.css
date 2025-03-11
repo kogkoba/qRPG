@@ -5,71 +5,108 @@ html, body {
   width: 100%;
   height: 100%;
   font-family: sans-serif;
-  background-color: #333; /* 背景色をやや明るめの黒 */
+  background-color: #222;
   color: #fff;
-  /*overflow: hidden;  ← 必要ならスクロール禁止に */
+  /* 変更前: overflow未指定
+     overflow: visible; (ブラウザデフォルト)
+  */
+  /* 変更後: スクロールを最低限に抑えるため、隠す */
+  overflow: hidden;
 }
 
-/* ---------- ログイン画面・タイトル画面を中央揃え ---------- */
-#loginScreen, #titleScreen {
-  /* 旧: position: relative; など → コメントアウト
-     position: relative;
-     z-index: 10; 
-  */
-  display: flex; /* flex で中央揃え */
+/* ========== ログイン画面 ========== */
+#loginScreen {
+  position: relative;
+  z-index: 10;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center; /* テキスト中央 */
   width: 100%;
   height: 100%;
-  background: #222; /* 背景黒 */
+  background: black;
 }
-
-/* インプットやボタンのスタイル */
-#loginScreen input, #loginScreen button,
-#titleScreen button {
+#loginScreen input,
+#loginScreen button {
   font-size: 18px;
-  padding: 8px 12px;
+  padding: 5px;
   margin: 10px;
 }
 
-/* ========== ゲーム画面全体 ========== */
-#gameContainer {
-  /* 旧: display block など → 今は index.html で display:none */
+/* ========== タイトル画面 ========== */
+#titleScreen {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
-  background: #111; 
-  position: relative; /* ステータス固定などに */
+  background: black;
+}
+#startButton {
+  font-size: 24px;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 2px solid #fff;
+  background: #444;
+  color: #fff;
+  border-radius: 5px;
 }
 
-/* ステータスバー */
+/* ========== ゲーム画面全体 ========== */
+/* 変更前: display: none; 幅・高さ設定のみ */
+/* 変更後: フレックスで中央寄せし、マップが中央に来るようにする */
+#gameContainer {
+  /* display: none; ← JS側で切り替えるため HTML内の style に残す */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;              /* 中央配置 */
+  justify-content: center;    /* 横中央 */
+  align-items: center;        /* 縦中央 */
+  overflow: hidden;           /* はみ出しを隠す */
+  flex-direction: column;     /* ステータスやマップを縦に並べる */
+}
+
+/* ---------- ステータス表示 ---------- */
 #status {
   padding: 10px;
   text-align: center;
   font-size: 18px;
   background-color: #111;
+  width: 100%; /* 横幅いっぱい使う */
 }
 
-/* ========== フィールド画面 ========== */
-#gameArea {
-  position: relative;
-  width: 100%;
-  height: calc(100% - 60px); /* ステータスバーの高さを差し引き */
-  overflow: hidden;
-  /* 旧: display: none; → コメントアウト 
-     display: none; 
-  */
-  background: #000;
-}
-
+/* ========== マップ背景やプレイヤーを配置 ========== */
 #mapContainer {
+  /* 変更前: position: relative; z-index: 0; top: 0; left: 0; width: 100%; height: 100%; */
+  /* 変更後: 絶対配置でも良いが、ここでは中央に固定サイズで表示するため position: relative のまま */
+  position: relative;
+  z-index: 0;
+  width: 480px;   /* タイル15×15=計480px, 端末が小さいと一部隠れますがスクロールはしない */
+  height: 480px;  /* 同上 */
+  /* 背面にしたいならさらに z-index を -1 にする方法もあるが、
+     他UIやプレイヤーを z-index:1 以上にすれば済むのでここでは 0 のまま */
+}
+
+/* プレイヤーやUIを前面に表示 */
+#gameArea {
   position: absolute;
+  /* 変更前:
+     display: none; と height: calc(100% - 50px); など
+  */
+  /* 変更後: マップ上に重ねるので絶対配置・z-indexを上に */
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
+  z-index: 1;
+  width: 480px;
+  height: 480px;
+  overflow: hidden;
+  /* もともと #gameArea の表示は JS から制御される場合もあるため
+     display: block; としておいてJSで切り替えでもOK
+  */
+  display: block;
+}
 
 /* プレイヤーキャラ */
 #player {
@@ -78,13 +115,13 @@ html, body {
   height: auto;
 }
 
-/* ========== 仮想十字キー ========== */
-/* 旧のグリッドボタンをコメントアウト
+/* ---------- D-Pad (十字キー) ---------- */
 #dpad {
   position: fixed;
   bottom: 70px;
   right: 50px;
-  width: 150px; height: 150px;
+  width: 150px;
+  height: 150px;
   display: grid;
   grid-template-areas:
     ".    up    ."
@@ -94,57 +131,210 @@ html, body {
   justify-content: center;
   align-items: center;
 }
-*/
-
-/* 新しいドット絵風の十字キー */
-#dpad {
-  position: fixed;
-  bottom: 70px;
-  right: 50px;
-  width: 128px;  /* 画像サイズに合わせる */
-  height: 128px;
-  background: url("../images/dpad-cross.png") no-repeat center center; 
-  background-size: contain;
-  z-index: 200;
-}
-
-/* ボタン領域は透明 & 絶対位置でヒットエリアを作る */
 .dpad-button {
-  position: absolute;
-  background: rgba(255,255,255,0);
-  border: none;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  background: #222;
+  color: white;
+  border: 2px solid #fff;
+  border-radius: 8px;
   cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-/* 位置調整(例) */
-#dpad-up {
-  top: 0; left: 44px;
+.dpad-button:hover {
+  background-color: #444;
 }
-#dpad-left {
-  top: 44px; left: 0;
+.dpad-button:active {
+  background-color: #666;
 }
-#dpad-center {
-  top: 44px; left: 44px;
+.up    { grid-area: up; }
+.down  { grid-area: down; }
+.left  { grid-area: left; }
+.right { grid-area: right; }
+.center {
+  grid-area: center;
+  background: transparent;
+  border: none;
   pointer-events: none;
 }
-#dpad-right {
-  top: 44px; left: 88px;
-}
-#dpad-down {
-  top: 88px; left: 44px;
-}
 
-/* ---------- 戦闘画面 ---------- */
+/* ========== 戦闘画面 ========== */
 #battle-screen {
   display: none;
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: black;
   padding: 10px;
   text-align: center;
+  z-index: 100;
+}
+#top-text-box {
+  border: 2px solid white;
+  padding: 5px;
+  margin-bottom: 5px;
+  min-height: 40px;
+  font-size: 16px;
+}
+#enemy-container {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+.monster {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+#quiz-image {
+  display: none;
+  width: 300px;
+  height: 300px;
+  margin: 5px auto;
+}
+#hp-container {
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  margin-top: 20px;
+}
+.choice-button {
+  display: block;
+  margin: 5px auto;
+  padding: 5px;
+  width: 150px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.choice-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+#quiz-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#explanation {
+  display: none; 
+}
+#zaorikuButton {
+  display: none;
+  font-size: 18px;
+  padding: 5px 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* ========== 円拡大演出用オーバーレイ ========== */
+#transition-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 200;
+  display: none;
+  pointer-events: none;
+}
+#transition-circle {
+  position: absolute;
+  width: 200vmax;
+  height: 200vmax;
+  background: black;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.8s ease-out;
+}
+#transition-circle.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ========== シェイクアニメーション ========== */
+@keyframes shake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-10px, 0); }
+  40%  { transform: translate(10px, 0); }
+  60%  { transform: translate(-10px, 0); }
+  80%  { transform: translate(10px, 0); }
+  100% { transform: translate(0, 0); }
+}
+.shake {
+  animation: shake 0.5s;
+}
+
+/* ========== ローディングオーバーレイ ========== */
+#loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #fff;
   z-index: 300;
 }
-/* ...（以下略。既存のままでOK） */
+
+/* ========== レスポンシブ調整 ========== */
+@media (max-width: 600px) {
+  #status {
+    font-size: 16px;
+    padding: 10px;
+  }
+  #top-text-box {
+    font-size: 14px;
+    padding: 5px;
+  }
+  .choice-button {
+    width: 120px;
+    font-size: 14px;
+  }
+  #player {
+    width: 25px;
+  }
+  #dpad {
+    width: 120px;
+    height: 120px;
+  }
+  .dpad-button {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (min-width: 768px) {
+  #battle-screen {
+    font-size: 20px;
+  }
+  #top-text-box {
+    font-size: 18px;
+  }
+  .choice-button {
+    width: 200px;
+    font-size: 18px;
+  }
+  .monster {
+    width: 80px;
+    height: 80px;
+  }
+  #hp-container {
+    font-size: 22px;
+  }
+}
