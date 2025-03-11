@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,143 +9,107 @@
   <link rel="icon" type="image/png" href="./favicon.png">
 </head>
 <body>
-  
 
 <!-- ローディングオーバーレイ -->
 <div id="loadingOverlay" style="display: none;">Loading…</div>
 
+<!-- ログイン画面 -->
+<div id="loginScreen">
+  <h2>プレイヤー名を入力してください</h2>
+  <input type="text" id="playerNameInput" placeholder="名前を入力">
+  <button id="loginButton">ログイン</button>
+</div>
   
-  /* ========== 共通設定 ========== */
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  font-family: sans-serif;
-  background-color: #222;
-  color: #fff;
-  /* スクロールをなくす */
-  overflow: hidden;
-}
-
-/* ログイン画面 */
-#loginScreen {
-  position: absolute; /* 親要素に依存して全画面を覆う */
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: black;
-}
-
-/* タイトル画面 */
-#titleScreen {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: black;
-}
-
-/* ゲーム全体のコンテナ */
-#gameContainer {
-  /* ログイン後に表示される */
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  display: none; /* 初期は非表示 */
-  /* 背景など必要なら指定 */
-}
-
-/* ステータスバー */
-#status {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 50px;
-  line-height: 50px;
-  background-color: #111;
-  text-align: center;
-  font-size: 18px;
-  z-index: 100;
-}
-
-/* フィールド画面 */
-#gameArea {
-  /* ステータスの下に配置 */
-  position: absolute;
-  top: 50px; /* #status の高さ分ずらす */
-  left: 0; right: 0; bottom: 0;
-  overflow: hidden; /* はみ出しを隠す */
-  display: none; /* 初期は非表示 → JSで "block" に */
-}
-
-/* mapContainer：タイルマップ描画領域 */
-#mapContainer {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  z-index: 0; 
-}
-
-/* プレイヤーキャラ */
-#player {
-  position: absolute;
-  width: 30px;
-  height: auto;
-}
-
-/* D-Pad */
-#dpad {
-  position: absolute;
-  /* 下部・右側に固定したい場合 */
-  bottom: 10px;
-  right: 10px;
-  width: 150px;
-  height: 150px;
-  display: grid;
-  grid-template-areas:
-    ".    up    ."
-    "left center right"
-    ".    down  .";
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
-  z-index: 150; /* マップより前面に表示 */
-}
-
-/* 戦闘画面 */
-#battle-screen {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: black;
-  display: none;
-  z-index: 200;
-  padding: 10px;
-  text-align: center;
-}
-
-/* 以下は残りのクラスはほぼ同じでOK */
+  <!-- ゲーム画面 -->
+<div id="gameArea"></div>
+  <div id="mapContainer"></div>
+  <!-- その他の要素（プレイヤーやUIなど） -->
 
 
-<!-- BGM -->
+  <!-- BGM -->
+
+<audio id="winbgm" style="display: none;" controls loop>
+  <source src="./assets/audio/DQwin.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="downAbgm" style="display: none;" controls loop>
+  <source src="./assets/audio/down.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 村BGM：IDを "villagebgm" として統一 -->
 <audio id="villagebgm" style="display: none;" controls loop>
   <source src="./assets/audio/villagebgm.mp3" type="audio/mpeg">
 </audio>
+
 <audio id="fieldBGM" style="display: none;" controls loop>
   <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
 </audio>
+
 <audio id="battleBGM" style="display: none;" controls loop>
   <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
 </audio>
-
-<!-- マップデータ読み込み -->
+  
+<!-- マップデータを読み込む -->
 <script src="js/tilemap_village.js"></script>
 <script src="js/tilemap_field.js"></script>
 
-<!-- メインスクリプト -->
+
+<!-- タイトル画面 -->
+<div id="titleScreen" style="display: none;">
+  <h1>ドラクエ風クイズRPG</h1>
+  <button id="startButton">ゲームスタート</button>
+</div>
+
+<!-- ゲーム画面 -->
+<div id="gameContainer" style="display: none;">
+  <div id="status">
+    HP: <span id="field-hp">50</span> / レベル: <span id="level">1</span> / G: <span id="field-g">0</span>
+    <button id="bgmToggleButton">🔇 BGM OFF</button>
+  </div>
+
+  <div id="gameArea">
+    <img id="player" src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh">
+  </div>
+
+  <button id="healButton" onclick="changeHp(10)">💖 回復 (+10 HP)</button>
+</div>
+  
+<!-- D-Pad (仮想十字キー) -->
+<div id="dpad">
+  <button id="dpad-up" class="dpad-button up">▲</button>
+  <button id="dpad-left" class="dpad-button left">◀</button>
+  <button id="dpad-center" class="dpad-button center"></button>
+  <button id="dpad-right" class="dpad-button right">▶</button>
+  <button id="dpad-down" class="dpad-button down">▼</button>
+</div>
+
+
+<!-- 戦闘画面 -->
+<div id="battle-screen" style="display: none;">
+  <div id="top-text-box">敵があらわれた！</div>
+  <div id="enemy-container"></div>
+  <img id="quiz-image" src="">
+  <div id="hp-container">
+    HP: <span id="battle-hp">50</span>
+  </div>
+
+  <div id="quiz-area">
+    <div id="choice-area"></div>
+  </div>
+
+  <button id="zaorikuButton" onclick="onZaoriku()">ザオリク</button>
+</div>
+
+<!-- ゲームオーバー画面 -->
+<div id="game-over-screen" style="display: none;">
+  <h2>ゲームオーバー</h2>
+  <button onclick="retryBattle()">再挑戦</button>
+  <button onclick="restartFromChurch()">教会へ行く</button>
+</div>
+
+
+
+<!-- メインスクリプトを最後に読み込む -->
 <script src="js/main.js"></script>
 </body>
 </html>
