@@ -81,15 +81,14 @@ html, body {
 }
 
 /* ========== マップ背景やプレイヤーを配置 ========== */
+/* 
+/* 新: 16×16タイル × 32px = 512px で確保 */
 #mapContainer {
-  /* 変更前: position: relative; z-index: 0; top: 0; left: 0; width: 100%; height: 100%; */
-  /* 変更後: 絶対配置でも良いが、ここでは中央に固定サイズで表示するため position: relative のまま */
   position: relative;
   z-index: 0;
-  width: 480px;   /* タイル15×15=計480px, 端末が小さいと一部隠れますがスクロールはしない */
-  height: 480px;  /* 同上 */
-  /* 背面にしたいならさらに z-index を -1 にする方法もあるが、
-     他UIやプレイヤーを z-index:1 以上にすれば済むのでここでは 0 のまま */
+  width: 512px;
+  height: 512px;
+  /* overflow: hidden; があるなら消去 */
 }
 
 /* プレイヤーやUIを前面に表示 */
