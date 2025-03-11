@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -19,40 +18,31 @@
   <input type="text" id="playerNameInput" placeholder="名前を入力">
   <button id="loginButton">ログイン</button>
 </div>
-  
-  <!-- ゲーム画面 -->
-<div id="gameArea"></div>
-  <div id="mapContainer"></div>
-  <!-- その他の要素（プレイヤーやUIなど） -->
 
+<!--
+  /* 変更前: ここに #gameArea が直接存在
+    <div id="gameArea"></div>
+    <div id="mapContainer"></div>
+    <!-- その他の要素（プレイヤーやUIなど） -->
+  */
+-->
 
-  <!-- BGM -->
-
+<!-- BGMたち -->
 <audio id="winbgm" style="display: none;" controls loop>
   <source src="./assets/audio/DQwin.mp3" type="audio/mpeg">
 </audio>
-
 <audio id="downAbgm" style="display: none;" controls loop>
   <source src="./assets/audio/down.mp3" type="audio/mpeg">
 </audio>
-
-<!-- 村BGM：IDを "villagebgm" として統一 -->
 <audio id="villagebgm" style="display: none;" controls loop>
   <source src="./assets/audio/villagebgm.mp3" type="audio/mpeg">
 </audio>
-
 <audio id="fieldBGM" style="display: none;" controls loop>
   <source src="./assets/audio/kouyawoiku.mp3" type="audio/mpeg">
 </audio>
-
 <audio id="battleBGM" style="display: none;" controls loop>
   <source src="./assets/audio/jypdance.mp3" type="audio/mpeg">
 </audio>
-  
-<!-- マップデータを読み込む -->
-<script src="js/tilemap_village.js"></script>
-<script src="js/tilemap_field.js"></script>
-
 
 <!-- タイトル画面 -->
 <div id="titleScreen" style="display: none;">
@@ -60,20 +50,30 @@
   <button id="startButton">ゲームスタート</button>
 </div>
 
-<!-- ゲーム画面 -->
+<!--
+  /* 変更前: #gameContainer がなかった or 重複していた部分を整理 */
+-->
+<!-- ゲーム画面コンテナ -->
 <div id="gameContainer" style="display: none;">
   <div id="status">
-    HP: <span id="field-hp">50</span> / レベル: <span id="level">1</span> / G: <span id="field-g">0</span>
+    HP: <span id="field-hp">50</span> /
+    レベル: <span id="level">1</span> /
+    G: <span id="field-g">0</span>
     <button id="bgmToggleButton">🔇 BGM OFF</button>
   </div>
 
+  <!-- マップを中央寄せで背面表示するコンテナ -->
+  <div id="mapContainer"></div>
+
+  <!-- プレイヤーなど前面に表示する領域 -->
   <div id="gameArea">
-    <img id="player" src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh">
+    <img id="player" src="https://lh3.googleusercontent.com/d/1peHOi70oOmL8c9v3OQydE5N-9R0PB6vh" />
   </div>
 
+  <!-- HP回復用ボタンなど -->
   <button id="healButton" onclick="changeHp(10)">💖 回復 (+10 HP)</button>
 </div>
-  
+
 <!-- D-Pad (仮想十字キー) -->
 <div id="dpad">
   <button id="dpad-up" class="dpad-button up">▲</button>
@@ -82,7 +82,6 @@
   <button id="dpad-right" class="dpad-button right">▶</button>
   <button id="dpad-down" class="dpad-button down">▼</button>
 </div>
-
 
 <!-- 戦闘画面 -->
 <div id="battle-screen" style="display: none;">
@@ -96,7 +95,6 @@
   <div id="quiz-area">
     <div id="choice-area"></div>
   </div>
-
   <button id="zaorikuButton" onclick="onZaoriku()">ザオリク</button>
 </div>
 
@@ -107,9 +105,11 @@
   <button onclick="restartFromChurch()">教会へ行く</button>
 </div>
 
+<!-- マップデータの読み込み -->
+<script src="js/tilemap_village.js"></script>
+<script src="js/tilemap_field.js"></script>
 
-
-<!-- メインスクリプトを最後に読み込む -->
+<!-- メインスクリプト -->
 <script src="js/main.js"></script>
 </body>
 </html>
