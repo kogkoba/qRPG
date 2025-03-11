@@ -52,17 +52,20 @@
 <!--
   変更前: #gameContainer がなかった or 重複していた部分を整理 
 -->
+
 <!-- ゲーム画面コンテナ -->
-<div id="gameContainer" style="display: none;">
+<div id="gameContainer" style="display: block;"> <!-- 変更前: style="display: none;" を display: block に変更 -->
   <div id="status">
     HP: <span id="field-hp">50</span> /
     レベル: <span id="level">1</span> /
     G: <span id="field-g">0</span>
     <button id="bgmToggleButton">🔇 BGM OFF</button>
   </div>
-
-  <!-- マップを中央寄せで背面表示するコンテナ -->
+  
+    <!-- マップを中央寄せで背面表示するコンテナ -->
   <div id="mapContainer"></div>
+
+  <!-- ※ここに、main.js の drawMap() 関数などで村またはフィールドの画像が描画されます -->
 
   <!-- プレイヤーなど前面に表示する領域 -->
   <div id="gameArea">
@@ -72,6 +75,7 @@
   <!-- HP回復用ボタンなど -->
   <button id="healButton" onclick="changeHp(10)">💖 回復 (+10 HP)</button>
 </div>
+
 
 <!-- D-Pad (仮想十字キー) -->
 <div id="dpad">
