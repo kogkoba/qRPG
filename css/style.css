@@ -1,18 +1,5 @@
 /* ========== 共通設定 ========== */
-/* 旧:
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  font-family: sans-serif;
-  background-color: #222;
-  color: #fff;
-  overflow: hidden;  <-- ここ
-}
-*/
 
-/* 新: overflow を削除 or auto にする */
 html, body {
   margin: 0;
   padding: 0;
