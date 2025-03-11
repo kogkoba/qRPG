@@ -1,4 +1,5 @@
 /* ========== 共通設定 ========== */
+/* 旧:
 html, body {
   margin: 0;
   padding: 0;
@@ -7,11 +8,21 @@ html, body {
   font-family: sans-serif;
   background-color: #222;
   color: #fff;
-  /* 変更前: overflow未指定
-     overflow: visible; (ブラウザデフォルト)
-  */
-  /* 変更後: スクロールを最低限に抑えるため、隠す */
-  overflow: hidden;
+  overflow: hidden;  <-- ここ
+}
+*/
+
+/* 新: overflow を削除 or auto にする */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: sans-serif;
+  background-color: #222;
+  color: #fff;
+  /* overflow: hidden; は消去 */
+  /* overflow: auto; としてもOK */
 }
 
 /* ========== ログイン画面 ========== */
