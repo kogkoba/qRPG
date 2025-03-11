@@ -5,6 +5,8 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzqM5gZr3HBY5LMo7U7uB0_
 
 const STEP = 20;
 
+
+
 // プレイヤーデータ、クイズ、モンスター
 let playerData = { name: "", level: 1, exp: 0, g: 0, hp: 50 };
 let quizData = [];
@@ -32,6 +34,73 @@ let lastEncounterSteps = 0;
 let encounterThreshold = 5;
 let battleStartHp = 50;
 let battleStartG = null;
+
+// ===== 追加：ピンチズーム対応 =====
+// この処理は #mapContainer に対してピンチ操作を検出し、scale を更新します。
+(function() {
+  const mapContainer = document.getElementById('mapContainer');
+  if (!mapContainer) return;
+
+  let initialDistance = 0; // タッチ開始時の2点間距離
+  let initialScale = 1;    // ピンチ開始時のscale
+  let currentScale = 1;    // 現在のscale
+
+  // 16×16のマップが画面全体に収まるよう、初期scaleを自動計算
+  function setInitialScale() {
+    const tileSize = 32;          // タイルサイズ(px)
+    const mapWidth = 16 * tileSize; // 16列×32px = 512px
+    const mapHeight = 16 * tileSize;// 16行×32px = 512px
+
+    // 画面に収めるためのscale（横・縦それぞれの比率の小さい方）
+    const scaleX = window.innerWidth / mapWidth;
+    const scaleY = window.innerHeight / mapHeight;
+    // 初期状態では、1以上には拡大しない（必要なら調整してください）
+    initialScale = Math.min(scaleX, scaleY, 1);
+    currentScale = initialScale;
+    mapContainer.style.transform = `scale(${initialScale})`;
+    mapContainer.style.transformOrigin = '0 0'; // 左上を基準に拡大縮小
+  }
+  setInitialScale();
+  window.addEventListener('resize', setInitialScale);
+
+  // タッチ開始：2点タッチの場合、距離を計算
+  mapContainer.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault(); // スクロールを防止
+      initialDistance = getDistance(e.touches[0], e.touches[1]);
+    }
+  }, { passive: false });
+
+  // タッチ移動：2点タッチの場合、scale を更新
+  mapContainer.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const newDistance = getDistance(e.touches[0], e.touches[1]);
+      if (initialDistance > 0) {
+        const scaleFactor = newDistance / initialDistance;
+        currentScale = initialScale * scaleFactor;
+        // scaleの下限・上限を設定（例：0.5～2倍）
+        currentScale = Math.max(0.5, Math.min(currentScale, 2));
+        mapContainer.style.transform = `scale(${currentScale})`;
+      }
+    }
+  }, { passive: false });
+
+  // タッチ終了：2点タッチが終了したら、最後のscaleを初期値に更新
+  mapContainer.addEventListener('touchend', function(e) {
+    if (e.touches.length < 2) {
+      initialScale = currentScale;
+      initialDistance = 0;
+    }
+  }, { passive: false });
+
+  // 2点間の距離を計算する補助関数
+  function getDistance(touch1, touch2) {
+    const dx = touch1.pageX - touch2.pageX;
+    const dy = touch1.pageY - touch2.pageY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+})();
 
 /*******************************************************
  *  2) データ取得（クイズ & モンスター）
