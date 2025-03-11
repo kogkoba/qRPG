@@ -59,7 +59,9 @@ html, body {
   position: absolute; /* 絶対配置に変更 */
   top: 10px;        /* 画面上からの距離 */
   right: 10px;      /* 画面右からの距離 */
-  z-index: 9999;    /* 非常に大きな値を指定して最前面へ */
+  z-index: 1;    /* 非常に大きな値を指定して最前面へ */
+
+
 }
 
 /* 変更前: display: none; 幅・高さ設定のみ */
