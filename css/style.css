@@ -68,7 +68,7 @@ html, body {
   position: relative;
   width: 100%;
   height: 100%;
-  display: block;              /* flex -> block */
+  display: none;            /* flex -> block */
   /* overflow: hidden; は消去 */
   /* 他の指定( flex-direction ) も不要なので消去 */
 }
@@ -98,6 +98,7 @@ html, body {
   top: 0;
   left: 0;
   z-index: 1;
+  display: none; 
   /* 固定サイズではなく、動的に調整 */
   width: 100%; /* 画面幅に合わせて広げる */
   height: 100%; /* 画面高さに合わせて広げる */
