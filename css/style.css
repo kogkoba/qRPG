@@ -98,7 +98,7 @@ html, body {
   z-index: 1;
   width: calc(16 * 32px);  /* タイル数 × タイルサイズ */
   height: calc(16 * 32px); /* タイル数 × タイルサイズ */
-  overflow: hidden;
+  overflow: auto;
   display: block;
 }
 
