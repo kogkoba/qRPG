@@ -325,31 +325,31 @@ function changeHp(amount) {
 /*******************************************************
  *  6) ゲーム開始処理 (タイトル画面 → 村マップ)
  *******************************************************/
+
 function startGame() {
   console.log("🎮 ゲーム開始！");
   // タイトル画面を非表示
   document.getElementById("titleScreen").style.display = "none";
-  // ゲーム画面を表示
-  document.getElementById("gameContainer").style.display = "block";
+  // ゲーム画面（背景）を表示する
+  document.getElementById("gameContainer").style.display = "block"; // ←ここで表示に切り替え
   // gameAreaも表示
   document.getElementById("gameArea").style.display = "block";
 
   initGame();
   currentMap = null;
 
-  // 必ず村から開始
+  // 村から開始
   switchMap("village");
 
-  // コメントアウト: もしfieldから始まっていたら削除する
-  // switchMap("field");
-
-  // プレイヤーの初期座標を村マップ上に
+  // プレイヤー初期座標設定
   player.x = 7;
   player.y = 7;
 
   updatePlayerPosition();
   updatePlayerStatusUI();
 }
+
+
 
 /*******************************************************
  *  7) マップ切り替え処理
