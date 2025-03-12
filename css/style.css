@@ -117,6 +117,7 @@ html, body {
   width: 150px;
   height: 150px;
   display: grid;
+  z-index: 1;
   grid-template-areas:
     ".    up    ."
     "left center right"
