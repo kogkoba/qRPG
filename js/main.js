@@ -328,20 +328,18 @@ function changeHp(amount) {
 
 function startGame() {
   console.log("🎮 ゲーム開始！");
-  // タイトル画面を非表示
   document.getElementById("titleScreen").style.display = "none";
-  // ゲーム画面（背景）を表示する
-  document.getElementById("gameContainer").style.display = "block"; // ←ここで表示に切り替え
-  // gameAreaも表示
+
+  // 修正済: ログイン成功後、背景を表示にする
+  document.getElementById("gameContainer").style.display = "block";
   document.getElementById("gameArea").style.display = "block";
+  document.getElementById("mapContainer").style.display = "block"; // ← 追加
 
   initGame();
   currentMap = null;
 
-  // 村から開始
   switchMap("village");
 
-  // プレイヤー初期座標設定
   player.x = 7;
   player.y = 7;
 
@@ -349,7 +347,45 @@ function startGame() {
   updatePlayerStatusUI();
 }
 
+---
 
+### 修正後の挙動（理想）
+- ログイン画面表示時は背景が非表示
+- ゲーム開始（ログイン成功）後に背景が表示される
+
+---
+
+### その他の修正点：
+- `switchMap`関数内に`currentMap`の初期化が漏れている部分があります。
+```js
+function switchMap(newMap) {
+  if (newMap === "village") {
+    if (typeof tileMapVillage !== "undefined") {
+      console.log("✅ 村のマップデータ:", tileMapVillage);
+      currentMap = "village";
+      tileMap = tileMapVillage;
+      player.x = 7;
+      player.y = 13;
+
+      stopFieldBgm();
+      playVillageBgm();
+    } else if (newMap === "field") {
+      if (typeof tileMapField !== "undefined") {
+        console.log("✅ フィールドのマップデータ:", tileMapField);
+        currentMap = "field";
+        tileMap = tileMapField;
+      } else {
+        console.error("❌ tileMapField が定義されていません！");
+        return;
+      }
+      player.x = 7;
+      player.y = 14;
+      stopVillageBgm();
+      playFieldBgm();
+    }
+    drawMap();
+    updatePlayerPosition();
+}
 
 /*******************************************************
  *  7) マップ切り替え処理
