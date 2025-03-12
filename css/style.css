@@ -91,22 +91,14 @@ html, body {
   /* overflow: hidden; があるなら消去 */
 }
 
-/* プレイヤーやUIを前面に表示 */
 #gameArea {
   position: absolute;
-  /* 変更前:
-     display: none; と height: calc(100% - 50px); など
-  */
-  /* 変更後: マップ上に重ねるので絶対配置・z-indexを上に */
   top: 0;
   left: 0;
   z-index: 1;
-  width: 480px;
-  height: 480px;
+  width: calc(16 * 32px);  /* タイル数 × タイルサイズ */
+  height: calc(16 * 32px); /* タイル数 × タイルサイズ */
   overflow: hidden;
-  /* もともと #gameArea の表示は JS から制御される場合もあるため
-     display: block; としておいてJSで切り替えでもOK
-  */
   display: block;
 }
 
