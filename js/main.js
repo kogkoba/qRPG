@@ -5,8 +5,6 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzqM5gZr3HBY5LMo7U7uB0_
 
 const STEP = 20;
 
-
-
 // プレイヤーデータ、クイズ、モンスター
 let playerData = { name: "", level: 1, exp: 0, g: 0, hp: 50 };
 let quizData = [];
@@ -57,6 +55,8 @@ let battleStartG = null;
     // 初期状態では、1以上には拡大しない（必要なら調整してください）
     initialScale = Math.min(scaleX, scaleY, 1);
     currentScale = initialScale;
+    // 修正: テンプレートリテラルに変更
+    // 旧: mapContainer.style.transform = scale(${initialScale});
     mapContainer.style.transform = `scale(${initialScale})`;
     mapContainer.style.transformOrigin = '0 0'; // 左上を基準に拡大縮小
   }
@@ -81,6 +81,8 @@ let battleStartG = null;
         currentScale = initialScale * scaleFactor;
         // scaleの下限・上限を設定（例：0.5～2倍）
         currentScale = Math.max(0.5, Math.min(currentScale, 2));
+        // 修正: テンプレートリテラルに変更
+        // 旧: mapContainer.style.transform = scale(${currentScale});
         mapContainer.style.transform = `scale(${currentScale})`;
       }
     }
@@ -267,6 +269,8 @@ function checkLevelUp() {
       playerData.g += 500;
       playerData.exp = 0;
     }
+    // 修正: テンプレートリテラルに変更
+    // 旧: console.log(🎉 レベルアップ！ レベル: ${playerData.level});
     console.log(`🎉 レベルアップ！ レベル: ${playerData.level}`);
   }
 }
@@ -442,8 +446,12 @@ function initGame() {
 function updatePlayerPosition() {
   const playerElement = document.getElementById("player");
   if (!playerElement) return;
+  // 修正: テンプレートリテラルに変更
+  // 旧: playerElement.style.left = ${player.x * 32}px;
   playerElement.style.left = `${player.x * 32}px`;
+  // 旧: playerElement.style.top = ${player.y * 32}px;
   playerElement.style.top = `${player.y * 32}px`;
+  // 旧: playerElement.style.transform = translate(-50%, -50%) ${facingRight ? "scaleX(1)" : "scaleX(-1)"};
   playerElement.style.transform = `translate(-50%, -50%) ${facingRight ? "scaleX(1)" : "scaleX(-1)"}`;
 }
 
@@ -481,11 +489,14 @@ function drawMap() {
       tileElement.style.width = "32px";
       tileElement.style.height = "32px";
       */
-      // 置き換え (TILE_SIZE||32)
+      // 修正: テンプレートリテラルに変更
+      // 旧: tileElement.style.width = ${32}px;
       tileElement.style.width = `${32}px`;
+      // 旧: tileElement.style.height = ${32}px;
       tileElement.style.height = `${32}px`;
-
+      // 旧: tileElement.style.left = ${x * 32}px;
       tileElement.style.left = `${x * 32}px`;
+      // 旧: tileElement.style.top = ${y * 32}px;
       tileElement.style.top = `${y * 32}px`;
       mapContainer.appendChild(tileElement);
     }
@@ -574,6 +585,8 @@ function recordMistake(playerName, questionId) {
     .then(r => r.json())
     .then(data => {
       if (data.success) {
+        // 修正: テンプレートリテラルに変更
+        // 旧: console.log(✅ 間違い記録: ${playerName} - QID ${questionId});
         console.log(`✅ 間違い記録: ${playerName} - QID ${questionId}`);
       } else {
         console.error("⛔ 記録エラー:", data.error || "不明なエラー");
