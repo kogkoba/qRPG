@@ -137,7 +137,7 @@ html, body {
   border: 2px solid #fff;
   border-radius: 8px;
   cursor: pointer;
-  touch-action: none;
+  touch-action: auto;
   user-select: none;
   display: flex;
   align-items: center;
