@@ -91,6 +91,25 @@ html, body {
   /* overflow: hidden; があるなら消去 */
 }
 
+/* プレイヤーやUIを前面に表示 */
+#gameArea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  /* 固定サイズではなく、動的に調整 */
+  width: 100%; /* 画面幅に合わせて広げる */
+  height: 100%; /* 画面高さに合わせて広げる */
+  overflow: hidden;
+  /* もともと #gameArea の表示は JS から制御される場合もあるため
+     display: block; としておいてJSで切り替えでもOK
+  */
+  display: block;
+}
+
+
+/* 
+
 #gameArea {
   position: relative;
   top: 0;
@@ -101,6 +120,8 @@ html, body {
   overflow: auto;
   display: block;
 }
+
+*/
 
 /* プレイヤーキャラ */
 #player {
