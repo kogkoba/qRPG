@@ -1,7 +1,36 @@
 /*******************************************************
  *  1) 定数・グローバル変数
  *******************************************************/
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzqM5gZr3HBY5LMo7U7uB0_dvEl29BW_2TpdBZjSH23OjiNfk0A6SsWXx6KRXF9x97T/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzqM5gZr3HBY5LMo7U7uB0_dvEl29BW_2TpdBZjSH23OjiNfk0A6SsWXx6KRXF9x97T/exec"; // GASのデプロイURLに置き換えてください
+
+async function login() {
+  const playerName = document.getElementById("playerNameInput").value.trim();
+  if (!playerName) {
+    alert("名前を入力してください！");
+    return;
+  }
+
+  try {
+    const params = { name: playerName };
+    const response = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      console.log("✅ ログイン成功:", data);
+      onLoginSuccess(playerName); // 成功時の処理
+    } else {
+      console.error("⛔ ログイン失敗:", data.error);
+      alert("ログイン失敗: " + data.error);
+    }
+  } catch (error) {
+    console.error("⛔ ログインエラー:", error);
+    alert("ネットワークエラーが発生しました。");
+  }
+}
 
 const STEP = 20;
 
