@@ -3,6 +3,17 @@
  *******************************************************/
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzqM5gZr3HBY5LMo7U7uB0_dvEl29BW_2TpdBZjSH23OjiNfk0A6SsWXx6KRXF9x97T/exec"; // 正しいGASのURLに置き換えてください
 
+function onLoginSuccess(playerName) {
+  console.log("✅ Logged in as:", playerName);
+
+  // ログイン画面を非表示
+  document.getElementById("loginScreen").style.display = "none";
+
+  // ゲーム画面を表示
+  document.getElementById("gameUI").style.display = "block";
+}
+
+
 async function login() {
   const playerName = document.getElementById("playerNameInput").value.trim();
   if (!playerName) {
