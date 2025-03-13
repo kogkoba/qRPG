@@ -1,7 +1,7 @@
 /*******************************************************
  *  1) 定数・グローバル変数
  *******************************************************/
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzqM5gZr3HBY5LMo7U7uB0_dvEl29BW_2TpdBZjSH23OjiNfk0A6SsWXx6KRXF9x97T/exec"; // GASのデプロイURLに置き換えてください
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzqM5gZr3HBY5LMo7U7uB0_dvEl29BW_2TpdBZjSH23OjiNfk0A6SsWXx6KRXF9x97T/exec"; // 正しいGASのURLに置き換えてください
 
 async function login() {
   const playerName = document.getElementById("playerNameInput").value.trim();
@@ -21,7 +21,21 @@ async function login() {
     const data = await response.json();
     if (data.success) {
       console.log("✅ ログイン成功:", data);
-      onLoginSuccess(playerName); // 成功時の処理
+      
+      // 取得したプレイヤーデータを反映
+      playerData = {
+        name: data.name,
+        level: data.level || 1,
+        exp: data.exp || 0,
+        g: data.g || 0,
+        hp: data.hp || 50
+      };
+
+      // ログイン画面を非表示、ゲーム開始
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("gameContainer").style.display = "block";
+
+      onLoginSuccess(playerData); // 成功時の処理
     } else {
       console.error("⛔ ログイン失敗:", data.error);
       alert("ログイン失敗: " + data.error);
